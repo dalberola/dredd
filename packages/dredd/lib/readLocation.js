@@ -24,7 +24,7 @@ function readRemoteFile(uri, options, callback) {
   }
   const request = options.request || defaultRequest;
 
-  const httpOptions = Object.assign({}, options.http || {});
+  const httpOptions = { ...(options.http || {}) };
   httpOptions.uri = uri;
   httpOptions.timeout = 5000; // ms, limits both connection time and server response time
 

@@ -110,7 +110,7 @@ paths:
           content:
             application/json:
               schema:
-${schema.split('\n').map(line => `                ${line}`).join('\n')}
+${schema.split('\n').map((line) => `                ${line}`).join('\n')}
 `;
     }
 
@@ -156,7 +156,7 @@ paths:
   ${pathTemplate}:
     get:
       parameters:
-${parameter.split('\n').map(line => `        ${line}`).join('\n')}
+${parameter.split('\n').map((line) => `        ${line}`).join('\n')}
       responses:
         '200':
           description: OK

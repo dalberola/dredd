@@ -24,7 +24,8 @@ describe('OpenAPI 3.1 JSON Schema validation', () => {
         res
           .status(404)
           .set('Content-Type', 'application/json')
-          .send(JSON.stringify(VALID_PROBLEM_BODY)));
+          .send(JSON.stringify(VALID_PROBLEM_BODY)),
+      );
       const dredd = new Dredd({ options: { path: FIXTURE_PATH } });
 
       runDreddWithServer(dredd, app, (error, info) => {
@@ -46,9 +47,8 @@ describe('OpenAPI 3.1 JSON Schema validation', () => {
         res
           .status(404)
           .set('Content-Type', 'application/json')
-          .send(JSON.stringify(Object.assign({}, VALID_PROBLEM_BODY, {
-            status: '404',
-          }))));
+          .send(JSON.stringify({ ...VALID_PROBLEM_BODY, status: '404' })),
+      );
       const dredd = new Dredd({ options: { path: FIXTURE_PATH } });
 
       runDreddWithServer(dredd, app, (error, info) => {
@@ -76,9 +76,10 @@ describe('OpenAPI 3.1 JSON Schema validation', () => {
         res
           .status(404)
           .set('Content-Type', 'application/json')
-          .send(JSON.stringify(Object.assign({}, VALID_PROBLEM_BODY, {
-            trace_id: 'not-a-uuid',
-          }))));
+          .send(
+            JSON.stringify({ ...VALID_PROBLEM_BODY, trace_id: 'not-a-uuid' }),
+          ),
+      );
       const dredd = new Dredd({ options: { path: FIXTURE_PATH } });
 
       runDreddWithServer(dredd, app, (error, info) => {
@@ -106,7 +107,8 @@ describe('OpenAPI 3.1 JSON Schema validation', () => {
         res
           .status(404)
           .set('Content-Type', 'application/json')
-          .send('not-json'));
+          .send('not-json'),
+      );
       const dredd = new Dredd({ options: { path: FIXTURE_PATH } });
 
       runDreddWithServer(dredd, app, (error, info) => {

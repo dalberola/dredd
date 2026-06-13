@@ -6,7 +6,6 @@ const createCompileResultSchema = require('../schemas/createCompileResultSchema'
 const { assert, fixtures } = require('../support');
 const compile = require('../../compile');
 
-
 describe('compile() · all API description formats', () => {
   describe('ordinary, valid API description', () => {
     fixtures('ordinary').forEachDescribe(({ mediaType, apiElements }) => {
@@ -132,11 +131,11 @@ describe('compile() · all API description formats', () => {
       context('the annotations', () => {
         it('are warnings', () => {
           compileResult.annotations
-            .map(ann => assert.equal(ann.type, 'warning'));
+            .map((ann) => assert.equal(ann.type, 'warning'));
         });
         it('come from parser', () => {
           compileResult.annotations
-            .map(ann => assert.equal(ann.component, 'apiDescriptionParser'));
+            .map((ann) => assert.equal(ann.component, 'apiDescriptionParser'));
         });
       });
     });
@@ -525,7 +524,7 @@ describe('compile() · all API description formats', () => {
           // Remove the lines with Content-Type headers as OpenAPI 2 doesn't
           // support generating them for 'multipart/form-data' request bodies
           const expectedRequestBody = format === 'openapi2'
-            ? expectedBody.split('\r\n').filter(line => !line.match(/Content-Type/)).join('\r\n')
+            ? expectedBody.split('\r\n').filter((line) => !line.match(/Content-Type/)).join('\r\n')
             : expectedBody;
 
           assert.deepEqual(

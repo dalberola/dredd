@@ -59,7 +59,7 @@ function isAjvSchema(bodySchema) {
 
 function normalizeAjvSchemaDialect(schema) {
   if (schema && schema.$schema === OAS_31_DIALECT) {
-    return Object.assign({}, schema, { $schema: JSON_SCHEMA_2020_12 });
+    return { ...schema, $schema: JSON_SCHEMA_2020_12 };
   }
   return schema;
 }
@@ -86,7 +86,9 @@ function formatJSONSchema202012Error(error) {
 
   switch (error.keyword) {
     case 'type':
-      return `At '${location}' Invalid type: ${getDataType(error.data)} (expected ${error.params.type})`;
+      return `At '${location}' Invalid type: ${getDataType(
+        error.data,
+      )} (expected ${error.params.type})`;
     case 'required':
       return `At '${location}' Missing required property: ${extraProperty}`;
     case 'enum':
@@ -106,15 +108,18 @@ function createJSONSchemaValidationResult(errors, actualBody) {
 }
 
 function createInvalidJSONValidationResult(error, actualBody) {
-  return createJSONSchemaValidationResult([
-    {
-      message: `Expected data to be a valid JSON: ${error.message}`,
-      location: {
-        pointer: '',
-        property: [],
+  return createJSONSchemaValidationResult(
+    [
+      {
+        message: `Expected data to be a valid JSON: ${error.message}`,
+        location: {
+          pointer: '',
+          property: [],
+        },
       },
-    },
-  ], actualBody);
+    ],
+    actualBody,
+  );
 }
 
 function validateBodySchemaWithAjv(bodySchema, actualBody) {
@@ -157,7 +162,7 @@ function validateBodySchemaWithAjv(bodySchema, actualBody) {
 }
 
 function validateFields(fields) {
-  return Object.keys(fields).every(fieldName => fields[fieldName].valid);
+  return Object.keys(fields).every((fieldName) => fields[fieldName].valid);
 }
 
 class TransactionRunner {
@@ -323,8 +328,9 @@ class TransactionRunner {
                           }
 
                           logger.debug(
-                            `Evaluating results of transaction execution #${transactionIndex +
-                              1}:`,
+                            `Evaluating results of transaction execution #${
+                              transactionIndex + 1
+                            }:`,
                             transaction.name,
                           );
                           this.emitResult(transaction, iterationCallback);
@@ -835,14 +841,14 @@ Not performing HTTP request for '${transaction.name}'.\
 
     try {
       if (isAjvSchema(transaction.expected.bodySchema)) {
-        const expectedWithoutBody = Object.assign({}, transaction.expected);
+        const expectedWithoutBody = { ...transaction.expected };
         delete expectedWithoutBody.body;
         delete expectedWithoutBody.bodySchema;
 
         gavelResult = gavel.validate(expectedWithoutBody, transaction.real);
         gavelResult.fields.body = validateBodySchemaWithAjv(
           transaction.expected.bodySchema,
-          transaction.real.body
+          transaction.real.body,
         );
         gavelResult.valid = validateFields(gavelResult.fields);
       } else {

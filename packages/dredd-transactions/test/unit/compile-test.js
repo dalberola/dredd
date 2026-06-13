@@ -5,7 +5,6 @@ const {
   _hasMultipartBody: hasMultipartBody,
 } = require('../../compile');
 
-
 describe('compile()', () => {
   describe('compileBody()', () => {
     const body = [

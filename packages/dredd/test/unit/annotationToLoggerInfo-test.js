@@ -6,7 +6,10 @@ const PARSE_ANNOTATION_FIXTURE = {
   type: 'error',
   message: 'Ouch!',
   component: 'apiDescriptionParser',
-  location: [[1, 2], [3, 4]],
+  location: [
+    [1, 2],
+    [3, 4],
+  ],
 };
 
 const COMPILE_ANNOTATION_FIXTURE = {
@@ -116,7 +119,10 @@ describe('annotationToLoggerInfo()', () => {
     it('formats location for parse annotations', () => {
       const loggerInfo = annotationToLoggerInfo('apiary.apib', {
         ...PARSE_ANNOTATION_FIXTURE,
-        location: [[1, 2], [3, 4]],
+        location: [
+          [1, 2],
+          [3, 4],
+        ],
       });
       assert.include(
         loggerInfo.message,
@@ -126,7 +132,10 @@ describe('annotationToLoggerInfo()', () => {
     it('formats location without end line if it is the same as the start line', () => {
       const loggerInfo = annotationToLoggerInfo('apiary.apib', {
         ...PARSE_ANNOTATION_FIXTURE,
-        location: [[1, 2], [1, 4]],
+        location: [
+          [1, 2],
+          [1, 4],
+        ],
       });
       assert.include(
         loggerInfo.message,
@@ -136,7 +145,10 @@ describe('annotationToLoggerInfo()', () => {
     it('formats location without range if the start and the end are the same', () => {
       const loggerInfo = annotationToLoggerInfo('apiary.apib', {
         ...PARSE_ANNOTATION_FIXTURE,
-        location: [[1, 2], [1, 2]],
+        location: [
+          [1, 2],
+          [1, 2],
+        ],
       });
       assert.include(
         loggerInfo.message,

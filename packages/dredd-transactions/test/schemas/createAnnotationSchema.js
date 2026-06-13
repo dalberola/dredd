@@ -3,7 +3,6 @@ const createOriginSchema = require('./createOriginSchema');
 
 const TYPES = ['error', 'warning'];
 
-
 module.exports = function createAnnotationSchema(options = {}) {
   // Either filename string or undefined (= doesn't matter)
   const { filename } = options;

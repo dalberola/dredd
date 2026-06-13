@@ -13,7 +13,6 @@ const SYMLINKS_LOG = path.join(PACKAGE_DIR, 'prepack-symlinks.log');
 const APIB_PARSER_PATH = path.join(PACKAGE_DIR, 'node_modules', '@apielements', 'apib-parser');
 const OPENAPI2_PARSER_PATH = path.join(PACKAGE_DIR, 'node_modules', '@apielements', 'openapi2-parser');
 
-
 function readPackageJson(packageDir) {
   return JSON.parse(fs.readFileSync(path.join(packageDir, 'package.json')));
 }
@@ -66,7 +65,6 @@ function symlinkDependencyTreeToLocalNodeModules(dependencyName) {
   dependencies.forEach(symlinkDependencyTreeToLocalNodeModules);
 }
 
-
 // make sure all bundled deps are accessible in the local 'node_modules' dir
 const packageData = readPackageJson(PACKAGE_DIR);
 const { bundledDependencies } = packageData;
@@ -89,5 +87,5 @@ writePackageJson(OPENAPI2_PARSER_PATH, openapi2ParserPackageData);
   path.join(PACKAGE_DIR, 'node_modules', 'protagonist'),
   path.join(PACKAGE_DIR, '..', '..', 'node_modules', 'protagonist'),
 ]
-  .filter(protagonistPath => fs.existsSync(protagonistPath))
-  .forEach(protagonistPath => rimraf.sync(protagonistPath));
+  .filter((protagonistPath) => fs.existsSync(protagonistPath))
+  .forEach((protagonistPath) => rimraf.sync(protagonistPath));

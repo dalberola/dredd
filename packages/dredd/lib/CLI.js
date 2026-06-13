@@ -27,14 +27,14 @@ function getAliases(options) {
 }
 
 function getArrayOptions(options) {
-  return Object.keys(options).filter(optionName =>
+  return Object.keys(options).filter((optionName) =>
     Array.isArray(options[optionName].default),
   );
 }
 
 function getBooleanOptions(options) {
   return Object.keys(options).filter(
-    optionName =>
+    (optionName) =>
       options[optionName].boolean === true ||
       typeof options[optionName].default === 'boolean',
   );

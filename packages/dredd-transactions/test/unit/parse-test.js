@@ -4,7 +4,6 @@ const parse = require('../../parse');
 
 const { assert, fixtures } = require('../support');
 
-
 describe('parse()', () => {
   const reMediaType = /\w+\/[\w.+]+/;
 
@@ -40,7 +39,7 @@ describe('parse()', () => {
       it('the parse result contains source map elements', () => {
         const sourceMaps = apiElements
           .recursiveChildren
-          .flatMap(element => element.sourceMapValue);
+          .flatMap((element) => element.sourceMapValue);
         assert.ok(sourceMaps.length);
       });
     });

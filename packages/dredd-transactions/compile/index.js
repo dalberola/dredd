@@ -4,7 +4,6 @@ const compileTransactionName = require('./compileTransactionName');
 const compileAnnotation = require('./compileAnnotation');
 const compileOpenAPI31 = require('./openapi31');
 
-
 function findRelevantTransactions(mediaType, apiElements) {
   const relevantTransactions = [];
   apiElements.findRecursive('resource', 'transition').forEach((transitionElement) => {
@@ -62,8 +61,8 @@ function compileOriginExampleName(mediaType, httpResponseElement, exampleNo) {
     const headers = compileHeaders(httpResponseElement.headers);
 
     const contentType = headers
-      .filter(header => header.name.toLowerCase() === 'content-type')
-      .map(header => header.value)[0];
+      .filter((header) => header.name.toLowerCase() === 'content-type')
+      .map((header) => header.value)[0];
 
     const segments = [];
     if (statusCode) { segments.push(statusCode); }
@@ -75,8 +74,8 @@ function compileOriginExampleName(mediaType, httpResponseElement, exampleNo) {
 }
 
 function compileOrigin(mediaType, filename, httpTransactionElement, exampleNo) {
-  const apiElement = httpTransactionElement.parents.find(element => element.classes.contains('api'));
-  const resourceGroupElement = httpTransactionElement.parents.find(element => element.classes.contains('resourceGroup'));
+  const apiElement = httpTransactionElement.parents.find((element) => element.classes.contains('api'));
+  const resourceGroupElement = httpTransactionElement.parents.find((element) => element.classes.contains('resourceGroup'));
   const resourceElement = httpTransactionElement.parents.find('resource');
   const transitionElement = httpTransactionElement.parents.find('transition');
   const httpRequestElement = httpTransactionElement.request;
@@ -155,7 +154,7 @@ function compileTransaction(mediaType, filename, httpTransactionElement, example
   annotations.forEach((annotation) => {
     /* eslint-disable no-param-reassign */
     annotation.name = name;
-    annotation.origin = Object.assign({}, origin);
+    annotation.origin = { ...origin };
     /* eslint-enable */
   });
   if (!request) { return { transaction: null, annotations }; }
@@ -191,10 +190,8 @@ function compile(mediaType, apiElements, filename) {
   return { mediaType, transactions, annotations };
 }
 
-
 // only for the purpose of unit tests
 compile._compileBody = compileBody;
 compile._hasMultipartBody = hasMultipartBody;
-
 
 module.exports = compile;

@@ -5,6 +5,7 @@
 // const Dredd = require('dredd').default
 //
 // To prevent this, using "module.exports".
+// eslint-disable-next-line import/no-import-module-exports
 import Dredd from './Dredd';
 
 module.exports = Dredd;

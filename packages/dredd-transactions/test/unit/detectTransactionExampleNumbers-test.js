@@ -3,7 +3,6 @@ const parse = require('../../parse');
 
 const { assert } = require('../support');
 
-
 // Encapsulates a single test scenario.
 function scenario(description, { actionContent, exampleNumbersPerTransaction }) {
   describe(`${description}`, () => {
@@ -34,7 +33,6 @@ ${actionContent}
     });
   });
 }
-
 
 describe('detectTransactionExamples()', () => {
   describe('various combinations of requests and responses', () => {
@@ -226,7 +224,6 @@ describe('detectTransactionExamples()', () => {
       exampleNumbersPerTransaction: [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2],
     });
   });
-
 
   describe('various ways of specifying requests', () => {
     scenario('bare', {
@@ -427,7 +424,6 @@ describe('detectTransactionExamples()', () => {
       exampleNumbersPerTransaction: [1, 2, 2, 3],
     });
   });
-
 
   describe('various ways of specifying responses', () => {
     scenario('bare', {

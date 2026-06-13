@@ -108,8 +108,7 @@ describe('TransactionRunner', () => {
   describe('configureTransaction(transaction)', () => {
     beforeEach(() => {
       transaction = {
-        name:
-          'Machines API > Group Machine > Machine > Delete Message > Bogus example name',
+        name: 'Machines API > Group Machine > Machine > Delete Message > Bogus example name',
         request: {
           body: '{\n  "type": "bulldozer",\n  "name": "willy"}\n',
           headers: {
@@ -121,8 +120,7 @@ describe('TransactionRunner', () => {
           method: 'POST',
         },
         response: {
-          body:
-            '{\n  "type": "bulldozer",\n  "name": "willy",\n  "id": "5229c6e8e4b0bd7dbb07e29c"\n}\n',
+          body: '{\n  "type": "bulldozer",\n  "name": "willy",\n  "id": "5229c6e8e4b0bd7dbb07e29c"\n}\n',
           headers: {
             'content-type': {
               value: 'application/json',
@@ -471,8 +469,7 @@ describe('TransactionRunner', () => {
         },
         expected: {
           headers: { 'content-type': 'application/json' },
-          body:
-            '{\n  "type": "bulldozer",\n  "name": "willy",\n  "id": "5229c6e8e4b0bd7dbb07e29c"\n}\n',
+          body: '{\n  "type": "bulldozer",\n  "name": "willy",\n  "id": "5229c6e8e4b0bd7dbb07e29c"\n}\n',
           status: '202',
         },
         origin: {
@@ -880,8 +877,7 @@ describe('TransactionRunner', () => {
           },
           expected: {
             headers: { 'content-type': 'application/json' },
-            body:
-              '{\n  "type": "bulldozer",\n  "name": "willy",\n  "id": "5229c6e8e4b0bd7dbb07e29c"\n}\n',
+            body: '{\n  "type": "bulldozer",\n  "name": "willy",\n  "id": "5229c6e8e4b0bd7dbb07e29c"\n}\n',
             statusCode: '202',
           },
           origin: {
@@ -1518,8 +1514,7 @@ describe('TransactionRunner', () => {
         },
         expected: {
           headers: { 'content-type': 'application/json' },
-          body:
-            '{\n  "type": "bulldozer",\n "name": "willy",\n  "id": "5229c6e8e4b0bd7dbb07e29c"\n}\n',
+          body: '{\n  "type": "bulldozer",\n "name": "willy",\n  "id": "5229c6e8e4b0bd7dbb07e29c"\n}\n',
           statusCode: '202',
         },
         origin: {
@@ -1564,7 +1559,7 @@ describe('TransactionRunner', () => {
         runner.hooks.afterHooks = {
           'Group Machine > Machine > Delete Message > Bogus example name': [
             // eslint-disable-next-line
-            function(transaction, done) {
+            function (transaction, done) {
               loggerStub.debug('after');
               done();
             },
@@ -1602,7 +1597,7 @@ describe('TransactionRunner', () => {
         runner.hooks.afterHooks = {
           'Group Machine > Machine > Delete Message > Bogus example name': [
             // eslint-disable-next-line
-            function(transaction, done) {
+            function (transaction, done) {
               loggerStub.debug('after');
               done();
             },
@@ -1631,7 +1626,7 @@ describe('TransactionRunner', () => {
             // eslint-disable-next-line
             (transaction) => loggerStub.debug('first'),
             // eslint-disable-next-line
-            function(transaction, cb) {
+            function (transaction, cb) {
               loggerStub.debug('second');
               cb();
             },
@@ -1729,8 +1724,7 @@ describe('TransactionRunner', () => {
           },
           expected: {
             headers: { 'content-type': 'application/json' },
-            body:
-              '{\n  "type": "bulldozer",\n  "name": "willy",\n  "id": "5229c6e8e4b0bd7dbb07e29c"\n}\n',
+            body: '{\n  "type": "bulldozer",\n  "name": "willy",\n  "id": "5229c6e8e4b0bd7dbb07e29c"\n}\n',
             statusCode: '202',
           },
           origin: {
@@ -1798,7 +1792,7 @@ describe('TransactionRunner', () => {
 
       describe('with a ‘beforeEachValidation’ hook', () => {
         // eslint-disable-next-line
-        const hook = function(transaction, callback) {
+        const hook = function (transaction, callback) {
           transaction.real.statusCode = '403';
           callback();
         };
@@ -2717,7 +2711,7 @@ describe('TransactionRunner', () => {
         runner.hooks.beforeHooks = {
           'Group Machine > Machine > Delete Message > Bogus example name': [
             // eslint-disable-next-line
-            function(transaction) {
+            function (transaction) {
               const body = JSON.parse(transaction.request.body);
               body.name = 'Michael';
               transaction.request.body = JSON.stringify(body);

@@ -1,9 +1,8 @@
 const createOriginSchema = require('./createOriginSchema');
 const createAnnotationSchema = require('./createAnnotationSchema');
 
-
 function addMinMax(schema, n) {
-  const modifiedSchema = Object.assign({}, schema);
+  const modifiedSchema = { ...schema };
 
   if (n.length === 1) { // [min]
     [modifiedSchema.minItems] = n;
@@ -15,7 +14,6 @@ function addMinMax(schema, n) {
   }
   return modifiedSchema;
 }
-
 
 module.exports = function createCompileResultSchema(options = {}) {
   // Either filename string or undefined (= doesn't matter)

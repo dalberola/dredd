@@ -8,7 +8,6 @@ const detectTransactionExampleNumbers = require('../../compile/detectTransaction
 const { assert, fixtures } = require('../support');
 const compile = require('../../compile');
 
-
 describe('compile() · API Blueprint', () => {
   describe('causing a \'missing title\' warning', () => {
     const { mediaType, apiElements } = fixtures('missing-title-annotation').apib;
@@ -84,8 +83,8 @@ describe('compile() · API Blueprint', () => {
       it(`has request with Content-Type: ${requestContentType}`, () => {
         const { headers } = compileResult.transactions[i].request;
         const contentType = headers
-          .filter(header => header.name === 'Content-Type')
-          .map(header => header.value)[0];
+          .filter((header) => header.name === 'Content-Type')
+          .map((header) => header.value)[0];
         assert.equal(contentType, requestContentType);
       });
       it(`has response with status code ${responseStatusCode}`, () => {

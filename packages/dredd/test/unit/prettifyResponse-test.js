@@ -28,8 +28,7 @@ body: \n{
         headers: {
           'content-type': 'text/html',
         },
-        body:
-          '<div>before paragraph <p>in para <i>italics</i><br /><b>bold</b> afterwords</p></div>',
+        body: '<div>before paragraph <p>in para <i>italics</i><br /><b>bold</b> afterwords</p></div>',
       });
 
       const expectedOutput = `\

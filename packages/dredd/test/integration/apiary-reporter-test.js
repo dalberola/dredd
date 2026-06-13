@@ -73,6 +73,7 @@ describe('Apiary reporter', () => {
     exitStatus = null;
 
     before((done) => {
+      // eslint-disable-next-line no-useless-catch
       try {
         const cmd = {
           options: {

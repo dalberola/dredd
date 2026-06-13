@@ -87,7 +87,7 @@ function createRequestOptions(options, url) {
     port: url.port,
     path: `${url.pathname}${url.search}`,
     method: options.method || 'GET',
-    headers: Object.assign({}, options.headers || {}),
+    headers: { ...(options.headers || {}) },
   };
 
   [
@@ -149,8 +149,8 @@ export default function request(options, callback) {
         headers: response.headers,
       };
 
-      response.on('data', chunk => chunks.push(chunk));
-      response.on('error', error => finish(error));
+      response.on('data', (chunk) => chunks.push(chunk));
+      response.on('error', (error) => finish(error));
       response.on('end', () => {
         const responseBody = getResponseBody(
           Buffer.concat(chunks),
@@ -161,7 +161,7 @@ export default function request(options, callback) {
     },
   );
 
-  req.on('error', error => finish(error));
+  req.on('error', (error) => finish(error));
 
   if (options.timeout) {
     req.setTimeout(options.timeout, () => {

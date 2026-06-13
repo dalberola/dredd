@@ -70,8 +70,8 @@ function parseContent(apiDescriptions, callback) {
         return;
       }
 
-      const parsedAPIdescriptions = apiDescriptions.map((apiDescription, i) =>
-        Object.assign({}, parseResults[i], apiDescription),
+      const parsedAPIdescriptions = apiDescriptions.map(
+        (apiDescription, i) => ({ ...parseResults[i], ...apiDescription }),
       );
       callback(null, parsedAPIdescriptions);
     },
@@ -91,9 +91,7 @@ function compileTransactions(apiDescriptions) {
         );
       }
     })
-    .map((compileResult, i) =>
-      Object.assign({}, compileResult, apiDescriptions[i]),
-    );
+    .map((compileResult, i) => ({ ...compileResult, ...apiDescriptions[i] }));
 }
 
 function toTransactions(apiDescriptions) {
@@ -103,17 +101,13 @@ function toTransactions(apiDescriptions) {
       // where each transaction object gets an extra 'apiDescription'
       // property with details about the API description it comes from
       .map((apiDescription) =>
-        apiDescription.transactions.map((transaction) =>
-          Object.assign(
-            {
-              apiDescription: {
-                location: apiDescription.location,
-                mediaType: apiDescription.mediaType,
-              },
-            },
-            transaction,
-          ),
-        ),
+        apiDescription.transactions.map((transaction) => ({
+          apiDescription: {
+            location: apiDescription.location,
+            mediaType: apiDescription.mediaType,
+          },
+          ...transaction,
+        })),
       )
       // flatten array of arrays
       .reduce((flatArray, array) => flatArray.concat(array), [])
@@ -170,9 +164,8 @@ class Dredd {
           readLocations(locations, { http: this.configuration.http }, next);
         },
         (apiDescriptions, next) => {
-          const allAPIdescriptions = this.configuration.apiDescriptions.concat(
-            apiDescriptions,
-          );
+          const allAPIdescriptions =
+            this.configuration.apiDescriptions.concat(apiDescriptions);
           this.logger.debug('Parsing API description documents');
           parseContent(allAPIdescriptions, next);
         },
@@ -188,9 +181,8 @@ class Dredd {
         );
         let apiDescriptionsWithTransactions;
         try {
-          apiDescriptionsWithTransactions = compileTransactions(
-            apiDescriptions,
-          );
+          apiDescriptionsWithTransactions =
+            compileTransactions(apiDescriptions);
         } catch (compileErr) {
           callback(compileErr);
           return;

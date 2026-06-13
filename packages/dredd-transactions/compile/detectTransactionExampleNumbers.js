@@ -43,7 +43,7 @@ function createRequestsResponsesIndex(transitionElement) {
 function detectTransactionExampleNumbers(transitionElement) {
   const requestsResponsesIndex = createRequestsResponsesIndex(transitionElement);
   const finalState = requestsResponsesIndex.reduce((previousState, indexEntry) => {
-    const currentState = Object.assign({}, previousState);
+    const currentState = { ...previousState };
 
     switch (indexEntry.type) {
       case 'httpRequest':

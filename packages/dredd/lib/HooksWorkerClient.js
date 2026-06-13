@@ -269,8 +269,9 @@ $ go get github.com/snikch/goodman/cmd/goodman
             this.handlerClient.destroy();
           }
           const msg =
-            `Connection timeout ${this.connectTimeout /
-              1000}s to hooks handler ` +
+            `Connection timeout ${
+              this.connectTimeout / 1000
+            }s to hooks handler ` +
             `on ${this.handlerHost}:${this.handlerPort} exceeded. Try increasing the limit.`;
           callback(new Error(msg));
         }
@@ -291,8 +292,9 @@ $ go get github.com/snikch/goodman/cmd/goodman
 
       this.handlerClient.on('connect', () => {
         logger.debug(
-          `Successfully connected to hooks handler. Waiting ${this
-            .afterConnectWait / 1000}s to start testing.`,
+          `Successfully connected to hooks handler. Waiting ${
+            this.afterConnectWait / 1000
+          }s to start testing.`,
         );
         this.clientConnected = true;
         clearTimeout(timeout);

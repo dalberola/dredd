@@ -492,12 +492,15 @@ FORMAT: 1A
       const transactions = dredd.transactionRunner.run.firstCall.args[0];
 
       assert.lengthOf(transactions, 4);
-      assert.deepEqual(transactions.map(({ name }) => name), [
-        'Beehive API v1 > /honey > GET',
-        'Beehive API v2 > /honey > GET',
-        'Beehive API v2 > /bees > GET',
-        'Machines API > Machines > Machines collection > Get Machines',
-      ]);
+      assert.deepEqual(
+        transactions.map(({ name }) => name),
+        [
+          'Beehive API v1 > /honey > GET',
+          'Beehive API v2 > /honey > GET',
+          'Beehive API v2 > /bees > GET',
+          'Machines API > Machines > Machines collection > Get Machines',
+        ],
+      );
     });
   });
 });

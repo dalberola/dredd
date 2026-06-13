@@ -30,5 +30,13 @@ module.exports = {
     'no-restricted-syntax': 'off',
     'no-use-before-define': 'off',
     'prefer-destructuring': 'off',
+
+    // Rules newly enforced by airbnb-base 15 that would otherwise require
+    // reordering function signatures or annotating every relative import with
+    // a file extension. Disabled to keep this a dependency upgrade rather than
+    // a codebase-wide refactor, consistent with the import rules already
+    // turned off above.
+    'default-param-last': 'off',
+    'import/extensions': 'off',
   },
 };

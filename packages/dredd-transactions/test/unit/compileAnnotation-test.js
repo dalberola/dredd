@@ -3,7 +3,6 @@ const fury = require('@apielements/core');
 const { assert, fixtures } = require('../support');
 const compileAnnotation = require('../../compile/compileAnnotation');
 
-
 describe('compileAnnotation()', () => {
   const { Annotation } = fury.minim.elements;
 

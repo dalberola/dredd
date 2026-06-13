@@ -2,7 +2,6 @@ const { assert } = require('chai');
 
 const compileTransactionName = require('../../compile/compileTransactionName');
 
-
 describe('compileTransactionName()', () => {
   it('is a function', () => assert.isFunction(compileTransactionName));
 

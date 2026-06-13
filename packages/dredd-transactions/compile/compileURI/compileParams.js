@@ -3,11 +3,9 @@ function getRequired(memberElement) {
   return typeAttributes.includes('required');
 }
 
-
 function getDefault(valueElement) {
   return valueElement ? valueElement.attributes.getValue('default') : undefined;
 }
-
 
 function getExample(valueElement) {
   if (valueElement) {
@@ -22,13 +20,11 @@ function getExample(valueElement) {
   return undefined;
 }
 
-
 function getValues(valueElement) {
   return valueElement
     ? valueElement.attributes.getValue('enumerations') || []
     : [];
 }
-
 
 function compileParams(hrefVariablesElement) {
   if (!hrefVariablesElement) return {};
@@ -46,6 +42,5 @@ function compileParams(hrefVariablesElement) {
     })
     .reduce((params, param) => Object.assign(params, param), {});
 }
-
 
 module.exports = compileParams;

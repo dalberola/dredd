@@ -2,7 +2,6 @@ const { assert } = require('chai');
 
 const expandUriTemplate = require('../../../compile/compileURI/expandURItemplate');
 
-
 describe('expandUriTemplate()', () => {
   let data = null;
   let uriTemplate = '';
@@ -30,7 +29,7 @@ describe('expandUriTemplate()', () => {
       'errors',
       'warnings',
       'uri',
-    ].forEach(key => it(`should have key "${key}"`, () => assert.include(Object.keys(data), key)));
+    ].forEach((key) => it(`should have key "${key}"`, () => assert.include(Object.keys(data), key)));
 
     describe('when not parseable uri templeate privided', () => {
       before(() => {
@@ -102,7 +101,6 @@ describe('expandUriTemplate()', () => {
         it('should return URI as it is', () => assert.equal(data.uri, uriTemplate));
       });
 
-
       describe('with some parameters given', () => {
         before(() => {
           uriTemplate = '/machines/waldo';
@@ -130,7 +128,6 @@ describe('expandUriTemplate()', () => {
         it('should return URI as it is', () => assert.equal(data.uri, uriTemplate));
       });
     });
-
 
     describe('when UriTemplate with some URI template expression given', () => {
       describe('when no matching parameters provided', () => {

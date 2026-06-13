@@ -15,24 +15,24 @@ let exitStatus;
 let stderr = '';
 
 const addHooksStub = proxyquire('../../../lib/addHooks', {
-  './logger': loggerStub
+  './logger': loggerStub,
 }).default;
 
 const transactionRunner = proxyquire('../../../lib/TransactionRunner', {
   './addHooks': addHooksStub,
-  './logger': loggerStub
+  './logger': loggerStub,
 }).default;
 
 const dreddStub = proxyquire('../../../lib/Dredd', {
   './TransactionRunner': transactionRunner,
-  './logger': loggerStub
+  './logger': loggerStub,
 }).default;
 
 const CLIStub = proxyquire('../../../lib/CLI', {
   './Dredd': dreddStub,
   './configUtils': configUtils,
   console: loggerStub,
-  fs
+  fs,
 }).default;
 
 function execCommand(custom = {}, cb) {
@@ -155,17 +155,17 @@ describe('CLI class Integration', () => {
     const errorCmd = {
       argv: [
         `http://127.0.0.1:${PORT + 1}/connection-error.apib`,
-        `http://127.0.0.1:${PORT + 1}`
-      ]
+        `http://127.0.0.1:${PORT + 1}`,
+      ],
     };
     const wrongCmd = {
       argv: [
         `http://127.0.0.1:${PORT}/not-found.apib`,
-        `http://127.0.0.1:${PORT}`
-      ]
+        `http://127.0.0.1:${PORT}`,
+      ],
     };
     const goodCmd = {
-      argv: [`http://127.0.0.1:${PORT}/file.apib`, `http://127.0.0.1:${PORT}`]
+      argv: [`http://127.0.0.1:${PORT}/file.apib`, `http://127.0.0.1:${PORT}`],
     };
 
     before((done) => {
@@ -175,12 +175,12 @@ describe('CLI class Integration', () => {
 
       app.get('/file.apib', (req, res) => {
         fs.createReadStream('./test/fixtures/single-get.apib').pipe(
-          res.type('text')
+          res.type('text'),
         );
       });
 
       app.get('/machines', (req, res) =>
-        res.json([{ type: 'bulldozer', name: 'willy' }])
+        res.json([{ type: 'bulldozer', name: 'willy' }]),
       );
 
       app.get('/not-found.apib', (req, res) => res.status(404).end());
@@ -193,7 +193,7 @@ describe('CLI class Integration', () => {
         app = null;
         server = null;
         done();
-      })
+      }),
     );
 
     describe('and I try to load a file from bad hostname at all', () => {

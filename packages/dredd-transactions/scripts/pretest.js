@@ -7,14 +7,12 @@ const fury = require('@apielements/core');
 
 const parse = require('../parse');
 
-
 const FIXTURES_DIR = path.join(__dirname, '..', 'test', 'fixtures');
-
 
 function listFixtures(fixturesSubDir) {
   return fs.readdirSync(fixturesSubDir)
-    .map(itemName => path.join(fixturesSubDir, itemName))
-    .filter(itemPath => itemPath.endsWith('.apib') || itemPath.endsWith('.yml'));
+    .map((itemName) => path.join(fixturesSubDir, itemName))
+    .filter((itemPath) => itemPath.endsWith('.apib') || itemPath.endsWith('.yml'));
 }
 
 function getJSONPath(fixturePath) {
@@ -37,10 +35,9 @@ function parseFixture(fixturePath) {
   });
 }
 
-
 const fixturesPerSubDir = fs.readdirSync(FIXTURES_DIR)
-  .map(itemName => path.join(FIXTURES_DIR, itemName))
-  .filter(itemPath => fs.statSync(itemPath).isDirectory())
+  .map((itemName) => path.join(FIXTURES_DIR, itemName))
+  .filter((itemPath) => fs.statSync(itemPath).isDirectory())
   .map(listFixtures);
 const fixtures = [].concat(...fixturesPerSubDir);
 

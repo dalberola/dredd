@@ -2,7 +2,6 @@ const { assert } = require('chai');
 
 const validateParams = require('../../../compile/compileURI/validateParams');
 
-
 describe('validateParams()', () => {
   it('should return an object', () => {
     const params = {
@@ -255,7 +254,6 @@ describe('validateParams()', () => {
       const result = validateParams(params);
       assert.equal(result.errors.length, 0);
     }));
-
 
     describe('and default value is not empty and example value is empty', () => it('should not set the error', () => {
       const params = {

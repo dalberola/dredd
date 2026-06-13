@@ -3,13 +3,11 @@ const path = require('path');
 
 const fury = require('@apielements/core');
 
-
 const FORMATS = {
   apib: { name: 'API Blueprint', ext: '.apib', mediaType: 'text/vnd.apiblueprint' },
   openapi2: { name: 'OpenAPI 2', ext: '.yml', mediaType: 'application/swagger+yaml' },
   openapi3: { name: 'OpenAPI 3', ext: '.yml', mediaType: 'application/vnd.oai.openapi' },
 };
-
 
 function readAPIelements(apiElementsPath) {
   const contents = fs.readFileSync(apiElementsPath, 'utf8');
@@ -24,7 +22,7 @@ function forEachDescribe(fn) {
 
 function fixtures(basename) {
   const array = Object.keys(FORMATS)
-    .map(format => ({
+    .map((format) => ({
       format,
       formatName: FORMATS[format].name,
       mediaType: FORMATS[format].mediaType,
@@ -34,11 +32,12 @@ function fixtures(basename) {
     // skip formats which do not have the requested fixture, but do not skip
     // fixtures with the API Elements JSON missing (should blow up and the
     // scripts/pretest.js should be ran to mitigate the issue)
-    .filter(fixture => fs.existsSync(fixture.apiDescriptionPath))
-    .map(fixture => Object.assign({
+    .filter((fixture) => fs.existsSync(fixture.apiDescriptionPath))
+    .map((fixture) => ({
       apiDescription: fs.readFileSync(fixture.apiDescriptionPath, 'utf8'),
       apiElements: readAPIelements(fixture.apiElementsPath),
-    }, fixture));
+      ...fixture,
+    }));
 
   // prevent invalid fixture names
   if (array.length < 1) {
@@ -55,6 +54,5 @@ function fixtures(basename) {
 
   return array;
 }
-
 
 module.exports = fixtures;

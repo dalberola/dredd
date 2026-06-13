@@ -8,7 +8,6 @@ const detectTransactionExampleNumbers = require('../../compile/detectTransaction
 const { assert, fixtures } = require('../support');
 const compile = require('../../compile');
 
-
 describe('compile() · OpenAPI 2', () => {
   describe('causing a \'not specified in URI Template\' error', () => {
     const { mediaType, apiElements } = fixtures('not-specified-in-uri-template-annotation').openapi2;
@@ -154,8 +153,8 @@ describe('compile() · OpenAPI 2', () => {
     });
     it('skips non-JSON media types in \'produces\'', () => compileResult.transactions.forEach((transaction) => {
       const contentType = transaction.response.headers
-        .filter(header => header.name.toLowerCase() === 'content-type')
-        .map(header => header.value)[0];
+        .filter((header) => header.name.toLowerCase() === 'content-type')
+        .map((header) => header.value)[0];
       assert.equal(contentType, 'application/json');
     }));
 

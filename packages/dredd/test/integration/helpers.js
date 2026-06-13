@@ -24,8 +24,8 @@ const DREDD_BIN = require.resolve('../../bin/dredd');
 // - logging (string) - the recorded logging output
 export const recordLogging = (fn, callback) => {
   const loggerSilent = !!logger.transports.console.silent;
-  const reporterOutputLoggerSilent = !!reporterOutputLogger.transports.console
-    .silent;
+  const reporterOutputLoggerSilent =
+    !!reporterOutputLogger.transports.console.silent;
 
   // Supress Dredd's console output (remove if debugging)
   logger.transports.console.silent = true;
@@ -264,11 +264,10 @@ export const runCLIWithServer = (args, app, serverPort, callback) => {
 };
 
 // Checks whether there's a process with name matching given pattern.
-export const isProcessRunning = (pattern, callback) => {
-  return ps.lookup({ arguments: pattern }, (err, processList) =>
+export const isProcessRunning = (pattern, callback) =>
+  ps.lookup({ arguments: pattern }, (err, processList) =>
     callback(err, !!(processList ? processList.length : undefined)),
   );
-};
 
 // Kills process with given PID if the process exists. Otherwise
 // does nothing.
@@ -287,8 +286,8 @@ export const kill = (pid, callback) => {
 
 // Kills processes which have names matching given pattern. Does
 // nothing if there are no matching processes.
-export const killAll = (pattern, callback) => {
-  return ps.lookup({ arguments: pattern }, (err, processList) => {
+export const killAll = (pattern, callback) =>
+  ps.lookup({ arguments: pattern }, (err, processList) => {
     if (err || !processList.length) {
       return callback(err);
     }
@@ -299,4 +298,3 @@ export const killAll = (pattern, callback) => {
       callback,
     );
   });
-};

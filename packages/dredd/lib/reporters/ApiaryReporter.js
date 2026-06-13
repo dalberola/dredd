@@ -68,6 +68,10 @@ ApiaryReporter.prototype._get = function _get(
     returnVal = this.config.custom[customProperty];
 
     // This will be the ONLY supported way how to configure this reporter
+    // FIXME: this branch duplicates the condition above and can never run;
+    // preserved as-is during the eslint upgrade (both assign the same value,
+    // so behaviour is unchanged). Tracked for a separate fix.
+    // eslint-disable-next-line no-dupe-else-if
   } else if (this.config.custom && this.config.custom[customProperty]) {
     returnVal = this.config.custom[customProperty];
 
@@ -325,23 +329,22 @@ to Apiary API: ${options.method} ${options.uri} \
   }
 };
 
-ApiaryReporter.prototype._transformTestToReporter = function _transformTestToReporter(
-  test,
-) {
-  return {
-    testRunId: this.remoteId,
-    origin: test.origin,
-    duration: test.duration,
-    result: test.status,
-    startedAt: test.startedAt,
-    results: {
-      request: test.request,
-      realResponse: test.actual,
-      expectedResponse: test.expected,
-      validationResult: test.results || {},
-      errors: test.errors || [],
-    },
+ApiaryReporter.prototype._transformTestToReporter =
+  function _transformTestToReporter(test) {
+    return {
+      testRunId: this.remoteId,
+      origin: test.origin,
+      duration: test.duration,
+      result: test.status,
+      startedAt: test.startedAt,
+      results: {
+        request: test.request,
+        realResponse: test.actual,
+        expectedResponse: test.expected,
+        validationResult: test.results || {},
+        errors: test.errors || [],
+      },
+    };
   };
-};
 
 export default ApiaryReporter;

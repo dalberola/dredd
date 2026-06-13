@@ -17,7 +17,6 @@ function compileLocation(sourceMapElement) {
   }
 }
 
-
 module.exports = function compileAnnotation(annotationElement) {
   return {
     type: annotationElement.classes.getValue(0),

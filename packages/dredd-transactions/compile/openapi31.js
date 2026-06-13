@@ -30,7 +30,7 @@ function cloneWithoutRef(document, value) {
     return resolved;
   }
   if (Array.isArray(resolved)) {
-    return resolved.map(item => cloneWithoutRef(document, item));
+    return resolved.map((item) => cloneWithoutRef(document, item));
   }
 
   return Object.keys(resolved).reduce((result, key) => Object.assign(result, {
@@ -94,7 +94,7 @@ function sampleFromSchema(document, schema) {
     return sampleFromSchema(document, resolvedSchema.anyOf[0]);
   }
 
-  const type = schemaTypes(resolvedSchema).filter(item => item !== 'null')[0];
+  const type = schemaTypes(resolvedSchema).filter((item) => item !== 'null')[0];
   switch (type) {
     case 'object':
       return Object.keys(resolvedSchema.properties || {}).reduce(
@@ -174,7 +174,7 @@ function serializeFormParameter(name, value, explode) {
 
   if (Array.isArray(value)) {
     if (explode) {
-      return value.map(item => `${serializedName}=${encodePart(item)}`);
+      return value.map((item) => `${serializedName}=${encodePart(item)}`);
     }
     return [`${serializedName}=${serializeArray(value, ',')}`];
   }
@@ -182,7 +182,7 @@ function serializeFormParameter(name, value, explode) {
   if (value && typeof value === 'object') {
     if (explode) {
       return Object.keys(value)
-        .map(key => `${encodePart(key)}=${encodePart(value[key])}`);
+        .map((key) => `${encodePart(key)}=${encodePart(value[key])}`);
     }
     return [`${serializedName}=${serializeObject(value, ',', ',')}`];
   }
@@ -339,8 +339,8 @@ function compileOrigin(filename, document, pathTemplate, method, response) {
     exampleName: [
       response.status,
       response.headers
-        .filter(header => header.name.toLowerCase() === 'content-type')
-        .map(header => header.value)[0],
+        .filter((header) => header.name.toLowerCase() === 'content-type')
+        .map((header) => header.value)[0],
     ].filter(Boolean).join(' > '),
   };
 }

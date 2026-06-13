@@ -3,7 +3,6 @@ const fury = require('@apielements/core');
 
 const compileParams = require('../../../compile/compileURI/compileParams');
 
-
 describe('compileParams()', () => {
   it('should compile a primitive href variable', () => {
     const hrefVariables = new fury.minim.elements.HrefVariables();

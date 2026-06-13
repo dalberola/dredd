@@ -139,19 +139,13 @@ const coerceOptions = R.compose(
     reporter: coerceToArray,
     output: coerceToArray,
     header: coerceToArray,
-    method: R.compose(
-      R.map(R.toUpper),
-      coerceToArray,
-    ),
+    method: R.compose(R.map(R.toUpper), coerceToArray),
     only: coerceToArray,
     path: coerceToArray,
     hookfiles: coerceToArray,
   }),
 );
 
-const normalizeConfig = R.compose(
-  coerceOptions,
-  removeUnsupportedOptions,
-);
+const normalizeConfig = R.compose(coerceOptions, removeUnsupportedOptions);
 
 export default normalizeConfig;
