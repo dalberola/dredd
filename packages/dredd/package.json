@@ -24,7 +24,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/apiaryio/dredd"
+    "url": "git+https://github.com/dalberola/dredd.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dalberola/dredd/issues"
   },
   "files": [
     "bin",
@@ -90,6 +93,12 @@
     "acceptance"
   ],
   "author": "Apiary Czech Republic, s.r.o. <support@apiary.io>",
+  "contributors": [
+    {
+      "name": "dalberola",
+      "url": "https://github.com/dalberola"
+    }
+  ],
   "license": "MIT",
-  "homepage": "https://github.com/apiaryio/dredd/tree/master/packages/dredd"
+  "homepage": "https://github.com/dalberola/dredd/tree/master/packages/dredd"
 }

@@ -1,5 +1,12 @@
 {
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dalberola/dredd.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dalberola/dredd/issues"
+  },
   "scripts": {
     "build": "lerna exec --scope=\"*\" yarn build",
     "prettify:check": "lerna exec --scope=\"dredd\" yarn prettify:check",
