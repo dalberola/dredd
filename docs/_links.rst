@@ -13,7 +13,8 @@
 .. OpenAPI specification
 
 .. _OpenAPI 2: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
-.. _OpenAPI 3: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md
+.. _OpenAPI 3: https://spec.openapis.org/oas/v3.0.4.html
+.. _OpenAPI 3.1: https://spec.openapis.org/oas/v3.1.2.html
 
 
 .. JSON Schema
@@ -23,6 +24,8 @@
 .. _JSON Schema Draft 5: https://tools.ietf.org/html/draft-wright-json-schema-00
 .. _JSON Schema Draft 6: https://tools.ietf.org/html/draft-wright-json-schema-01
 .. _JSON Schema Draft 7: https://tools.ietf.org/html/draft-handrews-json-schema-01
+.. _JSON Schema 2020-12: https://json-schema.org/draft/2020-12/json-schema-core.html
+.. _OpenAPI 3.1 Schema Object dialect: https://spec.openapis.org/oas/v3.1.2.html#schema-object
 
 
 .. CI

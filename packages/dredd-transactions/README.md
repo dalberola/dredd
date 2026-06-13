@@ -15,6 +15,22 @@ This project supersedes [Blueprint Transactions][blueprint-transactions] library
 - Warns on undefined placeholders in _URI Templates_ (both query and path).
 - Validates URI parameter types.
 - Selects first _Request_ and first _Response_ if multiple are specified in the API description document.
+- Compiles OpenAPI 3.1 response-testing transactions from paths and operations.
+
+### OpenAPI 3.1 Support
+
+OpenAPI 3.1 documents are compiled through a dedicated compiler path instead of the legacy API Elements OpenAPI 3 parser. The supported subset includes:
+
+- path and query parameters using `example`, first `examples` entry, `default`, or first `enum` value
+- path `simple` and query `form` parameter serialization, including arrays, objects, and `explode`
+- request bodies using the first declared media type and explicit or schema-derived examples
+- responses using the first declared media type and explicit or schema-derived examples
+- simple local `$ref` values
+- response schemas with dialect handling
+
+For response schemas, Dredd Transactions preserves schema-level `$schema`, otherwise uses root `jsonSchemaDialect`, otherwise uses the OpenAPI 3.1 Schema Object dialect URI `https://spec.openapis.org/oas/3.1/dialect/base`.
+
+The current OpenAPI 3.1 compiler does not implement every OpenAPI 3.1 feature. External references, callbacks, links, webhooks, header or cookie parameters, matrix, label, space-delimited, pipe-delimited, or deep-object parameter serialization, and multipart encoding objects are not yet covered.
 
 ### Deprecated Features
 

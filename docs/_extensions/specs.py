@@ -17,6 +17,7 @@ SPECS = {
     'mson': ('MSON', 'https://apiblueprint.org/documentation/mson/specification.html#{anchor}'),
     'openapi2': ('OpenAPI 2', 'https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#user-content-{anchor}'),
     'openapi3': ('OpenAPI 3', 'https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#user-content-{anchor}'),
+    'openapi31': ('OpenAPI 3.1', 'https://spec.openapis.org/oas/v3.1.2.html#{anchor}'),
 }
 
 

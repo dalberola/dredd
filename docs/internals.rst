@@ -309,6 +309,9 @@ OpenAPI 2 spec
 OpenAPI 3 spec
     Simplifies linking the `OpenAPI 3`_ spec. Usage: ``:openapi3:`parameterobject```
 
+OpenAPI 3.1 spec
+    Simplifies linking the `OpenAPI 3.1`_ spec. Usage: ``:openapi31:`parameter-object```
+
 RFCs
     Simplifies linking the RFCs. Not a custom extension in fact, this is provided by Sphinx out of the box. Usage: ``:rfc:`1855```
 

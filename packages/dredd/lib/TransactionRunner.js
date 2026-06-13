@@ -11,6 +11,9 @@ import packageData from '../package.json';
 import sortTransactions from './sortTransactions';
 import performRequest from './performRequest';
 
+const OAS_31_DIALECT = 'https://spec.openapis.org/oas/3.1/dialect/base';
+const JSON_SCHEMA_2020_12 = 'https://json-schema.org/draft/2020-12/schema';
+
 function headersArrayToObject(arr) {
   return Array.from(arr).reduce((result, currentItem) => {
     result[currentItem.name] = currentItem.value;
@@ -22,6 +25,111 @@ function eventCallback(reporterError) {
   if (reporterError) {
     logger.error(reporterError.message);
   }
+}
+
+function parseJSON(value, errorPrefix) {
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    throw new Error(`${errorPrefix}: ${error.message}`);
+  }
+}
+
+function getSchemaObject(bodySchema) {
+  if (typeof bodySchema === 'string') {
+    return parseJSON(bodySchema, 'Given JSON Schema is not a valid JSON');
+  }
+  return bodySchema;
+}
+
+function getSchemaDialect(bodySchema) {
+  if (!bodySchema) {
+    return null;
+  }
+
+  const schema = getSchemaObject(bodySchema);
+  return schema && schema.$schema;
+}
+
+function isAjvSchema(bodySchema) {
+  return [OAS_31_DIALECT, JSON_SCHEMA_2020_12].includes(
+    getSchemaDialect(bodySchema),
+  );
+}
+
+function normalizeAjvSchemaDialect(schema) {
+  if (schema && schema.$schema === OAS_31_DIALECT) {
+    return Object.assign({}, schema, { $schema: JSON_SCHEMA_2020_12 });
+  }
+  return schema;
+}
+
+function getErrorProperty(error) {
+  switch (error.keyword) {
+    case 'required':
+      return error.params.missingProperty;
+    case 'additionalProperties':
+      return error.params.additionalProperty;
+    default:
+      return null;
+  }
+}
+
+function getDataType(value) {
+  return value === null ? null : typeof value;
+}
+
+function formatJSONSchema202012Error(error) {
+  const pointer = error.instancePath || '';
+  const extraProperty = getErrorProperty(error);
+  const location = extraProperty ? `${pointer}/${extraProperty}` : pointer;
+
+  switch (error.keyword) {
+    case 'type':
+      return `At '${location}' Invalid type: ${getDataType(error.data)} (expected ${error.params.type})`;
+    case 'required':
+      return `At '${location}' Missing required property: ${extraProperty}`;
+    case 'enum':
+      return `At '${location}' No enum match for: "${error.data}"`;
+    default:
+      return `At '${location}' ${error.message}`;
+  }
+}
+
+function validateBodySchemaWithAjv(bodySchema, actualBody) {
+  const ajv2020ModuleName = 'ajv/dist/2020';
+  // eslint-disable-next-line global-require, import/no-dynamic-require
+  const Ajv2020Module = require(ajv2020ModuleName);
+  const Ajv2020 = Ajv2020Module.default || Ajv2020Module;
+  const schema = normalizeAjvSchemaDialect(getSchemaObject(bodySchema));
+  const actual = parseJSON(actualBody, 'Expected data to be a valid JSON');
+  const ajv = new Ajv2020({ allErrors: true, strict: false, verbose: true });
+  const validate = ajv.compile(schema);
+  validate(actual);
+
+  const errors = (validate.errors || []).map((error) => {
+    const pointer = error.instancePath || '';
+    const extraProperty = getErrorProperty(error);
+    const location = extraProperty ? `${pointer}/${extraProperty}` : pointer;
+    return {
+      message: formatJSONSchema202012Error(error),
+      location: {
+        pointer: location,
+        property: location.split('/').filter(Boolean),
+      },
+    };
+  });
+
+  return {
+    valid: errors.length === 0,
+    kind: 'json',
+    values: { actual: actualBody },
+    errors,
+  };
+}
+
+function validateFields(fields) {
+  return Object.keys(fields).every(fieldName => fields[fieldName].valid);
 }
 
 class TransactionRunner {
@@ -693,7 +801,20 @@ Not performing HTTP request for '${transaction.name}'.\
     let gavelResult = { fields: {} };
 
     try {
-      gavelResult = gavel.validate(transaction.expected, transaction.real);
+      if (isAjvSchema(transaction.expected.bodySchema)) {
+        const expectedWithoutBody = Object.assign({}, transaction.expected);
+        delete expectedWithoutBody.body;
+        delete expectedWithoutBody.bodySchema;
+
+        gavelResult = gavel.validate(expectedWithoutBody, transaction.real);
+        gavelResult.fields.body = validateBodySchemaWithAjv(
+          transaction.expected.bodySchema,
+          transaction.real.body
+        );
+        gavelResult.valid = validateFields(gavelResult.fields);
+      } else {
+        gavelResult = gavel.validate(transaction.expected, transaction.real);
+      }
     } catch (validationError) {
       logger.debug('Gavel.js validation errored:', validationError);
       this.emitError(validationError, test);

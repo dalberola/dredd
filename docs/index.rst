@@ -23,7 +23,8 @@ Supported API Description Formats
 
 -  `API Blueprint`_
 -  `OpenAPI 2`_ (formerly known as Swagger)
--  `OpenAPI 3`_ (`experimental <https://github.com/apiaryio/api-elements.js/blob/master/packages/openapi3-parser/STATUS.md>`__, contributions welcome!)
+-  `OpenAPI 3`_ 3.0 (experimental)
+-  `OpenAPI 3.1`_ response testing with JSON Schema 2020-12/OAS dialect validation
 
 Supported Hooks Languages
 ~~~~~~~~~~~~~~~~~~~~~~~~~

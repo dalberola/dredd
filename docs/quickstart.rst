@@ -18,10 +18,12 @@ If you’re not familiar with the Node.js ecosystem or you bump into any issues,
 Document Your API
 -----------------
 
-First, let’s design the API we are about to build and test. That means you will need to create an API description file, which will document how your API should look like. Dredd supports two formats of API description documents:
+First, let’s design the API we are about to build and test. That means you will need to create an API description file, which will document how your API should look like. Dredd supports the following API description document formats:
 
 -  `API Blueprint`_
 -  `OpenAPI 2`_ (formerly known as Swagger)
+-  `OpenAPI 3`_ 3.0 (experimental)
+-  `OpenAPI 3.1`_ response testing with JSON Schema 2020-12/OAS dialect validation
 
 .. tabs::
 
@@ -70,6 +72,34 @@ First, let’s design the API we are about to build and test. That means you wil
                      required:
                        - message
 
+   .. group-tab:: OpenAPI 3.1
+
+      If you choose OpenAPI 3.1, create a file called ``api-description.yml``:
+
+      .. code-block:: openapi3
+
+         openapi: 3.1.0
+         info:
+           version: '1.0'
+           title: Example API
+           license:
+             name: MIT
+         paths:
+           /:
+             get:
+               responses:
+                 '200':
+                   description: ''
+                   content:
+                     application/json; charset=utf-8:
+                       schema:
+                         type: object
+                         properties:
+                           message:
+                             type: string
+                         required:
+                           - message
+
 Implement Your API
 ------------------
 
@@ -112,6 +142,12 @@ Finally, let Dredd validate whether your freshly implemented API complies with t
          $ dredd api-description.apib http://127.0.0.1:3000
 
    .. group-tab:: OpenAPI 2
+
+      .. code-block:: shell
+
+         $ dredd api-description.yml http://127.0.0.1:3000
+
+   .. group-tab:: OpenAPI 3.1
 
       .. code-block:: shell
 

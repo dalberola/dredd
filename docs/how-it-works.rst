@@ -75,7 +75,7 @@ Following execution life cycle documentation should help you to understand how D
 Automatic Expectations
 ----------------------
 
-Dredd automatically generates expectations on HTTP responses based on examples in the API description with use of the `Gavel`_ library. Please refer to `Gavel's rules <https://relishapp.com/apiary/gavel/docs>`__ if you want know more.
+Dredd automatically generates expectations on HTTP responses based on examples in the API description. Most formats are validated with the `Gavel`_ library. OpenAPI 3.1 response schemas using the OpenAPI 3.1 Schema Object dialect or `JSON Schema 2020-12`_ are validated with Ajv.
 
 Response Headers Expectations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,6 +89,8 @@ When using `OpenAPI 2`_, headers are taken from ``response.headers`` (:openapi2:
 
 -  ``produces`` (:openapi2:`swaggerproduces`) is propagated as response’s ``Content-Type`` header.
 -  Response’s ``Content-Type`` header overrides any ``produces``.
+
+When using `OpenAPI 3.1`_, Dredd takes response ``Content-Type`` from the selected response ``content`` media type. Response headers are taken from the response ``headers`` object when an example or schema-derived sample value is available.
 
 Response Body Expectations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -111,6 +113,15 @@ OpenAPI 2
 
 1. ``response.schema`` (:openapi2:`responseschema`) - provided JSON Schema will be used.
 2. ``response.examples`` (:openapi2:`responseexamples`) with sample JSON payload - `Gavel`_, which is responsible for validation in Dredd, automatically infers some basic expectations described below.
+
+OpenAPI 3.1
+^^^^^^^^^^^
+
+1. Response ``content`` media type ``schema`` - provided Schema Object will be used.
+2. Response ``content`` media type ``example`` or first ``examples`` entry - Dredd uses the sample payload as the expected body.
+3. If no explicit response example is present, Dredd generates a sample body from the schema using the following precedence: ``example``, ``default``, ``const``, first ``enum`` value, first ``oneOf`` schema, first ``anyOf`` schema, then a generated value by type.
+
+OpenAPI 3.1 schemas are emitted with an explicit ``$schema`` before validation. Dredd preserves a schema-level ``$schema``. If the schema does not define one, Dredd uses the root ``jsonSchemaDialect`` value. If neither is present, Dredd uses the `OpenAPI 3.1 Schema Object dialect`_ URI. The OpenAPI 3.1 Schema Object dialect and ``https://json-schema.org/draft/2020-12/schema`` are validated with Ajv.
 
 .. _gavels-expectations:
 
@@ -136,13 +147,15 @@ It’s very likely that your API description document will not be testable **as 
 URI Parameters
 ~~~~~~~~~~~~~~
 
-Both `API Blueprint`_ and `OpenAPI 2`_ allow usage of URI templates (API Blueprint fully implements :rfc:`6570`, OpenAPI 2 templates are much simpler). In order to have an API description which is testable, you need to describe all required parameters used in URI (path or query) and provide sample values to make Dredd able to expand URI templates with given sample values. Following rules apply when Dredd interpolates variables in a templated URI, ordered by precedence:
+`API Blueprint`_, `OpenAPI 2`_, and `OpenAPI 3.1`_ allow usage of URI templates. In order to have an API description which is testable, you need to describe all required parameters used in URI (path or query) and provide sample values to make Dredd able to expand URI templates with given sample values. Following rules apply when Dredd interpolates variables in a templated URI, ordered by precedence:
 
-1. Sample value, in OpenAPI 2 available as the ``x-example`` vendor extension property (:ref:`docs <example-values-for-request-parameters>`).
+1. Sample value, in OpenAPI 2 available as the ``x-example`` vendor extension property (:ref:`docs <example-values-for-request-parameters>`), and in OpenAPI 3.1 available as ``example`` or the first ``examples`` entry.
 2. Value of ``default``.
 3. First value from ``enum``.
 
 If Dredd isn’t able to infer any value for a required parameter, it will terminate the test run and complain that the parameter is *ambiguous*.
+
+In `OpenAPI 3.1`_ documents, path parameters are serialized with ``style: simple`` and query parameters are serialized with ``style: form``. Arrays and objects support OpenAPI's default ``explode`` values and explicit ``explode: true`` or ``explode: false``. Other parameter locations and styles are not covered yet.
 
 .. note::
    The implementation of API Blueprint’s request-specific parameters is still in progress and there’s only experimental support for it in Dredd as of now.
@@ -155,6 +168,8 @@ In `OpenAPI 2`_ documents, HTTP headers are inferred from ``"in": "header"`` par
 -  ``consumes`` (:openapi2:`swaggerconsumes`) is propagated as request’s ``Content-Type`` header.
 -  ``produces`` (:openapi2:`swaggerproduces`) is propagated as request’s ``Accept`` header.
 -  If request body parameters are specified as ``"in": "formData"``, request’s ``Content-Type`` header is set to ``application/x-www-form-urlencoded``.
+
+In `OpenAPI 3.1`_ documents, Dredd takes request ``Content-Type`` from the selected request body ``content`` media type.
 
 
 Request Body
@@ -180,6 +195,11 @@ If body parameter has ``schema.example`` (:openapi2:`schemaexample`), it is used
 1. Value of ``default``.
 2. First value from ``enum``.
 3. Dummy, generated value.
+
+OpenAPI 3.1
+^^^^^^^^^^^
+
+The effective request body is inferred from the operation ``requestBody`` content. Dredd selects the first media type entry. If the media type defines ``example`` or ``examples``, Dredd uses the explicit example. If no example is present, Dredd generates a sample value from the schema using the following precedence: ``example``, ``default``, ``const``, first ``enum`` value, first ``oneOf`` schema, first ``anyOf`` schema, then a generated value by type.
 
 .. _empty-response-body:
 
@@ -227,6 +247,13 @@ In ``produces`` (:openapi2:`swaggerproduces`) and ``consumes`` (:openapi2:`swagg
 
 :openapi2:`Default response <responsesdefault>` is ignored by Dredd unless it is the only available response. In that case, the default response is assumed to have HTTP 200 status code.
 
+OpenAPI 3.1
+~~~~~~~~~~~
+
+The `OpenAPI 3.1`_ compiler produces one transaction for each response entry on an operation. For each request or response body, Dredd selects the first declared media type. For ``default`` responses, Dredd currently uses HTTP 200 as the compiled expected status.
+
+Current OpenAPI 3.1 support is focused on response testing. It supports path and query parameter examples, path ``simple`` and query ``form`` parameter serialization, request body examples, response body examples, simple local ``$ref`` values, schema-derived JSON/text samples, and response schema validation for the OpenAPI 3.1 Schema Object dialect and JSON Schema 2020-12. It does not yet implement all OpenAPI 3.1 features such as external references, callbacks, links, webhooks, header or cookie parameters, matrix, label, space-delimited, pipe-delimited, or deep-object parameter serialization, or multipart encoding objects.
+
 .. _security:
 
 Security
@@ -238,7 +265,7 @@ Mind that if you run Dredd in a CI server provided as a service (such as `Circle
 
 When using :ref:`Apiary Reporter and Apiary Tests <using-apiary-reporter-and-apiary-tests>`, you are sending your testing data to `Apiary`_ (Dredd creators and maintainers). See their `Terms of Service <https://apiary.io/tos>`__ and `Privacy Policy <https://apiary.io/privacy>`__. Which data exactly is being sent to Apiary?
 
--  **Complete API description under test.** This means your API Blueprint or OpenAPI 2 files. The API description is stored encrypted in Apiary.
+-  **Complete API description under test.** This means your API Blueprint, OpenAPI 2, OpenAPI 3.0, or OpenAPI 3.1 files. The API description is stored encrypted in Apiary.
 -  **Complete testing results.** Those can contain details of all requests made to the server under test and their responses. Apiary stores this data unencrypted, even if the original communication between Dredd and the API server under test happens to be over HTTPS. See :ref:`Apiary Reporter Test Data <apiary-reporter-test-data>` for detailed description of what is sent. You can :ref:`sanitize it before it gets sent <removing-sensitive-data-from-test-reports>`.
 -  **Little meta data about your environment.** Contents of environment variables ``TRAVIS``, ``CIRCLE``, ``CI``, ``DRONE``, ``BUILD_ID``, ``DREDD_AGENT``, ``USER``, and ``DREDD_HOSTNAME`` can be sent to Apiary. Your `hostname <https://en.wikipedia.org/wiki/Hostname>`__, version of your Dredd installation, and `type <https://nodejs.org/api/os.html#os_os_type>`__, `release <https://nodejs.org/api/os.html#os_os_release>`__ and `architecture <https://nodejs.org/api/os.html#os_os_arch>`__ of your OS can be sent as well. Apiary stores this data unencrypted.
 

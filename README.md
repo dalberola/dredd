@@ -23,7 +23,8 @@ documentation.
 
 - [API Blueprint][]
 - [OpenAPI 2][] (formerly known as Swagger)
-- [OpenAPI 3][] ([experimental](https://github.com/apiaryio/api-elements.js/blob/master/packages/openapi3-parser/STATUS.md), contributions welcome!)
+- [OpenAPI 3][] 3.0 (experimental)
+- [OpenAPI 3.1][] response testing with JSON Schema 2020-12/OAS dialect validation
 
 ### Supported Hooks Languages
 
@@ -93,7 +94,8 @@ $ npm install -g dredd
 [api blueprint tutorial]: https://apiblueprint.org/documentation/tutorial.html
 [api blueprint examples]: https://github.com/apiaryio/api-blueprint/tree/master/examples
 [openapi 2]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
-[openapi 3]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md
+[openapi 3]: https://spec.openapis.org/oas/v3.0.4.html
+[openapi 3.1]: https://spec.openapis.org/oas/v3.1.2.html
 [documentation]: https://dredd.org/en/latest/
 [changelog]: https://github.com/apiaryio/dredd/releases
 [contributor's guidelines]: https://dredd.org/en/latest/contributing/

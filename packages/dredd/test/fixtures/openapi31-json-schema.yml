@@ -1,0 +1,21 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI 3.1 JSON Schema API
+  version: '1.0'
+paths:
+  /resource:
+    get:
+      responses:
+        '200':
+          description: Representation
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                required:
+                  - label
+                properties:
+                  label:
+                    type:
+                      - string
+                      - 'null'

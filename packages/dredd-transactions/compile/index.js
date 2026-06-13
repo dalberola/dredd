@@ -2,6 +2,7 @@ const detectTransactionExampleNumbers = require('./detectTransactionExampleNumbe
 const compileUri = require('./compileURI');
 const compileTransactionName = require('./compileTransactionName');
 const compileAnnotation = require('./compileAnnotation');
+const compileOpenAPI31 = require('./openapi31');
 
 
 function findRelevantTransactions(mediaType, apiElements) {
@@ -171,6 +172,10 @@ function compileTransaction(mediaType, filename, httpTransactionElement, example
 }
 
 function compile(mediaType, apiElements, filename) {
+  if (apiElements && apiElements.openapi31) {
+    return compileOpenAPI31(apiElements, filename);
+  }
+
   apiElements.freeze();
 
   const transactions = [];

@@ -1,4 +1,5 @@
 const fury = require('@apielements/core');
+const yaml = require('yaml-js');
 
 
 fury.use(require('@apielements/apib-parser'));
@@ -28,6 +29,22 @@ function detectMediaType(apiDescription) {
 
 
 function parse(apiDescription, callback) {
+  try {
+    const document = yaml.load(apiDescription);
+    const version = document && document.openapi;
+    if (typeof version === 'string' && /^3\.1\.\d+$/.test(version)) {
+      const apiElements = new ParseResult([]);
+      apiElements.openapi31 = { document, source: apiDescription };
+      callback(null, {
+        mediaType: 'application/vnd.oai.openapi',
+        apiElements,
+      });
+      return;
+    }
+  } catch (e) {
+    // Let the existing parser produce the public parse annotations.
+  }
+
   const { mediaType, fallback } = detectMediaType(apiDescription);
 
   fury.parse({
