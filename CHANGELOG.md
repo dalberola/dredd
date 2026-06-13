@@ -39,6 +39,7 @@ This fork follows Semantic Versioning. The original upstream changelog remains a
 - Updated Dredd's TypeScript test/build toolchain for compatibility with refreshed dependency declarations.
 - Documentation now identifies `dalberola/dredd` as the maintained fork.
 - Documentation build dependencies are pinned for reproducible Sphinx 4.3 builds on modern Python.
+- Upgraded the root monorepo tooling: `lerna` 3.22.1 to 9.0.7 (only `lerna exec` is used, which is stable across these majors) and `@commitlint/cli` / `@commitlint/config-conventional` 11 to 20.5.3 (the newest line still supporting the Node.js 20 engine floor; commitlint 21 requires Node.js 22.12+). Removed the unused, unmaintained `commitlint-circle` dependency, as CI invokes `commitlint` directly. Added the missing `@types/node` (Node.js 20 line) build dependency to `packages/dredd`. Dropped the deprecated `useWorkspaces` key from `lerna.json`, since lerna 7+ reads workspaces from `package.json`.
 
 ### Notes
 
