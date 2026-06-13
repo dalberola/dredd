@@ -431,7 +431,8 @@ class TransactionRunner {
     if (!this.parsedUrl) {
       this.parsedUrl = this.parseServerUrl(configuration.endpoint);
     }
-    const fullPath = this.getFullPath(this.parsedUrl.path, request.uri);
+    const serverPath = `${this.parsedUrl.pathname}${this.parsedUrl.search}`;
+    const fullPath = this.getFullPath(serverPath, request.uri);
 
     const headers = headersArrayToObject(request.headers);
 
@@ -495,7 +496,9 @@ class TransactionRunner {
       name: transaction.name,
       id: `${request.method} (${expected.statusCode}) ${request.uri}`,
       host: this.parsedUrl.hostname,
-      port: this.parsedUrl.port,
+      // WHATWG URL returns '' for a missing port; preserve the legacy
+      // url.parse() contract of 'null' that hooks/reporters may rely on.
+      port: this.parsedUrl.port || null,
       request,
       expected,
       origin,
@@ -513,7 +516,9 @@ class TransactionRunner {
       // and prepend the URL with 'http://' (assumed as default fallback).
       serverUrl = `http://${serverUrl.replace(/^[:/]*/, '')}`;
     }
-    return url.parse(serverUrl);
+    // WHATWG URL replaces the deprecated url.parse(); '.pathname'/'.search'
+    // are used in place of the legacy '.path' getter (see configureTransaction).
+    return new URL(serverUrl);
   }
 
   getFullPath(serverPath, requestPath) {
