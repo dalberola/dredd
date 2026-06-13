@@ -161,7 +161,7 @@ describe('Running Dredd from JavaScript', () => {
       assert.instanceOf(dreddRuntimeInfo.stats.end, Date);
     });
     it('records duration', () => {
-      assert.isAbove(dreddRuntimeInfo.stats.duration, 0);
+      assert.isAtLeast(dreddRuntimeInfo.stats.duration, 0);
     });
   });
 

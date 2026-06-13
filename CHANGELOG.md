@@ -23,6 +23,7 @@ This fork follows Semantic Versioning. The original upstream changelog remains a
 - Regenerated the HTTPS test fixture certificate with a 2048-bit key and SHA-256 signature so the integration suite runs on OpenSSL 3 / Node.js 18+.
 - Replaced the deprecated `url.parse()` call in the transaction runner with the WHATWG `URL` API.
 - Bumped `chai` to 4.5.0 (resolves the bundled `get-func-name` advisory) and aligned `dredd-transactions` on `js-yaml` 3.14.2.
+- Forced patched transitive dependencies via `resolutions` (`ansi-regex` 5.0.1, `minimatch` 3.1.5, `brace-expansion` 1.1.15), clearing several high-severity ReDoS advisories without changing any direct dependency.
 - Removed Dredd's external `gavel` package dependency by vendoring its built validator bundle.
 - `dredd-transactions` now bundles the OpenAPI 2 parser with a fixed JSON Schema example generator dependency.
 
