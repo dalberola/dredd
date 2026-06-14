@@ -75,7 +75,7 @@ Following execution life cycle documentation should help you to understand how D
 Automatic Expectations
 ----------------------
 
-Dredd automatically generates expectations on HTTP responses based on examples in the API description. Most formats are validated with the `Gavel`_ library. OpenAPI 3.1 response schemas using the OpenAPI 3.1 Schema Object dialect or `JSON Schema 2020-12`_ are validated with Ajv.
+Dredd automatically generates expectations on HTTP responses based on examples and schemas in the API description. Structural expectations are validated with the `Gavel`_ library. In addition, **both OpenAPI 3.0 and OpenAPI 3.1 response schemas are validated with Ajv**, so response data types — including ``$ref``, ``allOf``, arrays, ``nullable``, and string formats — are checked against the described schema.
 
 Response Headers Expectations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -113,6 +113,12 @@ OpenAPI 2
 
 1. ``response.schema`` (:openapi2:`responseschema`) - provided JSON Schema will be used.
 2. ``response.examples`` (:openapi2:`responseexamples`) with sample JSON payload - `Gavel`_, which is responsible for validation in Dredd, automatically infers some basic expectations described below.
+
+OpenAPI 3.0
+^^^^^^^^^^^
+
+1. Response ``content`` media type ``schema`` - the Schema Object is converted to JSON Schema (for example ``nullable: true`` becomes a type union with ``"null"``, and boolean ``exclusiveMinimum``/``exclusiveMaximum`` are normalized) and validated with Ajv, the same way as OpenAPI 3.1.
+2. Response ``content`` media type ``example`` or first ``examples`` entry - Dredd uses the sample payload as the expected body.
 
 OpenAPI 3.1
 ^^^^^^^^^^^

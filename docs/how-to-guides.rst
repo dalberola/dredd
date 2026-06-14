@@ -533,20 +533,59 @@ Most of the authentication schemes use HTTP header for carrying the authenticati
 Sending Multipart Requests
 --------------------------
 
-.. literalinclude:: ../packages/dredd/test/fixtures/request/multipart-form-data.apib
-  :language: apiblueprint
+Describe the request body using the ``multipart/form-data`` media type:
 
-.. literalinclude:: ../packages/dredd/test/fixtures/request/multipart-form-data.yaml
-  :language: openapi2
+.. code-block:: openapi3
+
+   openapi: "3.0.3"
+   info:
+     title: Multipart example
+     version: "1.0"
+   paths:
+     /data:
+       post:
+         requestBody:
+           content:
+             multipart/form-data:
+               schema:
+                 type: object
+                 properties:
+                   text:
+                     type: string
+                   file:
+                     type: string
+                     format: binary
+         responses:
+           "200":
+             description: OK
 
 Sending Form Data
 -----------------
 
-.. literalinclude:: ../packages/dredd/test/fixtures/request/application-x-www-form-urlencoded.apib
-  :language: apiblueprint
+Describe the request body using the ``application/x-www-form-urlencoded`` media type:
 
-.. literalinclude:: ../packages/dredd/test/fixtures/request/application-x-www-form-urlencoded.yaml
-  :language: openapi2
+.. code-block:: openapi3
+
+   openapi: "3.0.3"
+   info:
+     title: Form data example
+     version: "1.0"
+   paths:
+     /data:
+       post:
+         requestBody:
+           content:
+             application/x-www-form-urlencoded:
+               schema:
+                 type: object
+                 properties:
+                   name:
+                     type: string
+                   email:
+                     type: string
+         responses:
+           "200":
+             description: OK
 
 Working with Images and other Binary Bodies
 -------------------------------------------
@@ -556,17 +595,26 @@ The API description formats generally do not provide a way to describe binary co
 Binary Request Body
 ~~~~~~~~~~~~~~~~~~~
 
-API Blueprint
-^^^^^^^^^^^^^
+Describe only the media type and use a ``binary`` string schema:
 
-.. literalinclude:: ../packages/dredd/test/fixtures/request/image-png.apib
-  :language: apiblueprint
+.. code-block:: openapi3
 
-OpenAPI 2
-^^^^^^^^^
-
-.. literalinclude:: ../packages/dredd/test/fixtures/request/image-png.yaml
-  :language: openapi2
+   openapi: "3.0.3"
+   info:
+     title: Binary request example
+     version: "1.0"
+   paths:
+     /images:
+       post:
+         requestBody:
+           content:
+             image/png:
+               schema:
+                 type: string
+                 format: binary
+         responses:
+           "200":
+             description: OK
 
 Hooks
 ^^^^^
@@ -579,17 +627,28 @@ In hooks, you can populate the request body with real binary data. The data must
 Binary Response Body
 ~~~~~~~~~~~~~~~~~~~~
 
-API Blueprint
-^^^^^^^^^^^^^
+Describe only the media type and :ref:`leave out the body <empty-response-body>`, then handle the binary data in :ref:`hooks`:
 
-.. literalinclude:: ../packages/dredd/test/fixtures/response/binary.apib
-  :language: apiblueprint
+.. code-block:: openapi3
 
-OpenAPI 2
-^^^^^^^^^
-
-.. literalinclude:: ../packages/dredd/test/fixtures/response/binary.yaml
-  :language: openapi2
+   openapi: "3.0.3"
+   info:
+     title: Binary response example
+     version: "1.0"
+   paths:
+     /images/{id}:
+       get:
+         parameters:
+           - name: id
+             in: path
+             required: true
+             schema:
+               type: string
+         responses:
+           "200":
+             description: OK
+             content:
+               image/png: {}
 
 .. note::
    Do not use the explicit ``binary`` or ``bytes`` formats with response bodies, as Dredd is not able to properly work with those (:ghissue:`api-elements.js#269`).
@@ -765,79 +824,66 @@ Sometimes your API sends back sensitive information you don’t want to get disc
 Sanitation of the Entire Request Body
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/entire-request-body.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/entire-request-body.js>`__
 
 Sanitation of the Entire Response Body
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/entire-response-body.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/entire-response-body.js>`__
 
 Sanitation of a Request Body Attribute
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/request-body-attribute.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/request-body-attribute.js>`__
 
 Sanitation of a Response Body Attribute
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/response-body-attribute.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/response-body-attribute.js>`__
 
 Sanitation of Plain Text Response Body by Pattern Matching
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/plain-text-response-body.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/plain-text-response-body.js>`__
 
 Sanitation of Request Headers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/request-headers.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/request-headers.js>`__
 
 Sanitation of Response Headers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/response-headers.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/response-headers.js>`__
 
 Sanitation of URI Parameters by Pattern Matching
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/uri-parameters.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/uri-parameters.js>`__
 
 Sanitation of Any Content by Pattern Matching
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/any-content-pattern-matching.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/any-content-pattern-matching.js>`__
 
 Sanitation of Test Data of Passing Transaction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/transaction-passing.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/transaction-passing.js>`__
 
 Sanitation of Test Data When Transaction Is Marked as Failed in 'before' Hook
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/transaction-marked-failed-before.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/transaction-marked-failed-before.js>`__
 
 Sanitation of Test Data When Transaction Is Marked as Failed in 'after' Hook
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/transaction-marked-failed-after.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/transaction-marked-failed-after.js>`__
 
 Sanitation of Test Data When Transaction Is Marked as Skipped
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/transaction-marked-skipped.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/transaction-marked-skipped.js>`__
 
 .. _sanitation-ultimate-guard:
@@ -847,7 +893,6 @@ Ultimate ‘afterEach’ Guard Using Pattern Matching
 
 You can use this guard to make sure you won’t leak any sensitive data by mistake.
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/any-content-guard-pattern-matching.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/any-content-guard-pattern-matching.js>`__
 
 .. _sanitation-secured-erroring-hooks:
@@ -857,5 +902,4 @@ Sanitation of Test Data of Transaction With Secured Erroring Hooks
 
 If your hooks crash, Dredd will send an error to reporters, alongside with current contents of the ``transaction.test`` (:ref:`docs <transaction-test>`) object. If you want to prevent this, you need to add ``try/catch`` to your hooks, sanitize the test object, and gracefully fail the transaction.
 
--  `API Blueprint <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/transaction-secured-erroring-hooks.apib>`__
 -  `Hooks <https://github.com/apiaryio/dredd/blob/master/packages/dredd/test/fixtures/sanitation/transaction-secured-erroring-hooks.js>`__
