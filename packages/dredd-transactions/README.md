@@ -55,16 +55,16 @@ Dredd Transactions library is written in JavaScript (ES2015+).
 
 ### `parse`
 
-Parses given API description document into API Elements with options specific
-to Dredd. Assumes that documents with unrecognizable format are
-[API Blueprint][api-blueprint]. Turns any parser failures, including
-the unexpected ones, into [API Elements][api-elements] annotations.
+Parses given OpenAPI 3.0 or OpenAPI 3.1 description document into API Elements
+with options specific to Dredd. Documents in an unrecognized format produce an
+[API Elements][api-elements] error annotation. Turns any parser failures,
+including the unexpected ones, into [API Elements][api-elements] annotations.
 
 ```javascript
 const parse = require('dredd-transactions/parse');
 // const { parse } = require('dredd-transactions');
 
-parse('# My API\n...', (error, parseResult) => {
+parse('openapi: "3.0.0"\n...', (error, parseResult) => {
   // ...
 });
 ```
@@ -90,7 +90,7 @@ const compileResult = compile(mediaType, apiElements, filename);
 
 Result of parsing.
 
-- `mediaType`: `text/vnd.apiblueprint` (string, default, nullable) - Media type of the input format, can be empty in case of some fatal errors
+- `mediaType`: `application/vnd.oai.openapi` (string, default, nullable) - Media type of the input format, can be empty in case of some fatal errors
 - `apiElements` ([API Elements][api-elements]) - API Elements parse result
 
 <a name="compile-result-object"></a>
@@ -99,7 +99,7 @@ Result of parsing.
 
 Result of compilation. Alongside compiled [Transaction][transaction-object-spec] objects contains also errors and warnings, mainly from API description parser.
 
-- `mediaType`: `text/vnd.apiblueprint` (string, default, nullable) - Media type of the input format, defaults to API Blueprint format. Can be empty in case of some fatal errors.
+- `mediaType`: `application/vnd.oai.openapi` (string, default, nullable) - Media type of the input format, defaults to the OpenAPI media type. Can be empty in case of some fatal errors.
 - `transactions` (array[[Transaction][transaction-object-spec]]) - Compiled _HTTP Transactions_.
 - `annotations` (array[[Annotation][annotation-object-spec]]) - Errors and warnings which occurred during parsing of the API description or during compilation of transactions.
 
@@ -137,7 +137,7 @@ Represents a single _HTTP Transaction_ (Request-Response pair) and its location 
 
 - name: `Hello world! > Retrieve Message` (string) - Transaction Name, non-deterministic breadcrumb location of the HTTP Transaction within the API description document.
 - origin (object) - Object of references to nodes of [API Elements][api-elements] derived from the original API description document.
-    - filename: `./api-description.apib` (string)
+    - filename: `./api-description.yaml` (string)
     - apiName: `My Api` (string)
     - resourceGroupName: `Greetings` (string)
     - resourceName: `Hello, world!` (string)
@@ -174,7 +174,7 @@ Description of an error or warning which occurred during parsing of the API desc
 
 - name: `Hello world! > Retrieve Message` (string) - Transaction Name, non-deterministic breadcrumb location of the relevant HTTP Transaction within the API description document.
 - origin (object) - Object of references to nodes of [API Elements][api-elements] derived from the original API description document.
-    - filename: `./api-description.apib` (string)
+    - filename: `./api-description.yaml` (string)
     - apiName: `My Api` (string)
     - resourceGroupName: `Greetings` (string)
     - resourceName: `Hello, world!` (string)
@@ -186,7 +186,6 @@ Description of an error or warning which occurred during parsing of the API desc
 [dredd]: https://dredd.org
 [mson-spec]: https://github.com/apiaryio/mson
 [api-elements]: http://api-elements.readthedocs.org/
-[api-blueprint]: https://apiblueprint.org/
 [api-blueprint-glossary]: https://github.com/apiaryio/api-blueprint/blob/master/Glossary%20of%20Terms.md
 [blueprint-transactions]: https://github.com/apiaryio/blueprint-transactions/
 [filename-deprecation]: https://github.com/apiaryio/dredd-transactions/issues/6
