@@ -849,6 +849,15 @@ describe('Hooks worker client', () => {
         socket.on('data', (data) => {
           receivedData += data.toString();
 
+          // Wait for a complete, newline-delimited message before echoing,
+          // mirroring the real hooks handler's framing. The client sends the
+          // payload and the delimiter as two separate writes, so without this
+          // guard a message split across TCP chunks gets echoed twice, firing
+          // the hook callback (and the test's `done`) more than once.
+          if (receivedData.indexOf('\n') === -1) {
+            return;
+          }
+
           const receivedObject = JSON.parse(receivedData.replace('\n', ''));
           const objectToSend = clone(receivedObject);
           const message = `${JSON.stringify(objectToSend)}\n`;
