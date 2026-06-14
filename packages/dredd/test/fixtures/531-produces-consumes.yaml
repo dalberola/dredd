@@ -1,45 +1,37 @@
-swagger: "2.0"
+openapi: "3.0.0"
 info:
-  title: "Blog API"
+  title: Blog API
   version: "1.0"
-consumes:
-  - "application/hal+json; charset=utf-8"
-produces:
-  - "application/hal+json; charset=utf-8"
 paths:
-  "/articles":
-    x-summary: "Articles"
+  /articles:
     get:
-      summary: "List articles"
-      description: "Retrieve a list of all articles"
+      summary: List articles
       responses:
-        200:
-          description: "Articles list"
-          examples:
+        "200":
+          description: Articles list
+          content:
             "application/hal+json; charset=utf-8":
-              - id: 1
-                title: "Creamy cucumber salad"
-                text: "Slice cucumbers…"
-                _links: {
-                  self: {
-                    href: "/articles/1"
-                  }
-                }
+              example:
+                - id: 1
+                  title: Creamy cucumber salad
+                  text: "Slice cucumbers"
+                  _links:
+                    self:
+                      href: /articles/1
     post:
-      summary: "Publish an article"
-      description: "Create and publish a new article"
-      parameters:
-        - name: "body"
-          in: "body"
-          schema:
+      summary: Publish an article
+      requestBody:
+        content:
+          "application/hal+json; charset=utf-8":
             example:
-              title: "Crispy schnitzel"
-              text: "Prepare eggs…"
+              title: Crispy schnitzel
+              text: "Prepare eggs"
       responses:
-        201:
-          description: "New article"
-          examples:
+        "201":
+          description: New article
+          content:
             "application/hal+json; charset=utf-8":
-              id: 2
-              title: "Crispy schnitzel"
-              text: "Prepare eggs…"
+              example:
+                id: 2
+                title: Crispy schnitzel
+                text: "Prepare eggs"

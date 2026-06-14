@@ -1,14 +1,12 @@
-swagger: "2.0"
+openapi: "3.0.0"
 info:
-  version: "1.0"
   title: Colors API
-schemes:
-  - http
-produces:
-  - application/json; charset=utf-8
+  version: "1.0"
 paths:
   /resource:
     get:
       responses:
         default:
           description: Representation
+          content:
+            "application/json; charset=utf-8": {}
