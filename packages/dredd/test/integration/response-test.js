@@ -6,11 +6,7 @@ import Dredd from '../../lib/Dredd';
 
 const files = [
   {
-    name: 'API Blueprint',
-    path: './test/fixtures/response/empty-body-empty-schema.apib',
-  },
-  {
-    name: 'OpenAPI 2',
+    name: 'OpenAPI 3',
     path: './test/fixtures/response/empty-body-empty-schema.yaml',
   },
 ];
@@ -58,11 +54,7 @@ files.forEach((apiDescription) =>
 );
 [
   {
-    name: 'API Blueprint',
-    path: './test/fixtures/response/empty-body.apib',
-  },
-  {
-    name: 'OpenAPI 2',
+    name: 'OpenAPI 3',
     path: './test/fixtures/response/empty-body.yaml',
   },
 ].forEach((apiDescription) =>
@@ -109,11 +101,7 @@ files.forEach((apiDescription) =>
 );
 [
   {
-    name: 'API Blueprint',
-    path: './test/fixtures/response/empty-body-empty-schema.apib',
-  },
-  {
-    name: 'OpenAPI 2',
+    name: 'OpenAPI 3',
     path: './test/fixtures/response/empty-body-empty-schema.yaml',
   },
 ].forEach((apiDescription) =>
@@ -174,11 +162,7 @@ files.forEach((apiDescription) =>
 );
 [
   {
-    name: 'API Blueprint',
-    path: './test/fixtures/response/empty-body-empty-schema.apib',
-  },
-  {
-    name: 'OpenAPI 2',
+    name: 'OpenAPI 3',
     path: './test/fixtures/response/empty-body-empty-schema.yaml',
   },
 ].forEach((apiDescription) =>
@@ -239,11 +223,7 @@ files.forEach((apiDescription) =>
 );
 [
   {
-    name: 'API Blueprint',
-    path: './test/fixtures/response/204-205-body.apib',
-  },
-  {
-    name: 'OpenAPI 2',
+    name: 'OpenAPI 3',
     path: './test/fixtures/response/204-205-body.yaml',
   },
 ].forEach((apiDescription) =>
@@ -333,11 +313,7 @@ files.forEach((apiDescription) =>
 );
 [
   {
-    name: 'API Blueprint',
-    path: './test/fixtures/response/binary.apib',
-  },
-  {
-    name: 'OpenAPI 2',
+    name: 'OpenAPI 3',
     path: './test/fixtures/response/binary.yaml',
   },
 ].forEach((apiDescription) =>

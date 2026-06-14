@@ -1,19 +1,12 @@
-swagger: "2.0"
+openapi: "3.0.0"
 info:
-  version: "1.0"
   title: Images API
-schemes:
-  - http
-produces:
-  - image/png
+  version: "1.0"
 paths:
   /image.png:
     get:
       responses:
-        200:
-          description: Representation
-          schema:
-            type: string
-            format: binary
-          examples:
-            "image/png": ""
+        "200":
+          description: Retrieve Representation
+          content:
+            image/png: {}
