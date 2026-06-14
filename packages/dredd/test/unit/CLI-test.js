@@ -216,9 +216,9 @@ describe('CLI class', () => {
       dc = new CLIStub({
         custom: {
           argv: [
-            './test/fixtures/single-get.apib',
+            './test/fixtures/single-get.yaml',
             `http://127.0.0.1:${PORT}`,
-            '--path=./test/fixtures/single-get.apib',
+            '--path=./test/fixtures/single-get.yaml',
           ],
         },
         exit(code) {
@@ -242,7 +242,7 @@ describe('CLI class', () => {
       it('propagates configuration options to Dredd class', () => {
         assert.equal(
           dc.dreddInstance.configuration.path[0],
-          './test/fixtures/single-get.apib',
+          './test/fixtures/single-get.yaml',
         );
         assert.equal(
           dc.dreddInstance.configuration.endpoint,
@@ -261,7 +261,7 @@ describe('CLI class', () => {
       it('propagates configuration options to Dredd class', () => {
         assert.equal(
           dc.dreddInstance.configuration.path[0],
-          './test/fixtures/single-get.apib',
+          './test/fixtures/single-get.yaml',
         );
         assert.equal(
           dc.dreddInstance.configuration.endpoint,
@@ -325,7 +325,7 @@ describe('CLI class', () => {
       execCommand(
         {
           argv: [
-            './test/fixtures/single-get.apib',
+            './test/fixtures/single-get.yaml',
             `http://127.0.0.1:${PORT}`,
             '--server',
             'foo/bar',
