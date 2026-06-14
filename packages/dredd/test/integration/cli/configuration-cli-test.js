@@ -69,7 +69,7 @@ describe('CLI class Integration', () => {
     describe('When specifying custom configuration file by --config', () => {
       const configPath = '../../../custom-dredd-config-path.yaml';
       const cmd = { argv: ['--config', configPath, '--loglevel=debug'] };
-      const options = { _: ['api-description.apib', 'http://127.0.0.1'] };
+      const options = { _: ['api-description.yaml', 'http://127.0.0.1'] };
 
       let fsExistsSync;
       let configUtilsLoad;
@@ -97,7 +97,7 @@ describe('CLI class Integration', () => {
     describe('When dredd.yml exists', () => {
       const configPath = './dredd.yml';
       const cmd = { argv: ['--loglevel=debug'] };
-      const options = { _: ['api-description.apib', 'http://127.0.0.1'] };
+      const options = { _: ['api-description.yaml', 'http://127.0.0.1'] };
 
       let fsExistsSync;
       let configUtilsLoad;
@@ -154,18 +154,18 @@ describe('CLI class Integration', () => {
 
     const errorCmd = {
       argv: [
-        `http://127.0.0.1:${PORT + 1}/connection-error.apib`,
+        `http://127.0.0.1:${PORT + 1}/connection-error.yaml`,
         `http://127.0.0.1:${PORT + 1}`,
       ],
     };
     const wrongCmd = {
       argv: [
-        `http://127.0.0.1:${PORT}/not-found.apib`,
+        `http://127.0.0.1:${PORT}/not-found.yaml`,
         `http://127.0.0.1:${PORT}`,
       ],
     };
     const goodCmd = {
-      argv: [`http://127.0.0.1:${PORT}/file.apib`, `http://127.0.0.1:${PORT}`],
+      argv: [`http://127.0.0.1:${PORT}/file.yaml`, `http://127.0.0.1:${PORT}`],
     };
 
     before((done) => {
@@ -173,8 +173,8 @@ describe('CLI class Integration', () => {
 
       app.get('/', (req, res) => res.sendStatus(404));
 
-      app.get('/file.apib', (req, res) => {
-        fs.createReadStream('./test/fixtures/single-get.apib').pipe(
+      app.get('/file.yaml', (req, res) => {
+        fs.createReadStream('./test/fixtures/single-get.yaml').pipe(
           res.type('text'),
         );
       });
@@ -183,7 +183,7 @@ describe('CLI class Integration', () => {
         res.json([{ type: 'bulldozer', name: 'willy' }]),
       );
 
-      app.get('/not-found.apib', (req, res) => res.status(404).end());
+      app.get('/not-found.yaml', (req, res) => res.status(404).end());
 
       server = app.listen(PORT, () => done());
     });
@@ -203,7 +203,7 @@ describe('CLI class Integration', () => {
 
       it('should print error message to stderr', () => {
         assert.include(stderr, 'Unable to load API description document from');
-        assert.include(stderr, 'connection-error.apib');
+        assert.include(stderr, 'connection-error.yaml');
       });
     });
 
@@ -215,7 +215,7 @@ describe('CLI class Integration', () => {
       it('should print error message to stderr', () => {
         assert.include(stderr, 'Unable to load API description document from');
         assert.include(stderr, 'Dredd got HTTP 404 response without body');
-        assert.include(stderr, 'not-found.apib');
+        assert.include(stderr, 'not-found.yaml');
       });
     });
 
