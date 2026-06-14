@@ -1,0 +1,54 @@
+openapi: 3.0.3
+info:
+  title: OpenAPI 3.0 edge-case schemas
+  version: "1.0"
+paths:
+  /ref:
+    get:
+      summary: Ref response
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Widget'
+  /allof:
+    get:
+      summary: AllOf response
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Widget'
+                  - type: object
+                    properties:
+                      extra:
+                        type: boolean
+  /array:
+    get:
+      summary: Array response
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Widget'
+components:
+  schemas:
+    Widget:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+        label:
+          type: string
+          nullable: true
