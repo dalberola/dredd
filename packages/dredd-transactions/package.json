@@ -30,7 +30,8 @@
     "@apielements/core": "^0.2.1",
     "@apielements/openapi3-parser": "0.16.1",
     "uri-template": "1.0.1",
-    "yaml-js": "^0.2.3"
+    "yaml-js": "^0.2.3",
+    "z-schema": "4.2.4"
   },
   "devDependencies": {
     "chai": "4.5.0",
