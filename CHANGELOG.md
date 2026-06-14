@@ -45,3 +45,11 @@ This fork follows Semantic Versioning. The original upstream changelog remains a
 
 - Source package names remain `dredd` and `dredd-transactions` for compatibility.
 - Future npm publishing should use scoped package names unless original package ownership is transferred.
+- During `yarn install` the optional native dependency `protagonist` (an
+  API Blueprint parser binding, pulled in optionally by `@apielements/apib-parser`)
+  fails to compile on Node.js 20+ and prints `node-gyp` errors. This is expected
+  and harmless: the install still succeeds, and the pure-JavaScript `drafter.js`
+  parser is used instead (its `try { require('protagonist') } catch { require('drafter.js') }`
+  fallback). It cannot be skipped surgically under Yarn 1 — `--ignore-optional`
+  would also drop Nx's platform binary and break `lerna exec` — so the optional
+  build is left in place.
