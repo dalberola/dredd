@@ -17,9 +17,7 @@
     "prettify:check": "prettier --check lib/**/*.js test/**/*.js",
     "test": "mocha \"./test/**/*-test.js\"",
     "test:smoke": "bash ./scripts/smoke.sh",
-    "e2e": "yarn e2e:apib && yarn e2e:openapi2",
-    "e2e:apib": "cucumber-js",
-    "e2e:openapi2": "cucumber-js --world-parameters=\"{\\\"apiDescriptionFormat\\\": \\\"application/swagger+yaml\\\"}\"",
+    "e2e": "cucumber-js --world-parameters=\"{\\\"apiDescriptionFormat\\\": \\\"application/vnd.oai.openapi\\\"}\"",
     "prepack": "npm run build"
   },
   "repository": {

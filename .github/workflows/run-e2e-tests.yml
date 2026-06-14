@@ -6,8 +6,8 @@ name: run-e2e-tests
 on: push
 
 jobs:
-  # e2e tests on api blueprint and swagger
-  test-e2e-apib:
+  # e2e tests on OpenAPI 3
+  test-e2e-openapi3:
 
     runs-on: ${{ matrix.os }}
 
@@ -24,23 +24,4 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: yarn install --frozen-lockfile
     - run: yarn build
-    - run: npx lerna exec --scope="dredd" yarn e2e:apib
-  
-  test-e2e-openapi2:
-
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        node-version: [20.x]
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: yarn install --frozen-lockfile
-    - run: yarn build
-    - run: npx lerna exec --scope="dredd" yarn e2e:openapi2
+    - run: npx lerna exec --scope="dredd" yarn e2e
