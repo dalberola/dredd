@@ -1,0 +1,40 @@
+openapi: "3.1.0"
+info:
+  title: Schema Reference
+  version: "1.0"
+paths:
+  /test:
+    get:
+      responses:
+        "200":
+          description: Test description
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+              example:
+                id: 123
+                name: Hello
+  /test-without-example:
+    get:
+      responses:
+        "200":
+          description: Test description without example
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemWithoutSample'
+components:
+  schemas:
+    Item:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+    ItemWithoutSample:
+      description: A schema with no inferable example value

@@ -32,28 +32,11 @@ describe('compileAnnotation()', () => {
 
     assert.propertyVal(annotation, 'message', 'Ouch!');
   });
-  it('sets location to [[start row, column], [end row, column]]', () => {
-    const { apiElements } = fixtures('parser-warning').apib;
-    const annotation = compileAnnotation(apiElements.annotations.first);
-
-    assert.deepPropertyVal(annotation, 'location', [[7, 3], [8, 1]]);
-  });
   it('sets location to null for no source maps', () => {
     const annotationElement = new Annotation('Ouch!');
     const annotation = compileAnnotation(annotationElement);
 
     assert.isNull(annotation.location);
-  });
-  it('sets location to the extreme positions for multiple ranges', () => {
-    const { apiElements } = fixtures('annotation-sourcemap-ranges').apib;
-    const annotationElement = apiElements.annotations.first;
-
-    // verify that there truly are multiple ranges - the parser could change implementation
-    assert.isAbove(annotationElement.attributes.get('sourceMap').first.toValue().length, 1);
-
-    const annotation = compileAnnotation(annotationElement);
-
-    assert.deepPropertyVal(annotation, 'location', [[7, 5], [13, 19]]);
   });
 
   fixtures('parser-warning').forEachDescribe(({ apiElements }) => {

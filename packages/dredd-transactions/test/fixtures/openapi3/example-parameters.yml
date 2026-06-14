@@ -1,0 +1,45 @@
+openapi: "3.0.0"
+info:
+  version: "1.0"
+  title: Petstore
+paths:
+  /honey:
+    get:
+      parameters:
+        - name: beekeeper
+          in: query
+          schema:
+            type: string
+            enum:
+              - Adam
+              - Honza
+              - Dredd
+          example: Honza
+        - name: flavour
+          in: query
+          schema:
+            type: string
+            enum:
+              - sweet
+              - spicy
+          example: spicy
+      responses:
+        "200":
+          description: pet response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+components:
+  schemas:
+    Pet:
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        tag:
+          type: string

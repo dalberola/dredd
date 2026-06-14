@@ -285,4 +285,108 @@ ${parameter.split('\n').map((line) => `        ${line}`).join('\n')}
       });
     });
   });
+
+  describe('with response schema', () => {
+    let compileResult;
+
+    before((done) => {
+      const apiDescription = fs.readFileSync(
+        path.join(__dirname, '../fixtures/openapi3/response-schema.yml'),
+        'utf8'
+      );
+      parse(apiDescription, (err, parseResult) => {
+        if (err) {
+          done(err);
+          return;
+        }
+        compileResult = compile(
+          parseResult.mediaType,
+          parseResult.apiElements,
+          'response-schema.yml'
+        );
+        done();
+      });
+    });
+
+    it('produces two transactions', () => {
+      assert.jsonSchema(compileResult, createCompileResultSchema({
+        transactions: 2,
+      }));
+    });
+
+    context('the first transaction', () => {
+      it('has the body in response data', () => {
+        assert.ok(compileResult.transactions[0].response.body);
+        assert.doesNotThrow(() => JSON.parse(compileResult.transactions[0].response.body));
+      });
+      it('has the schema in response data', () => {
+        assert.ok(compileResult.transactions[0].response.schema);
+        assert.doesNotThrow(() => JSON.parse(compileResult.transactions[0].response.schema));
+      });
+    });
+
+    context('the second transaction', () => {
+      it('has no body in response data', () => {
+        assert.notOk(compileResult.transactions[1].response.body);
+      });
+      it('has the schema in response data', () => {
+        assert.ok(compileResult.transactions[1].response.schema);
+        assert.doesNotThrow(() => JSON.parse(compileResult.transactions[1].response.schema));
+      });
+    });
+  });
+
+  describe("with 'multipart/form-data' message bodies", () => {
+    const expectedBody = [
+      '--CUSTOM-BOUNDARY',
+      'Content-Disposition: form-data; name="text"',
+      'Content-Type: text/plain',
+      '',
+      'test equals to 42',
+      '--CUSTOM-BOUNDARY',
+      'Content-Disposition: form-data; name="json"',
+      'Content-Type: application/json',
+      '',
+      '{"test": 42}',
+      '',
+      '--CUSTOM-BOUNDARY--',
+      '',
+    ].join('\r\n');
+    let compileResult;
+
+    before((done) => {
+      const apiDescription = fs.readFileSync(
+        path.join(__dirname, '../fixtures/openapi3/multipart-form-data.yml'),
+        'utf8'
+      );
+      parse(apiDescription, (err, parseResult) => {
+        if (err) {
+          done(err);
+          return;
+        }
+        compileResult = compile(
+          parseResult.mediaType,
+          parseResult.apiElements,
+          'multipart-form-data.yml'
+        );
+        done();
+      });
+    });
+
+    it('produces no annotations and 1 transaction', () => {
+      assert.jsonSchema(compileResult, createCompileResultSchema({
+        annotations: 0,
+        transactions: 1,
+      }));
+    });
+
+    context('the transaction', () => {
+      it('has the expected request body', () => {
+        assert.deepEqual(compileResult.transactions[0].request.body, expectedBody);
+      });
+      it('has the expected response body', () => {
+        assert.deepEqual(compileResult.transactions[0].response.body, expectedBody);
+      });
+    });
+  });
 });

@@ -1,0 +1,27 @@
+openapi: "3.0.0"
+info:
+  title: Beehive API
+  version: "1.0"
+paths:
+  /honey:
+    parameters:
+      - name: beekeeper
+        in: query
+        schema:
+          type: string
+        example: Adam
+    get:
+      parameters:
+        - name: beekeeper
+          in: query
+          schema:
+            type: string
+          example: Honza
+        - name: amount
+          in: query
+          schema:
+            type: number
+          example: 42
+      responses:
+        "204":
+          description: Sample description

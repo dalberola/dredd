@@ -1,0 +1,16 @@
+openapi: "3.0.0"
+info:
+  version: "1"
+  title: test
+paths:
+  /pets:
+    get:
+      description: Get
+      parameters:
+        - in: query
+          name: filter.dotted
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
