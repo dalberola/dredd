@@ -7,8 +7,6 @@
     "node": ">=20"
   },
   "scripts": {
-    "prepack": "node ./scripts/prepack.js",
-    "postpack": "node ./scripts/postpack.js",
     "build": "exit 0",
     "clean": "rimraf ./coverage",
     "lint": "eslint --ignore-path .gitignore .",
@@ -29,28 +27,11 @@
     "README.md"
   ],
   "dependencies": {
-    "@apielements/apib-parser": "0.20.1",
     "@apielements/core": "^0.2.1",
-    "@apielements/openapi2-parser": "0.32.6",
     "@apielements/openapi3-parser": "0.16.1",
-    "content-type": "1.0.4",
-    "deckardcain": "1.0.0",
-    "drafter.js": "3.2.0",
-    "js-yaml": "3.14.2",
-    "json-schema-faker": "0.5.8",
-    "lodash": "4.17.21",
-    "media-typer": "1.1.0",
-    "swagger-parser": "8.0.2",
     "uri-template": "1.0.1",
-    "yaml-js": "^0.2.3",
-    "z-schema": "4.2.4"
+    "yaml-js": "^0.2.3"
   },
-  "bundledDependencies": [
-    "@apielements/openapi2-parser",
-    "@apielements/apib-parser",
-    "deckardcain",
-    "drafter.js"
-  ],
   "devDependencies": {
     "chai": "4.5.0",
     "chai-json-schema": "1.5.1",

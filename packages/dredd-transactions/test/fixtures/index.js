@@ -4,8 +4,6 @@ const path = require('path');
 const fury = require('@apielements/core');
 
 const FORMATS = {
-  apib: { name: 'API Blueprint', ext: '.apib', mediaType: 'text/vnd.apiblueprint' },
-  openapi2: { name: 'OpenAPI 2', ext: '.yml', mediaType: 'application/swagger+yaml' },
   openapi3: { name: 'OpenAPI 3', ext: '.yml', mediaType: 'application/vnd.oai.openapi' },
 };
 

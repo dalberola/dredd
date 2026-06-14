@@ -1,8 +1,6 @@
 const fury = require('@apielements/core');
 const yaml = require('yaml-js');
 
-fury.use(require('@apielements/apib-parser'));
-fury.use(require('@apielements/openapi2-parser'));
 fury.use(require('@apielements/openapi3-parser'));
 
 const { Annotation, SourceMap, ParseResult } = fury.minim.elements;
@@ -14,14 +12,6 @@ function createAnnotation(type, message) {
     new SourceMap([[0, 1]]),
   ]);
   return element;
-}
-
-function detectMediaType(apiDescription) {
-  const adapters = fury.detect(apiDescription);
-  if (adapters.length) {
-    return { mediaType: adapters[0].mediaTypes[0], fallback: false };
-  }
-  return { mediaType: 'text/vnd.apiblueprint', fallback: true };
 }
 
 function parse(apiDescription, callback) {
@@ -38,10 +28,26 @@ function parse(apiDescription, callback) {
       return;
     }
   } catch (e) {
-    // Let the existing parser produce the public parse annotations.
+    // Let the OpenAPI 3 parser produce the public parse annotations.
   }
 
-  const { mediaType, fallback } = detectMediaType(apiDescription);
+  const adapters = fury.detect(apiDescription);
+  if (!adapters.length) {
+    const apiElements = new ParseResult([]);
+    apiElements.push(createAnnotation(
+      'error', (
+        'Unrecognized API description format. '
+        + 'Only OpenAPI 3.0 and 3.1 descriptions are supported.'
+      )
+    ));
+    callback(null, {
+      mediaType: 'application/vnd.oai.openapi',
+      apiElements,
+    });
+    return;
+  }
+
+  const mediaType = adapters[0].mediaTypes[0];
 
   fury.parse({
     source: apiDescription,
@@ -50,13 +56,6 @@ function parse(apiDescription, callback) {
   }, (err, parseResult) => {
     const apiElements = parseResult || new ParseResult([]);
 
-    if (fallback) {
-      apiElements.unshift(createAnnotation(
-        'warning', (
-          'Could not recognize API description format, assuming API Blueprint'
-        )
-      ));
-    }
     if (err && !parseResult) {
       // The condition should be only 'if (err)'
       // https://github.com/apiaryio/api-elements.js/issues/167
