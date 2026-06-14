@@ -207,7 +207,7 @@ ${protocol}_proxy=${PROXY_URL}\
         configureDredd(configuration) {
           configuration.loglevel = 'debug';
           configuration.server = serverUrl;
-          configuration.options.path = './test/fixtures/single-get.apib';
+          configuration.options.path = './test/fixtures/single-get.yaml';
         },
         expectedLog,
         expectedDestination: 'server',
@@ -224,7 +224,7 @@ ${protocol}_proxy=${PROXY_URL}\
         protocol,
         configureDredd(configuration) {
           configuration.server = DUMMY_URL;
-          configuration.options.path = './test/fixtures/single-get.apib';
+          configuration.options.path = './test/fixtures/single-get.yaml';
           configuration.options.reporter = ['apiary'];
         },
         expectedLog,
@@ -238,11 +238,11 @@ ${protocol}_proxy=${PROXY_URL}\
         protocol,
         configureDredd(configuration) {
           configuration.server = DUMMY_URL;
-          configuration.options.path = `${serverUrl}/example.apib`;
+          configuration.options.path = `${serverUrl}/example.yaml`;
         },
         expectedLog,
         expectedDestination: 'proxy',
-        expectedUrl: `${serverUrl}/example.apib`,
+        expectedUrl: `${serverUrl}/example.yaml`,
       }));
   });
 });
@@ -267,7 +267,7 @@ http_proxy=${PROXY_URL}, no_proxy=${SERVER_HOST}\
       configureDredd(configuration) {
         configuration.loglevel = 'debug';
         configuration.server = serverUrl;
-        configuration.options.path = './test/fixtures/single-get.apib';
+        configuration.options.path = './test/fixtures/single-get.yaml';
       },
       expectedLog,
       expectedDestination: 'server',
@@ -284,7 +284,7 @@ http_proxy=${PROXY_URL}, no_proxy=${SERVER_HOST}\
       protocol: 'http',
       configureDredd(configuration) {
         configuration.server = DUMMY_URL;
-        configuration.options.path = './test/fixtures/single-get.apib';
+        configuration.options.path = './test/fixtures/single-get.yaml';
         configuration.options.reporter = ['apiary'];
       },
       expectedLog,
@@ -298,10 +298,10 @@ http_proxy=${PROXY_URL}, no_proxy=${SERVER_HOST}\
       protocol: 'http',
       configureDredd(configuration) {
         configuration.server = DUMMY_URL;
-        configuration.options.path = `${serverUrl}/example.apib`;
+        configuration.options.path = `${serverUrl}/example.yaml`;
       },
       expectedLog,
       expectedDestination: 'server',
-      expectedUrl: '/example.apib',
+      expectedUrl: '/example.yaml',
     }));
 });
