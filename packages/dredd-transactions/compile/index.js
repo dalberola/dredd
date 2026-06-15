@@ -1,46 +1,15 @@
-const detectTransactionExampleNumbers = require('./detectTransactionExampleNumbers');
 const compileUri = require('./compileURI');
 const compileTransactionName = require('./compileTransactionName');
 const compileAnnotation = require('./compileAnnotation');
 const compileOpenAPI31 = require('./openapi31');
 const augmentWithOpenAPI30Schemas = require('./openapi30Schema');
 
-function findRelevantTransactions(mediaType, apiElements) {
+function findRelevantTransactions(apiElements) {
   const relevantTransactions = [];
   apiElements.findRecursive('resource', 'transition').forEach((transitionElement) => {
-    if (mediaType === 'text/vnd.apiblueprint') {
-      // API Blueprint has a concept of transaction examples and
-      // the API Blueprint AST used to expose it. The concept isn't present
-      // in API Elements anymore, so we have to detect and backport them, because
-      // the example numbers are used in the transaction names for hooks.
-      //
-      // This is very specific to API Blueprint and to backwards compatibility
-      // of Dredd. There's a plan to migrate to a different solution
-      // in the future (https://github.com/apiaryio/dredd/issues/227), which
-      // won't use the concept of transaction examples anymore.
-      const transactionExampleNumbers = detectTransactionExampleNumbers(transitionElement);
-      const hasMoreExamples = Math.max(...Array.from(transactionExampleNumbers || [])) > 1;
-
-      // Dredd supports only testing of the first request-response pair within
-      // each transaction example. We iterate over available transactions and
-      // skip those, which are not first within a particular example.
-      let exampleNo = 0;
-      transitionElement.transactions.forEach((httpTransactionElement, httpTransactionNo) => {
-        const httpTransactionExampleNo = transactionExampleNumbers[httpTransactionNo];
-        if (httpTransactionExampleNo !== exampleNo) {
-          const relevantTransaction = { httpTransactionElement };
-          if (hasMoreExamples) { relevantTransaction.exampleNo = httpTransactionExampleNo; }
-          relevantTransactions.push(relevantTransaction);
-        }
-        exampleNo = httpTransactionExampleNo;
-        return exampleNo;
-      });
-    } else {
-      // All other formats then API Blueprint
-      transitionElement.transactions.forEach((httpTransactionElement) => {
-        relevantTransactions.push({ httpTransactionElement });
-      });
-    }
+    transitionElement.transactions.forEach((httpTransactionElement) => {
+      relevantTransactions.push({ httpTransactionElement });
+    });
   });
   return relevantTransactions;
 }
@@ -50,31 +19,21 @@ function compileHeaders(httpHeadersElement) {
   return httpHeadersElement.toValue().map(({ key, value }) => ({ name: key, value: value || '' }));
 }
 
-function compileOriginExampleName(mediaType, httpResponseElement, exampleNo) {
-  let exampleName = '';
+function compileOriginExampleName(httpResponseElement) {
+  const statusCode = (httpResponseElement.statusCode ? httpResponseElement.statusCode.toValue() : undefined) || '200';
+  const headers = compileHeaders(httpResponseElement.headers);
 
-  if (mediaType === 'text/vnd.apiblueprint') {
-    if (exampleNo) {
-      exampleName = `Example ${exampleNo}`;
-    }
-  } else {
-    const statusCode = (httpResponseElement.statusCode ? httpResponseElement.statusCode.toValue() : undefined) || '200';
-    const headers = compileHeaders(httpResponseElement.headers);
+  const contentType = headers
+    .filter((header) => header.name.toLowerCase() === 'content-type')
+    .map((header) => header.value)[0];
 
-    const contentType = headers
-      .filter((header) => header.name.toLowerCase() === 'content-type')
-      .map((header) => header.value)[0];
-
-    const segments = [];
-    if (statusCode) { segments.push(statusCode); }
-    if (contentType) { segments.push(contentType); }
-    exampleName = segments.join(' > ');
-  }
-
-  return exampleName;
+  const segments = [];
+  if (statusCode) { segments.push(statusCode); }
+  if (contentType) { segments.push(contentType); }
+  return segments.join(' > ');
 }
 
-function compileOrigin(mediaType, filename, httpTransactionElement, exampleNo) {
+function compileOrigin(filename, httpTransactionElement) {
   const apiElement = httpTransactionElement.parents.find((element) => element.classes.contains('api'));
   const resourceGroupElement = httpTransactionElement.parents.find((element) => element.classes.contains('resourceGroup'));
   const resourceElement = httpTransactionElement.parents.find('resource');
@@ -87,7 +46,7 @@ function compileOrigin(mediaType, filename, httpTransactionElement, exampleNo) {
     resourceGroupName: (resourceGroupElement ? resourceGroupElement.meta.getValue('title') : undefined) || '',
     resourceName: resourceElement.meta.getValue('title') || resourceElement.attributes.getValue('href') || '',
     actionName: transitionElement.meta.getValue('title') || httpRequestElement.attributes.getValue('method') || '',
-    exampleName: compileOriginExampleName(mediaType, httpResponseElement, exampleNo),
+    exampleName: compileOriginExampleName(httpResponseElement),
   };
 }
 
@@ -147,8 +106,8 @@ function compileResponse(httpResponseElement) {
   return response;
 }
 
-function compileTransaction(mediaType, filename, httpTransactionElement, exampleNo) {
-  const origin = compileOrigin(mediaType, filename, httpTransactionElement, exampleNo);
+function compileTransaction(filename, httpTransactionElement) {
+  const origin = compileOrigin(filename, httpTransactionElement);
   const name = compileTransactionName(origin);
 
   const { request, annotations } = compileRequest(httpTransactionElement.request);
@@ -181,9 +140,9 @@ function compile(mediaType, apiElements, filename) {
   const transactions = [];
   let annotations = apiElements.annotations.map(compileAnnotation);
 
-  findRelevantTransactions(mediaType, apiElements)
-    .forEach(({ httpTransactionElement, exampleNo }) => {
-      const result = compileTransaction(mediaType, filename, httpTransactionElement, exampleNo);
+  findRelevantTransactions(apiElements)
+    .forEach(({ httpTransactionElement }) => {
+      const result = compileTransaction(filename, httpTransactionElement);
       if (result.transaction) { transactions.push(result.transaction); }
       annotations = annotations.concat(result.annotations);
     });
