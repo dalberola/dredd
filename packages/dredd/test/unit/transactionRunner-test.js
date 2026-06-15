@@ -311,38 +311,17 @@ describe('TransactionRunner', () => {
       );
     });
 
-    describe('when processing OpenAPI 2 document and given transaction has non-2xx status code', () => {
+    describe('when a transaction has a non-2xx status code', () => {
       const filename = 'api-description.yml';
       let configuredTransaction;
 
-      ['100', '400', 199, 300].forEach((status) =>
+      ['100', '400', 199, 300, 500].forEach((status) =>
         context(`status code: ${JSON.stringify(status)}`, () => {
           beforeEach(() => {
             transaction.response.status = status;
             transaction.origin.filename = filename;
             transaction.apiDescription = {
-              mediaType: 'application/swagger+json',
-            };
-            configuredTransaction = runner.configureTransaction(transaction);
-          });
-
-          it('skips the transaction by default', () =>
-            assert.isTrue(configuredTransaction.skip));
-        }),
-      );
-    });
-
-    describe('when processing OpenAPI 2 document and given transaction has 2xx status code', () => {
-      const filename = 'api-description.yml';
-      let configuredTransaction;
-
-      ['200', 299].forEach((status) =>
-        context(`status code: ${JSON.stringify(status)}`, () => {
-          beforeEach(() => {
-            transaction.response.status = status;
-            transaction.origin.filename = filename;
-            transaction.apiDescription = {
-              mediaType: 'application/swagger+json',
+              mediaType: 'application/vnd.oai.openapi',
             };
             configuredTransaction = runner.configureTransaction(transaction);
           });
@@ -351,21 +330,6 @@ describe('TransactionRunner', () => {
             assert.isFalse(configuredTransaction.skip));
         }),
       );
-    });
-
-    describe('when processing other than OpenAPI 2 document and given transaction has non-2xx status code', () => {
-      const filename = 'api-description.yml';
-      let configuredTransaction;
-
-      beforeEach(() => {
-        transaction.response.status = 400;
-        transaction.origin.filename = filename;
-        transaction.apiDescription = { mediaType: 'text/plain' };
-        configuredTransaction = runner.configureTransaction(transaction);
-      });
-
-      it('does not skip the transaction by default', () =>
-        assert.isFalse(configuredTransaction.skip));
     });
 
     describe('when processing multiple API description documents', () =>

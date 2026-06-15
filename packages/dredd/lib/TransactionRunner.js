@@ -484,18 +484,8 @@ class TransactionRunner {
       );
     }
 
-    // Transaction skipping (can be modified in hooks). If the input format
-    // is OpenAPI 2, non-2xx transactions should be skipped by default.
-    let skip = false;
-    if (
-      transaction.apiDescription &&
-      transaction.apiDescription.mediaType.includes('swagger')
-    ) {
-      const status = parseInt(response.status, 10);
-      if (status < 200 || status >= 300) {
-        skip = true;
-      }
-    }
+    // Transaction skipping (can be modified in hooks).
+    const skip = false;
     delete transaction.apiDescription;
 
     const configuredTransaction = {
