@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: 22.x
       - run: yarn install          
-      - run: npx commitlint --from HEAD~${{ github.event.pull_request.commits }} --to HEAD
+      - run: npx commitlint --last --verbose
 
   quality-checks:
 
