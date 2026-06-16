@@ -115,13 +115,3 @@ Use Hooks
 ---------
 
 Dredd’s :ref:`hooks <hooks>` enable you to write some glue code in your favorite language to support enhanced scenarios in your API tests. Read the documentation about hooks to learn more on how to write them. Choose your language and install corresponding hooks handler library.
-
-Advanced Examples
------------------
-
-For more complex example applications, please refer to:
-
--  `Express.js <https://github.com/apiaryio/dredd-example>`__
--  `Laravel <https://github.com/ddelnano/dredd-hooks-php/wiki/Laravel-Example>`__
--  `Laravel & OpenAPI 3 <https://github.com/AndyWendt/laravel-dredd-openapi-v3>`__
--  `Ruby on Rails <https://gitlab.com/theodorton/dredd-test-rails/>`__
