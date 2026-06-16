@@ -1,0 +1,13 @@
+openapi: "3.0.0"
+info:
+  title: Testing 'image/png' Request API
+  version: "1.0"
+paths:
+  /image.png:
+    put:
+      requestBody:
+        content:
+          image/png: {}
+      responses:
+        "200":
+          description: Test OK

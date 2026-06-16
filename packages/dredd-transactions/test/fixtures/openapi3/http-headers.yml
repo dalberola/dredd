@@ -1,0 +1,34 @@
+openapi: "3.0.0"
+info:
+  version: "1.0"
+  title: Beehive API
+paths:
+  /honey:
+    get:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bee'
+      responses:
+        "200":
+          description: pet response
+          headers:
+            X-Test: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bee'
+components:
+  schemas:
+    Bee:
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        tag:
+          type: string

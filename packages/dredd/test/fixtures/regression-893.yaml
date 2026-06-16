@@ -1,0 +1,12 @@
+openapi: "3.0.0"
+info:
+  title: Colors API
+  version: "1.0"
+paths:
+  /resource:
+    get:
+      responses:
+        default:
+          description: Representation
+          content:
+            "application/json; charset=utf-8": {}

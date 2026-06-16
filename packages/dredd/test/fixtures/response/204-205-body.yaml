@@ -1,0 +1,31 @@
+openapi: "3.0.0"
+info:
+  title: My API
+  version: "1.0"
+paths:
+  /204-without-body:
+    get:
+      responses:
+        "204":
+          description: Retrieve Representation
+  /205-without-body:
+    get:
+      responses:
+        "205":
+          description: Retrieve Representation
+  /204-with-body:
+    get:
+      responses:
+        "204":
+          description: Retrieve Representation
+          content:
+            "text/plain; charset=utf-8":
+              example: "test\n"
+  /205-with-body:
+    get:
+      responses:
+        "205":
+          description: Retrieve Representation
+          content:
+            "text/plain; charset=utf-8":
+              example: "test\n"

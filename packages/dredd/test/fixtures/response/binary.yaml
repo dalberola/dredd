@@ -1,0 +1,12 @@
+openapi: "3.0.0"
+info:
+  title: Images API
+  version: "1.0"
+paths:
+  /image.png:
+    get:
+      responses:
+        "200":
+          description: Retrieve Representation
+          content:
+            image/png: {}

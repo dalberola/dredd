@@ -1,0 +1,19 @@
+openapi: "3.0.0"
+info:
+  title: My API
+  version: "1.0"
+paths:
+  /resource.json:
+    get:
+      responses:
+        "200":
+          description: Retrieve Representation
+          content:
+            "application/json; charset=utf-8": {}
+  /resource.csv:
+    get:
+      responses:
+        "200":
+          description: Retrieve Representation
+          content:
+            "text/csv; charset=utf-8": {}

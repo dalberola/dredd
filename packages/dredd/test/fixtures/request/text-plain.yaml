@@ -1,0 +1,14 @@
+openapi: "3.1.0"
+info:
+  title: Testing 'text/plain' Request API
+  version: "1.0"
+paths:
+  /data:
+    post:
+      requestBody:
+        content:
+          text/plain:
+            example: "test equals to 42\n"
+      responses:
+        "200":
+          description: Test OK

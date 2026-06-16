@@ -1,0 +1,63 @@
+{
+  "name": "dredd-transactions",
+  "version": "0.1.0",
+  "description": "Compiles HTTP Transactions (Request-Response pairs) from an API description document",
+  "main": "index.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "exit 0",
+    "clean": "rimraf ./coverage",
+    "lint": "eslint .",
+    "pretest": "node ./scripts/pretest.js",
+    "test": "npm run clean && mocha",
+    "test:smoke": "bash ./scripts/smoke.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dalberola/dredd.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dalberola/dredd/issues"
+  },
+  "files": [
+    "parse",
+    "compile",
+    "README.md"
+  ],
+  "dependencies": {
+    "@apielements/core": "^0.2.1",
+    "@apielements/openapi3-parser": "0.16.1",
+    "uri-template": "2.0.0",
+    "yaml-js": "0.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10",
+    "ajv": "8.20.0",
+    "chai": "6.2.2",
+    "eslint": "^10",
+    "globals": "17.6.0",
+    "mocha": "11.7.6",
+    "mocha-lcov-reporter": "1.3.0",
+    "proxyquire": "2.1.3",
+    "rimraf": "6.1.3"
+  },
+  "keywords": [
+    "api",
+    "test",
+    "testing",
+    "documenation",
+    "integration",
+    "acceptance"
+  ],
+  "author": "Apiary Czech Republic, s.r.o. <support@apiary.io>",
+  "contributors": [
+    {
+      "name": "dalberola",
+      "url": "https://github.com/dalberola"
+    }
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/dalberola/dredd/tree/master/packages/dredd-transactions"
+}

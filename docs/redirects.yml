@@ -1,0 +1,54 @@
+# This file is a documentation of which redirects need to be manually set
+# on the https://readthedocs.org/dashboard/dredd/redirects/ page. It's up
+# to Dredd maintainers to keep this list in sync with reality.
+#
+# You can use https://github.com/honzajavorek/rtd-redirects to programmatically
+# upload the redirects to the ReadTheDocs admin interface.
+redirects:
+  # Removed pages
+  "/example/": "/quickstart.html"
+  "/example.html": "/quickstart.html"
+  "/execution-lifecycle/": "/how-it-works.html#execution-life-cycle"
+  "/execution-lifecycle.html": "/how-it-works.html#execution-life-cycle"
+  "/overview/": "/how-it-works.html"
+  "/overview.html": "/how-it-works.html"
+  "/usage/": "/usage-cli.html"
+  "/usage.html": "/usage-cli.html"
+  "/contributing.html": "/internals.html"
+
+  # Removal of sandboxed JS hooks
+  "/hooks-js-sandbox.html": "/hooks/js.html"
+  "/hooks-js-sandbox/": "/hooks/js.html"
+
+  # 'Node.js to JavaScript' migration
+  "/hooks/nodejs.html": "/hooks/js.html"
+  "/hooks-nodejs.html": "/hooks/js.html"
+  "/hooks-nodejs/": "/hooks/js.html"
+
+  # 'Hooks to a directory' migration
+  "/hooks.html": "/hooks/index.html"
+  "/hooks-go.html": "/hooks/go.html"
+  "/hooks-new-language.html": "/hooks/new-language.html"
+  "/hooks-perl.html": "/hooks/perl.html"
+  "/hooks-ruby.html": "/hooks/ruby.html"
+  "/hooks-rust.html": "/hooks/rust.html"
+  "/hooks-php.html": "/hooks/php.html"
+  "/hooks-python.html": "/hooks/python.html"
+
+  # 'MkDocs to Sphinx' migration
+  "/usage-js/": "/usage-js.html"
+  "/data-structures/": "/data-structures.html"
+  "/contributing/": "/contributing.html"
+  "/how-to-guides/": "/how-to-guides.html"
+  "/quickstart/": "/quickstart.html"
+  "/how-it-works/": "/how-it-works.html"
+  "/installation/": "/installation.html"
+  "/usage-cli/": "/usage-cli.html"
+  "/hooks/": "/hooks/index.html"
+  "/hooks-go/": "/hooks/go.html"
+  "/hooks-new-language/": "/hooks/new-language.html"
+  "/hooks-perl/": "/hooks/perl.html"
+  "/hooks-ruby/": "/hooks/ruby.html"
+  "/hooks-rust/": "/hooks/rust.html"
+  "/hooks-php/": "/hooks/php.html"
+  "/hooks-python/": "/hooks/python.html"

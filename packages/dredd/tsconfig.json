@@ -1,0 +1,18 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "module": "node16",
+    "target": "es2017",
+    "lib": ["es2017"],
+    "typeRoots": ["node_modules/@types"],
+    "rootDir": "./lib",
+    "outDir": "./build",
+    "moduleResolution": "node16",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["./lib/**/*.ts", "./lib/**/*.js"],
+  "exclude": ["node_modules", "build"]
+}

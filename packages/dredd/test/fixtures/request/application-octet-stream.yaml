@@ -1,0 +1,13 @@
+openapi: "3.0.0"
+info:
+  title: Testing 'application/octet-stream' Request API
+  version: "1.0"
+paths:
+  /binary:
+    post:
+      requestBody:
+        content:
+          application/octet-stream: {}
+      responses:
+        "200":
+          description: Test OK

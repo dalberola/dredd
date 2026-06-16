@@ -1,0 +1,51 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI 3.1 Minimal
+  version: '1.0'
+paths:
+  /things/{thingId}:
+    parameters:
+      - name: thingId
+        in: path
+        required: true
+        schema:
+          type: string
+        example: abc
+    post:
+      parameters:
+        - name: include
+          in: query
+          schema:
+            type: string
+            enum:
+              - details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: created
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              example:
+                id: abc
+                label: null
+              schema:
+                $ref: '#/components/schemas/Thing'
+components:
+  schemas:
+    Thing:
+      type: object
+      required:
+        - id
+        - label
+      properties:
+        id:
+          type: string
+        label:
+          type:
+            - string
+            - 'null'

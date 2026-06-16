@@ -1,0 +1,15 @@
+openapi: "3.1.0"
+info:
+  title: Testing 'application/json' Request API
+  version: "1.0"
+paths:
+  /data:
+    post:
+      requestBody:
+        content:
+          application/json:
+            example:
+              test: 42
+      responses:
+        "200":
+          description: Test OK

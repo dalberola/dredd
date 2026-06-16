@@ -1,0 +1,20 @@
+package-lock.json
+npm-shrinkwrap.json
+
+.idea
+.vscode
+.DS_Store
+node_modules
+cov.*
+*.log
+.env*
+__pycache__
+/docs/_build
+/dist-packages
+coverage
+smoke
+build
+*.tsbuildinfo
+
+# Regardless the rules above, never ignore following
+!.vscode/launch.json

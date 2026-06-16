@@ -1,0 +1,18 @@
+openapi: "3.0.0"
+info:
+  title: Colors API
+  version: "1.0"
+paths:
+  /resource:
+    get:
+      responses:
+        "200":
+          description: Representation
+  /resource.csv:
+    get:
+      responses:
+        "200":
+          description: Representation
+          content:
+            "text/csv; charset=utf-8":
+              example: ""

@@ -1,0 +1,36 @@
+openapi: "3.0.0"
+info:
+  title: Blog API
+  version: "1.0"
+paths:
+  /articles:
+    get:
+      summary: List articles
+      description: Retrieve a list of all articles
+      responses:
+        "200":
+          description: Articles list
+          content:
+            "application/json; charset=utf-8":
+              example:
+                - id: 1
+                  title: Creamy cucumber salad
+                  text: "Slice cucumbers…"
+    post:
+      summary: Publish an article
+      description: Create and publish a new article
+      requestBody:
+        content:
+          "application/json; charset=utf-8":
+            example:
+              title: Crispy schnitzel
+              text: "Prepare eggs…"
+      responses:
+        "201":
+          description: New article
+          content:
+            "application/json; charset=utf-8":
+              example:
+                id: 2
+                title: Crispy schnitzel
+                text: "Prepare eggs…"

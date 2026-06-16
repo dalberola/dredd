@@ -1,0 +1,42 @@
+openapi: "3.0.0"
+info:
+  version: "1.0"
+  title: Colors API
+paths:
+  /resource:
+    get:
+      responses:
+        "200":
+          description: Representation
+          content:
+            application/json: {}
+  /resource.json:
+    get:
+      responses:
+        "200":
+          description: Representation
+          content:
+            application/json:
+              example:
+                name: Honza
+                color: green
+  /resource.csv:
+    get:
+      responses:
+        "200":
+          description: Representation
+          content:
+            text/csv:
+              example: |
+                name,color
+                Honza,green
+  /resource.yaml:
+    get:
+      responses:
+        "200":
+          description: Representation
+          content:
+            text/yaml:
+              example: |
+                name: Honza
+                color: green

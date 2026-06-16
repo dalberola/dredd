@@ -1,0 +1,17 @@
+openapi: "3.0.0"
+info:
+  title: Machines API
+  version: "1.0"
+paths:
+  /machines:
+    get:
+      summary: Get Machines
+      description: Retrieve Machines list
+      responses:
+        "200":
+          description: Machine list response
+          content:
+            "application/json; charset=utf-8":
+              example:
+                - type: bulldozer
+                  name: willy

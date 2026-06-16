@@ -1,0 +1,36 @@
+{
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dalberola/dredd.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dalberola/dredd/issues"
+  },
+  "scripts": {
+    "build": "node scripts/run-workspaces.mjs build",
+    "prettify:check": "yarn workspace dredd prettify:check",
+    "docs:lint": "sphinx-build -nW -b linkcheck ./docs ./docs/_build",
+    "docs:test-extensions": "python -m unittest docs/_extensions/*.py --verbose",
+    "docs:build": "sphinx-build -nW -b html ./docs ./docs/_build",
+    "docs:serve": "sphinx-autobuild ./docs ./docs/_build",
+    "commit:lint": "./scripts/commitlint.sh",
+    "lint": "node scripts/run-workspaces.mjs lint",
+    "test:smoke": "node scripts/run-workspaces.mjs test:smoke",
+    "test": "node scripts/run-workspaces.mjs test"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.0.2",
+    "@commitlint/config-conventional": "21.0.2"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "resolutions": {
+    "json-schema-faker": "0.5.8",
+    "ansi-regex": "5.0.1",
+    "lodash": "4.18.1"
+  }
+}

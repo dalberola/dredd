@@ -1,0 +1,7 @@
+{
+  "require": [
+    "./test/ts-node.js"
+  ],
+  "timeout": 120000,
+  "recursive": true
+}

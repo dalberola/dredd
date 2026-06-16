@@ -1,0 +1,14 @@
+openapi: "3.1.0"
+info:
+  title: Testing 'multipart/form-data' Request API
+  version: "1.0"
+paths:
+  /data:
+    post:
+      requestBody:
+        content:
+          "multipart/form-data; boundary=CUSTOM-BOUNDARY":
+            example: "--CUSTOM-BOUNDARY\r\nContent-Disposition: form-data; name=\"text\"\r\n\r\ntest equals to 42\r\n--CUSTOM-BOUNDARY\r\nContent-Disposition: form-data; name=\"json\"\r\n\r\n{\"test\": 42}\r\n\r\n--CUSTOM-BOUNDARY--\r\n"
+      responses:
+        "200":
+          description: Test OK
