@@ -28,7 +28,6 @@ sys.path.append(os.path.abspath('_extensions'))
 extensions = [
     'sphinx.ext.todo',
     'sphinx_tabs.tabs',
-    'pygments_markdown_lexer',
     'cli_options',
     'ghissue',
     'specs',
@@ -74,7 +73,16 @@ todo_include_todos = True
 
 # The theme to use for HTML and HTML Help pages. See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_book_theme'
+
+html_theme_options = {
+    'repository_url': 'https://github.com/dalberola/dredd',
+    'repository_branch': 'main',
+    'path_to_docs': 'docs',
+    'use_repository_button': True,
+    'use_issues_button': True,
+    'use_edit_page_button': True,
+}
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
@@ -155,11 +163,6 @@ templates_path = []
 
 # -- Custom Pygments lexers for OpenAPI -----------------------------------
 
-class OpenAPI2Lexer(YamlLexer):
-    name = 'OpenAPI 2'
-    aliases = ['openapi2', 'swagger']
-    mimetypes = ['application/swagger+yaml']
-
 class OpenAPI3Lexer(YamlLexer):
     name = 'OpenAPI 3'
     aliases = ['openapi3']
@@ -172,6 +175,5 @@ def setup(app):
     # An extension adding the '_static/css/dredd.css' stylesheet
     app.add_css_file('css/dredd.css')
 
-    # Adding lexers for rendering OpenAPI code blocks as YAML
-    app.add_lexer('openapi2', OpenAPI2Lexer)
+    # Adding lexer for rendering OpenAPI 3 code blocks as YAML
     app.add_lexer('openapi3', OpenAPI3Lexer)
