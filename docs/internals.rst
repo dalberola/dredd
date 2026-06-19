@@ -16,9 +16,9 @@ Dredd itself is a `command-line <https://en.wikipedia.org/wiki/Command-line_inte
 Maintainers
 -----------
 
-`Apiary`_ is the original author of Dredd. The original `Apiary Dredd repository <https://github.com/apiaryio/dredd>`__ was archived on November 8, 2024 and is now read-only. Active maintenance for this fork happens in `dalberola/dredd <https://github.com/dalberola/dredd>`__.
+`Apiary`_ is the original author of Dredd. The original `Apiary Dredd repository <https://github.com/apiaryio/dredd>`__ was archived on November 8, 2024 and is now read-only. Active maintenance for this fork happens in `stacklych/dredd <https://github.com/stacklych/dredd>`__.
 
--  `@dalberola <https://github.com/dalberola>`__ - fork maintenance, releases, issue triage
+-  `@stacklych <https://github.com/stacklych>`__ - fork maintenance, releases, issue triage
 
 .. _hall-of-fame:
 
@@ -43,7 +43,7 @@ Contributing
 
 We are grateful for any contributions made by the community. Even seemingly small contributions such as fixing a typo in the documentation or reporting a bug are very appreciated!
 
-To contribute to this maintained fork, open issues and pull requests in `dalberola/dredd <https://github.com/dalberola/dredd>`__. See also the root ``MAINTAINERS.md`` and ``SECURITY.md`` files.
+To contribute to this maintained fork, open issues and pull requests in `stacklych/dredd <https://github.com/stacklych/dredd>`__. See also the root ``MAINTAINERS.md`` and ``SECURITY.md`` files.
 
 
 .. _install-dev:
@@ -97,7 +97,7 @@ In the rare cases when your changes break backwards compatibility, the message m
     out of the box anymore. Instead manually install the coffeescript
     module and add --require=coffeescript/register to your command.
 
--   See `existing commits <https://github.com/dalberola/dredd/commits/master>`__ as a reference
+-   See `existing commits <https://github.com/stacklych/dredd/commits/master>`__ as a reference
 -   `Commitizen CLI <https://github.com/commitizen/cz-cli>`__ can help you to create correct commit messages
 -   Run ``npm run lint`` to validate format of your messages
 -   Use ``refactor`` together with ``BREAKING CHANGE:`` for changes in code which only remove features (there doesn't seem to be a better category for that use case) -- see `real-world example <https://github.com/apiaryio/dredd/commit/a5fe81b>`__
@@ -163,7 +163,7 @@ The linter is optional for local development to make easy prototyping and workin
 Changelog
 ~~~~~~~~~
 
-Changelog entries for this maintained fork are tracked in the root ``CHANGELOG.md`` and can also be published as `GitHub Releases <https://github.com/dalberola/dredd/releases>`__.
+Changelog entries for this maintained fork are tracked in the root ``CHANGELOG.md`` and can also be published as `GitHub Releases <https://github.com/stacklych/dredd/releases>`__.
 
 Automated release note generation can be restored later after the fork's npm publishing scope is decided.
 
@@ -196,7 +196,7 @@ The ``APIARY_API_URL`` environment variable allows the developer to override the
 Contributing to documentation
 -----------------------------
 
-The documentation is written `as code <http://www.writethedocs.org/guide/docs-as-code/>`__ in the `reStructuredText <http://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html>`__ format and its source files are located in the `docs <https://github.com/dalberola/dredd/tree/master/docs>`__ directory.
+The documentation is written `as code <http://www.writethedocs.org/guide/docs-as-code/>`__ in the `reStructuredText <http://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html>`__ format and its source files are located in the `docs <https://github.com/stacklych/dredd/tree/master/docs>`__ directory.
 
 The historical documentation site is https://dredd.org. This maintained fork should link to the fork repository until a new documentation hosting target is configured.
 

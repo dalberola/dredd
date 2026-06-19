@@ -1,20 +1,20 @@
 # Maintainers
 
-This repository is the Stackly-maintained fork of Dredd at `dalberola/dredd`. The project is owned and maintained by **Stackly**.
+This repository is the Stackly-maintained fork of Dredd at `stacklych/dredd`. The project is owned and maintained by **Stackly**.
 
 The original upstream repository, `apiaryio/dredd`, was archived on November 8, 2024 and is read-only. Keep the MIT license notice intact and avoid implying that Apiary or Oracle maintains this fork.
 
 ## Current Maintainer
 
 - **Stackly** - project ownership and direction
-- `@dalberola` - fork maintenance, issue triage, release decisions
+- `@stacklych` - fork maintenance, issue triage, release decisions
 
 ## Maintenance Rules
 
 - Keep changes small, tested, and documented.
 - Preserve backward compatibility for the existing `dredd` CLI unless a release is explicitly marked breaking.
 - Keep package names unchanged in source until a scoped npm publishing migration is implemented and tested.
-- Publish forked npm packages only under a distinct scope, such as `@dalberola`, unless ownership of the original package names is explicitly transferred.
+- Publish forked npm packages only under a distinct scope, such as `@stacklych`, unless ownership of the original package names is explicitly transferred.
 - Keep dependency upgrades separate from feature work unless the upgrade is required for the feature.
 - Run lint, targeted tests, and documentation builds before release.
 

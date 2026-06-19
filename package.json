@@ -2,10 +2,10 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dalberola/dredd.git"
+    "url": "git+https://github.com/stacklych/dredd.git"
   },
   "bugs": {
-    "url": "https://github.com/dalberola/dredd/issues"
+    "url": "https://github.com/stacklych/dredd/issues"
   },
   "scripts": {
     "build": "node scripts/run-workspaces.mjs build",

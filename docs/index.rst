@@ -16,7 +16,7 @@ Dredd reads your API description and step by step validates whether your API imp
 Maintained fork
 ---------------
 
-This documentation belongs to the **Stackly**-maintained fork at `dalberola/dredd <https://github.com/dalberola/dredd>`__. The original `Apiary Dredd <https://github.com/apiaryio/dredd>`__ repository was archived upstream on November 8, 2024 and is now read-only. This fork keeps the original MIT license notice and continues development independently.
+This documentation belongs to the **Stackly**-maintained fork at `stacklych/dredd <https://github.com/stacklych/dredd>`__. The original `Apiary Dredd <https://github.com/apiaryio/dredd>`__ repository was archived upstream on November 8, 2024 and is now read-only. This fork keeps the original MIT license notice and continues development independently.
 
 Features
 --------
@@ -74,9 +74,9 @@ Contents
 Useful Links
 ------------
 
--  `GitHub Repository <https://github.com/dalberola/dredd>`__
--  `Bug Tracker <https://github.com/dalberola/dredd/issues?q=is%3Aopen>`__
--  `Changelog <https://github.com/dalberola/dredd/releases>`__
+-  `GitHub Repository <https://github.com/stacklych/dredd>`__
+-  `Bug Tracker <https://github.com/stacklych/dredd/issues?q=is%3Aopen>`__
+-  `Changelog <https://github.com/stacklych/dredd/releases>`__
 
 Example Applications
 --------------------

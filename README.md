@@ -11,7 +11,7 @@
 
 ## Maintained Fork
 
-This repository is owned and maintained by **Stackly**. It is a maintained fork of [Apiary Dredd](https://github.com/apiaryio/dredd), which was archived upstream on November 8, 2024. The original project remains licensed under MIT; this fork keeps the original license notice and continues development independently at [dalberola/dredd](https://github.com/dalberola/dredd).
+This repository is owned and maintained by **Stackly**. It is a maintained fork of [Apiary Dredd](https://github.com/apiaryio/dredd), which was archived upstream on November 8, 2024. The original project remains licensed under MIT; this fork keeps the original license notice and continues development independently at [stacklych/dredd](https://github.com/stacklych/dredd).
 
 The npm package names are currently kept as `dredd` and `dredd-transactions` in source metadata for compatibility with the existing workspace and import paths. New npm publishing should use a distinct scoped package plan before release.
 
@@ -77,6 +77,6 @@ $ npm install -g dredd
 
 [openapi 3]: https://spec.openapis.org/oas/v3.0.4.html
 [openapi 3.1]: https://spec.openapis.org/oas/v3.1.2.html
-[documentation]: https://dalberola.github.io/dredd/
+[documentation]: https://stacklych.github.io/dredd/
 [changelog]: CHANGELOG.md
 [contributor's guidelines]: MAINTAINERS.md

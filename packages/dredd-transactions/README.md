@@ -4,7 +4,7 @@ Dredd Transactions library compiles _HTTP Transactions_ (simple Request-Response
 
 ## Maintained Fork
 
-This package is maintained in the [dalberola/dredd](https://github.com/dalberola/dredd) fork. The original Apiary repository was archived on November 8, 2024. The package name remains `dredd-transactions` in source metadata for compatibility with the existing workspace and import paths; scoped package publishing should be handled as a separate release migration.
+This package is maintained in the [stacklych/dredd](https://github.com/stacklych/dredd) fork. The original Apiary repository was archived on November 8, 2024. The package name remains `dredd-transactions` in source metadata for compatibility with the existing workspace and import paths; scoped package publishing should be handled as a separate release migration.
 
 > **Note:** To better understand _emphasized_ terms in this documentation, please refer to the [Glossary of Terms][api-blueprint-glossary]. All data structures are described using the [MSON][mson-spec] format.
 

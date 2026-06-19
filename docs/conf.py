@@ -76,7 +76,7 @@ todo_include_todos = True
 html_theme = 'sphinx_book_theme'
 
 html_theme_options = {
-    'repository_url': 'https://github.com/dalberola/dredd',
+    'repository_url': 'https://github.com/stacklych/dredd',
     'repository_branch': 'main',
     'path_to_docs': 'docs',
     'use_repository_button': True,

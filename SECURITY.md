@@ -6,7 +6,7 @@ This maintained fork does not yet publish independent npm releases. Security fix
 
 ## Reporting a Vulnerability
 
-Report vulnerabilities privately through GitHub Security Advisories for `dalberola/dredd` when available. If private advisories are not enabled, contact the maintainer through a non-public channel before opening a public issue.
+Report vulnerabilities privately through GitHub Security Advisories for `stacklych/dredd` when available. If private advisories are not enabled, contact the maintainer through a non-public channel before opening a public issue.
 
 Do not include exploit details, credentials, private API descriptions, or live service URLs in a public issue.
 
