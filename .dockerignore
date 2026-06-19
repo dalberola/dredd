@@ -22,7 +22,6 @@ packages/*/build
 packages/dredd/test
 packages/dredd/features
 packages/dredd/eslint.config.mjs
-packages/dredd/tsconfig*
 packages/dredd-transactions/test
 packages/dredd-transactions/scripts
 packages/dredd-transactions/eslint.config.mjs
