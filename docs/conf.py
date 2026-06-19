@@ -82,11 +82,12 @@ html_theme_options = {
     'use_repository_button': True,
     'use_issues_button': True,
     'use_edit_page_button': True,
+    'logo': {
+        'image_light': '_static/images/dredd-logo.svg',
+        'image_dark': '_static/images/dredd-logo.svg',
+        'text': 'dredd',
+    },
 }
-
-# The name of an image file (relative to this directory) to place at the top
-# of the sidebar.
-html_logo = '_static/images/dredd-logo.svg'
 
 # The name of an image file (relative to this directory) to use as a favicon of
 # the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
