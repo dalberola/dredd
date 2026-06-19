@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "node scripts/run-workspaces.mjs build",
-    "prettify:check": "yarn workspace dredd prettify:check",
+    "prettify:check": "yarn workspace @stacklych/dredd prettify:check",
     "docs:lint": "sphinx-build -nW -b linkcheck ./docs ./docs/_build",
     "docs:test-extensions": "python -m unittest docs/_extensions/*.py --verbose",
     "docs:build": "sphinx-build -nW -b html ./docs ./docs/_build",

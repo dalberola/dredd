@@ -11,7 +11,7 @@
  */
 import { execFileSync } from 'child_process';
 
-const WORKSPACES = ['dredd-transactions', 'dredd'];
+const WORKSPACES = ['@stacklych/dredd-transactions', '@stacklych/dredd'];
 
 const script = process.argv[2];
 if (!script) {
