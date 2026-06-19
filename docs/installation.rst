@@ -13,7 +13,7 @@ There are several options how to run Dredd on your machine or in your :ref:`cont
 Docker
 ------
 
-If you are familiar with `Docker <https://docs.docker.com>`__, you can get started with Dredd quickly by using the ready-made `apiaryio/dredd <https://hub.docker.com/r/apiaryio/dredd/>`__ image. Specifics of running Dredd inside Docker are:
+If you are familiar with `Docker <https://docs.docker.com>`__, you can get started with Dredd quickly by using the ready-made `stacklych/dredd <https://hub.docker.com/r/stacklych/dredd/>`__ image. Specifics of running Dredd inside Docker are:
 
 - you won't be able to use the :option:`--server` option (see :ref:`docker-compose`)
 - setting up non-JavaScript :ref:`hooks <hooks>` is less straightforward (see :ref:`hooks-docker`)
@@ -22,25 +22,25 @@ If you are familiar with `Docker <https://docs.docker.com>`__, you can get start
 
    .. group-tab:: macOS, Linux
 
-      Following line runs the ``dredd`` command using the `apiaryio/dredd <https://hub.docker.com/r/apiaryio/dredd/>`__ Docker image::
+      Following line runs the ``dredd`` command using the `stacklych/dredd <https://hub.docker.com/r/stacklych/dredd/>`__ Docker image::
 
-         $ docker run -it -v $PWD:/api -w /api apiaryio/dredd dredd
+         $ docker run -it -v $PWD:/api -w /api stacklych/dredd dredd
 
       As an example of how to pass arguments, following line runs the ``dredd init`` command::
 
-         $ docker run -it -v $PWD:/api -w /api apiaryio/dredd dredd init
+         $ docker run -it -v $PWD:/api -w /api stacklych/dredd dredd init
 
       When testing a service running on host (e.g. ``localhost:8080``), you need to use ``--network host`` parameter in Docker command. If you are using `Docker for Mac <https://docs.docker.com/docker-for-mac/>`__, you should use `host.docker.internal <https://docs.docker.com/docker-for-mac/networking/>`__ instead of 127.0.0.1/localhost.
 
    .. group-tab:: Windows
 
-      Following line runs the ``dredd`` command using the `apiaryio/dredd <https://hub.docker.com/r/apiaryio/dredd/>`__ Docker image::
+      Following line runs the ``dredd`` command using the `stacklych/dredd <https://hub.docker.com/r/stacklych/dredd/>`__ Docker image::
 
-         C:\Users\Susan> docker run -it -v ${pwd}:/api -w /api apiaryio/dredd dredd
+         C:\Users\Susan> docker run -it -v ${pwd}:/api -w /api stacklych/dredd dredd
 
       As an example of how to pass arguments, following line runs the ``dredd init`` command::
 
-         C:\Users\Susan> docker run -it -v ${pwd}:/api -w /api apiaryio/dredd dredd init
+         C:\Users\Susan> docker run -it -v ${pwd}:/api -w /api stacklych/dredd dredd init
 
 
 .. _docker-compose:
