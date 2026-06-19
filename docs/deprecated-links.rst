@@ -21,7 +21,6 @@ Sites and services
 - ``https://apiary.io`` and ``https://apiary.io/support`` — former product site.
 - ``https://help.apiary.io`` — former help center.
 - ``https://dredd.org`` — former documentation site.
-- ``https://hub.docker.com/r/apiaryio/dredd`` — former Docker image.
 - ``https://travis-ci.org/apiaryio/...`` — former CI badges and links.
 
 GitHub (former owner ``apiaryio``)
