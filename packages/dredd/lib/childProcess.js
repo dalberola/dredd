@@ -1,6 +1,24 @@
+// @ts-check
 import crossSpawn from 'cross-spawn';
 
 import ignorePipeErrors from './ignorePipeErrors';
+
+/**
+ * @typedef {(error?: Error | null) => void} TerminateCallback
+ * @typedef {{ timeout?: number, retryDelay?: number, force?: boolean }} TerminateOptions
+ *
+ * A spawned child process augmented with the extra state and control methods
+ * Dredd attaches at runtime (Node's own ChildProcess type models none of them).
+ * @typedef {import('child_process').ChildProcess & {
+ *   spawned?: boolean,
+ *   terminated?: boolean,
+ *   killedIntentionally?: boolean,
+ *   terminatedIntentionally?: boolean,
+ *   signalKill?: () => void,
+ *   signalTerm?: () => void,
+ *   terminate?: (options?: TerminateOptions) => void,
+ * }} DreddChildProcess
+ */
 
 const ASCII_CTRL_C = 3;
 const IS_WINDOWS = process.platform === 'win32';
@@ -9,6 +27,10 @@ const TERM_DEFAULT_TIMEOUT_MS = 1000;
 const TERM_DEFAULT_RETRY_MS = 300;
 
 // Signals the child process to forcefully terminate
+/**
+ * @param {import('child_process').ChildProcess} childProcess
+ * @param {TerminateCallback} callback
+ */
 export function signalKill(childProcess, callback) {
   childProcess.emit('signalKill');
   if (IS_WINDOWS) {
@@ -30,6 +52,10 @@ export function signalKill(childProcess, callback) {
 }
 
 // Signals the child process to gracefully terminate
+/**
+ * @param {import('child_process').ChildProcess} childProcess
+ * @param {TerminateCallback} callback
+ */
 export function signalTerm(childProcess, callback) {
   childProcess.emit('signalTerm');
   if (IS_WINDOWS) {
@@ -50,7 +76,9 @@ export function signalTerm(childProcess, callback) {
     // it sends the '\u0003' to stdin of the child. It's up to the child
     // to implement reading from stdin in such way it works both for
     // programmatic and manual Ctrl+C.
-    childProcess.stdin.write(String.fromCharCode(ASCII_CTRL_C));
+    /** @type {import('stream').Writable} */ (childProcess.stdin).write(
+      String.fromCharCode(ASCII_CTRL_C),
+    );
   } else {
     childProcess.kill('SIGTERM');
   }
@@ -72,10 +100,17 @@ export function signalTerm(childProcess, callback) {
 //                      attempts will be done
 // - retryDelay (number) - Delay in ms between termination attempts
 // - force (boolean) - Kills the process forcefully after the timeout
+/**
+ * @param {import('child_process').ChildProcess} childProcess
+ * @param {TerminateOptions | TerminateCallback} [options]
+ * @param {TerminateCallback} [callback]
+ */
 export function terminate(childProcess, options = {}, callback) {
   if (typeof options === 'function') {
-    [callback, options] = Array.from([options, {}]);
+    [callback, options] = [options, {}];
   }
+  // After the overload swap, a callback is always present by contract.
+  const cb = /** @type {TerminateCallback} */ (callback);
   const force = options.force || false;
 
   // If the timeout is zero or less then the delay for waiting between
@@ -93,6 +128,7 @@ export function terminate(childProcess, options = {}, callback) {
   childProcess.on('exit', onExit);
 
   const start = Date.now();
+  /** @type {NodeJS.Timeout | undefined} */
   let t;
 
   // A function representing one check, whether the process already
@@ -101,13 +137,13 @@ export function terminate(childProcess, options = {}, callback) {
     if (terminated) {
       // Successfully terminated
       clearTimeout(t);
-      return callback();
+      return cb();
     }
     if (Date.now() - start < timeout) {
       // Still not terminated, try again
       signalTerm(childProcess, (err) => {
         if (err) {
-          return callback(err);
+          return cb(err);
         }
         t = setTimeout(check, retryDelay);
       });
@@ -116,9 +152,9 @@ export function terminate(childProcess, options = {}, callback) {
       // kill the process (force) or provide an error
       clearTimeout(t);
       if (force) {
-        signalKill(childProcess, callback);
+        signalKill(childProcess, cb);
       } else {
-        callback(
+        cb(
           new Error(
             `Unable to gracefully terminate process ${childProcess.pid}`,
           ),
@@ -130,14 +166,23 @@ export function terminate(childProcess, options = {}, callback) {
   // Fire the first termination attempt and check the result
   signalTerm(childProcess, (err) => {
     if (err) {
-      return callback(err);
+      return cb(err);
     }
     t = setTimeout(check, TERM_FIRST_CHECK_TIMEOUT_MS);
   });
 }
 
+/**
+ * @param {...any} args
+ * @returns {DreddChildProcess}
+ */
 export function spawn(...args) {
-  const childProcess = crossSpawn.spawn.apply(null, args);
+  const childProcess = /** @type {DreddChildProcess} */ (
+    crossSpawn.spawn.apply(
+      null,
+      /** @type {Parameters<typeof crossSpawn.spawn>} */ (args),
+    )
+  );
 
   ignorePipeErrors(childProcess);
 
@@ -178,7 +223,8 @@ export function spawn(...args) {
   };
 
   childProcess.on('error', (err) => {
-    if (err.syscall && err.syscall.indexOf('spawn') >= 0) {
+    const errno = /** @type {NodeJS.ErrnoException} */ (err);
+    if (errno.syscall && errno.syscall.indexOf('spawn') >= 0) {
       childProcess.spawned = false;
     }
   });
