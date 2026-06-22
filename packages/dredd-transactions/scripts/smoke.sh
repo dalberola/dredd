@@ -18,11 +18,10 @@ npm pack
 echo "======================================================================"
 echo "Preparing a temporary test directory"
 echo "======================================================================"
-SMOKE_DIR=~/test-temp/dredd-transactions-smoke
-rm -rf "$SMOKE_DIR"
-mkdir -p $SMOKE_DIR
-cp ./*.tgz $SMOKE_DIR
-cd $SMOKE_DIR
+SMOKE_DIR="$(mktemp -d)"
+trap 'rm -rf "$SMOKE_DIR"' EXIT
+cp ./*.tgz "$SMOKE_DIR"
+cd "$SMOKE_DIR"
 echo "package-lock=true" > .npmrc
 
 # Initialize a test project
@@ -60,7 +59,7 @@ node index.js
 echo "======================================================================"
 echo "Cleaning up"
 echo "======================================================================"
-rm -rf $SMOKE_DIR
+# $SMOKE_DIR is removed by the EXIT trap registered above.
 
 echo "======================================================================"
 echo "SUCCESS"

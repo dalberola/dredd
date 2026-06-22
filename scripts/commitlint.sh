@@ -4,4 +4,4 @@
 
 set -e  # aborts as soon as anything returns non-zero exit status
 
-npx commitlint --from=master
+npx commitlint --from=origin/main

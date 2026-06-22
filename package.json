@@ -1,5 +1,8 @@
 {
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stacklych/dredd.git"
