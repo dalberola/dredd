@@ -9,7 +9,7 @@ import formatJsonSchemaError from './formatJsonSchemaError';
 import formatGavelSchemaError from './formatGavelSchemaError';
 import generateSchemaFromExample from './generateSchemaFromExample';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const addFormats = require('ajv-formats');
 
 function getContentType(headers: Record<string, string> = {}): string | null {

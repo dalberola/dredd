@@ -1,8 +1,9 @@
 import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
 import globals from 'globals';
 
-export default [
+export default tseslint.config(
   {
     ignores: [
       '.github/**',
@@ -14,6 +15,10 @@ export default [
     ],
   },
   js.configs.recommended,
+  {
+    files: ['**/*.ts'],
+    extends: [tseslint.configs.recommended],
+  },
   {
     linterOptions: { reportUnusedDisableDirectives: 'off' },
     languageOptions: {
@@ -33,6 +38,29 @@ export default [
     },
   },
   {
+    // TypeScript sources: hand off the unused-vars check to the type-aware
+    // rule (the base rule throws on TS-only AST nodes), mirroring the JS
+    // config's options. `any` is intentional throughout the migrated code, so
+    // `no-explicit-any` stays off to match the established convention.
+    files: ['**/*.ts'],
+    rules: {
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          args: 'after-used',
+          caughtErrors: 'none',
+          // `_`-prefixed identifiers are intentional throwaways (e.g. ignored
+          // tuple elements in array destructuring).
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+        },
+      ],
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
+  {
     files: ['bin/dredd'],
     languageOptions: { sourceType: 'module', globals: { ...globals.node } },
   },
@@ -49,4 +77,4 @@ export default [
     },
   },
   prettier,
-];
+);
