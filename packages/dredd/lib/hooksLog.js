@@ -1,5 +1,11 @@
+// @ts-check
 import util from 'util';
 
+/**
+ * @param {Array<{ timestamp: number, content: string }>} logs
+ * @param {{ hook?: (content: any) => void }} logger
+ * @param {*} content
+ */
 export default function hooksLog(logs = [], logger, content) {
   // Log to logger
   if (logger && typeof logger.hook === 'function') {
