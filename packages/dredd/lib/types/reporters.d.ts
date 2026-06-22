@@ -8,8 +8,10 @@ export interface ReporterStats {
   failures: number;
   errors: number;
   skipped: number;
-  start?: Date;
-  end?: Date;
+  // Initialized as numbers by Dredd, then overwritten with Dates by the
+  // BaseReporter at runtime; only ever assigned or read through Number().
+  start?: Date | number;
+  end?: Date | number;
   duration?: number;
 }
 
