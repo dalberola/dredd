@@ -143,9 +143,12 @@ function sampleFromSchema(document, schema, seen = new Set()) {
   if (resolvedSchema.allOf && resolvedSchema.allOf.length) {
     // `allOf` requires satisfying every subschema, so merge their object
     // samples into a single example, then layer on any sibling properties.
-    const objects = resolvedSchema.allOf
-      .map((subSchema) => sampleFromSchema(document, subSchema, seen))
-      .filter((value) => value && typeof value === 'object' && !Array.isArray(value));
+    const samples = resolvedSchema.allOf.map(
+      (subSchema) => sampleFromSchema(document, subSchema, seen)
+    );
+    const objects = samples.filter(
+      (value) => value && typeof value === 'object' && !Array.isArray(value)
+    );
     if (Object.keys(resolvedSchema.properties || {}).length) {
       objects.push(Object.keys(resolvedSchema.properties).reduce(
         (result, name) => Object.assign(result, {
@@ -154,7 +157,14 @@ function sampleFromSchema(document, schema, seen = new Set()) {
         {}
       ));
     }
-    sample = objects.length ? Object.assign({}, ...objects) : undefined;
+    if (objects.length) {
+      sample = Object.assign({}, ...objects);
+    } else {
+      // No object subschemas to merge (e.g. `allOf` wrapping a single
+      // primitive or `$ref`); fall back to the first defined sample so the
+      // schema still yields a body instead of nothing.
+      sample = samples.find((value) => typeof value !== 'undefined');
+    }
   } else if (resolvedSchema.oneOf && resolvedSchema.oneOf.length) {
     sample = sampleFromSchema(document, resolvedSchema.oneOf[0], seen);
   } else if (resolvedSchema.anyOf && resolvedSchema.anyOf.length) {
@@ -550,3 +560,6 @@ module.exports = function compileOpenAPI31(apiElements, filename) {
     annotations,
   };
 };
+
+// Exposed only for unit tests.
+module.exports._sampleFromSchema = sampleFromSchema;
