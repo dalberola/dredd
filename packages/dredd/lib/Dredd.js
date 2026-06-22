@@ -1,3 +1,4 @@
+// @ts-check
 import async from 'async';
 import parse from '@stacklych/dredd-transactions/parse';
 import compile from '@stacklych/dredd-transactions/compile';
@@ -11,11 +12,56 @@ import TransactionRunner from './TransactionRunner';
 import { applyConfiguration } from './configuration';
 import annotationToLoggerInfo from './annotationToLoggerInfo';
 
+/**
+ * The normalized Dredd configuration as produced by `applyConfiguration`.
+ * `normalizeConfig` is not yet type-checked, so its return is `unknown`; this
+ * typedef captures the fields Dredd reads and forwards to its collaborators.
+ *
+ * @typedef {{
+ *   custom: { cwd: string },
+ *   path: string[],
+ *   http: Record<string, any>,
+ *   apiDescriptions: any[],
+ *   require?: string,
+ *   emitter: import('events').EventEmitter,
+ *   reporter: string[],
+ *   output: string[],
+ *   details: boolean,
+ *   'inline-errors': boolean,
+ * }} DreddConfiguration
+ *
+ * Dredd's public stats object. `start`/`end`/`duration` start as numbers and
+ * are overwritten with Dates by the TransactionRunner at runtime;
+ * `fileBasedReporters` is added by `configureReporters` and deleted here.
+ *
+ * @typedef {{
+ *   tests: number,
+ *   failures: number,
+ *   errors: number,
+ *   passes: number,
+ *   skipped: number,
+ *   start: number,
+ *   end: number,
+ *   duration: number,
+ *   fileBasedReporters?: number,
+ * }} DreddStats
+ */
+
+/**
+ * @param {Error} error
+ * @param {string} prefix
+ * @returns {Error}
+ */
 function prefixError(error, prefix) {
   error.message = `${prefix}: ${error.message}`;
   return error;
 }
 
+/**
+ * @param {(error: any, ...args: any[]) => void} decoratedCallback
+ * @param {string} prefix
+ * @returns {(error: any, ...args: any[]) => void}
+ */
 function prefixErrors(decoratedCallback, prefix) {
   return (error, ...args) => {
     if (error) {
@@ -25,6 +71,11 @@ function prefixErrors(decoratedCallback, prefix) {
   };
 }
 
+/**
+ * @param {string[]} locations
+ * @param {any} options
+ * @param {Function} callback
+ */
 function readLocations(locations, options, callback) {
   const usesOptions = typeof options !== 'function';
   const resolvedOptions = usesOptions ? options : {};
@@ -47,13 +98,17 @@ function readLocations(locations, options, callback) {
 
       const apiDescriptions = locations.map((location, i) => ({
         location,
-        content: contents[i],
+        content: /** @type {any[]} */ (contents)[i],
       }));
       resolvedCallback(null, apiDescriptions);
     },
   );
 }
 
+/**
+ * @param {Array<{ location: string, content: any }>} apiDescriptions
+ * @param {Function} callback
+ */
 function parseContent(apiDescriptions, callback) {
   async.map(
     apiDescriptions,
@@ -71,29 +126,41 @@ function parseContent(apiDescriptions, callback) {
       }
 
       const parsedAPIdescriptions = apiDescriptions.map(
-        (apiDescription, i) => ({ ...parseResults[i], ...apiDescription }),
+        (apiDescription, i) => ({
+          .../** @type {any[]} */ (parseResults)[i],
+          ...apiDescription,
+        }),
       );
       callback(null, parsedAPIdescriptions);
     },
   );
 }
 
+/**
+ * @param {any[]} apiDescriptions
+ * @returns {any[]}
+ */
 function compileTransactions(apiDescriptions) {
   return apiDescriptions
     .map(({ mediaType, apiElements, location }) => {
       try {
         return compile(mediaType, apiElements, location);
       } catch (error) {
+        const compileError = /** @type {Error} */ (error);
         throw prefixError(
-          error,
+          compileError,
           'Unable to compile HTTP transactions from ' +
-            `API description document '${location}': ${error.message}`,
+            `API description document '${location}': ${compileError.message}`,
         );
       }
     })
     .map((compileResult, i) => ({ ...compileResult, ...apiDescriptions[i] }));
 }
 
+/**
+ * @param {Array<{ transactions: any[], location: string, mediaType: string }>} apiDescriptions
+ * @returns {any[]}
+ */
 function toTransactions(apiDescriptions) {
   return (
     apiDescriptions
@@ -114,6 +181,10 @@ function toTransactions(apiDescriptions) {
   );
 }
 
+/**
+ * @param {Array<{ annotations: any[], location: string }>} apiDescriptions
+ * @returns {Array<{ level: string, message: string }>}
+ */
 function toLoggerInfos(apiDescriptions) {
   return apiDescriptions
     .map((apiDescription) =>
@@ -128,8 +199,14 @@ function toLoggerInfos(apiDescriptions) {
 }
 
 class Dredd {
+  /**
+   * @param {any} config
+   */
   constructor(config) {
-    this.configuration = applyConfiguration(config);
+    this.configuration = /** @type {DreddConfiguration} */ (
+      applyConfiguration(config)
+    );
+    /** @type {DreddStats} */
     this.stats = {
       tests: 0,
       failures: 0,
@@ -144,6 +221,9 @@ class Dredd {
     this.logger = logger;
   }
 
+  /**
+   * @param {(error: any, apiDescriptions?: any[]) => void} callback
+   */
   prepareAPIdescriptions(callback) {
     this.logger.debug('Resolving locations of API description documents');
     let locations;
@@ -159,11 +239,14 @@ class Dredd {
 
     async.waterfall(
       [
-        (next) => {
+        (/** @type {Function} */ next) => {
           this.logger.debug('Reading API description documents');
           readLocations(locations, { http: this.configuration.http }, next);
         },
-        (apiDescriptions, next) => {
+        (
+          /** @type {any[]} */ apiDescriptions,
+          /** @type {Function} */ next,
+        ) => {
           const allAPIdescriptions =
             this.configuration.apiDescriptions.concat(apiDescriptions);
           this.logger.debug('Parsing API description documents');
@@ -193,6 +276,9 @@ class Dredd {
     );
   }
 
+  /**
+   * @param {(error: any, stats?: DreddStats) => void} callback
+   */
   run(callback) {
     this.logger.debug('Resolving --require');
     if (this.configuration.require) {
@@ -223,7 +309,10 @@ class Dredd {
         return;
       }
 
-      const loggerInfos = toLoggerInfos(apiDescriptions);
+      // Guaranteed defined on the success path; the callback types it as
+      // optional only because the error path omits it.
+      const resolvedAPIdescriptions = /** @type {any[]} */ (apiDescriptions);
+      const loggerInfos = toLoggerInfos(resolvedAPIdescriptions);
       // Call with the (level, message) signature, not a single loggerInfo
       // object: although Winston 3.x renders both identically, the integration
       // tests in test/integration/annotations-test.js assert on these call
@@ -237,12 +326,15 @@ class Dredd {
       }
 
       this.logger.debug('Starting the transaction runner');
-      this.configuration.apiDescriptions = apiDescriptions;
+      this.configuration.apiDescriptions = resolvedAPIdescriptions;
       this.transactionRunner.config(this.configuration);
-      const transactions = toTransactions(apiDescriptions);
-      this.transactionRunner.run(transactions, (runError) => {
-        callback(runError, this.stats);
-      });
+      const transactions = toTransactions(resolvedAPIdescriptions);
+      this.transactionRunner.run(
+        transactions,
+        (/** @type {any} */ runError) => {
+          callback(runError, this.stats);
+        },
+      );
     });
   }
 }
