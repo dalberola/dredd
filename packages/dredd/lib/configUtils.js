@@ -1,7 +1,12 @@
+// @ts-check
 import clone from 'clone';
 import fs from 'fs';
 import yaml from 'js-yaml';
 
+/**
+ * @param {Record<string, any>} argsOrigin
+ * @param {string} [path]
+ */
 export function save(argsOrigin, path) {
   if (!path) {
     path = './dredd.yml';
@@ -24,13 +29,17 @@ export function save(argsOrigin, path) {
   fs.writeFileSync(path, yaml.dump(args));
 }
 
+/**
+ * @param {string} [path]
+ * @returns {Record<string, any>}
+ */
 export function load(path) {
   if (!path) {
     path = './dredd.yml';
   }
 
-  const yamlData = fs.readFileSync(path);
-  const data = yaml.load(yamlData);
+  const yamlData = fs.readFileSync(path, 'utf8');
+  const data = /** @type {Record<string, any>} */ (yaml.load(yamlData));
 
   data._ = [data.blueprint, data.endpoint];
 
@@ -40,7 +49,12 @@ export function load(path) {
   return data;
 }
 
+/**
+ * @param {string[]} [customArray]
+ * @returns {Record<string, string | undefined>}
+ */
 export function parseCustom(customArray) {
+  /** @type {Record<string, string | undefined>} */
   const output = {};
   if (Array.isArray(customArray)) {
     for (const string of customArray) {
