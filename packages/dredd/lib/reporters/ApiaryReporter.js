@@ -1,3 +1,4 @@
+// @ts-check
 import clone from 'clone';
 import { randomUUID as generateUuid } from 'crypto';
 import os from 'os';
@@ -6,6 +7,18 @@ import request from '../httpClient';
 import logger from '../logger';
 import reporterOutputLogger from './reporterOutputLogger';
 import packageData from '../../package.json';
+
+/**
+ * @typedef {import('../types/reporters').ReporterStats} ReporterStats
+ * @typedef {import('../types/reporters').ReporterTest} ReporterTest
+ * @typedef {{
+ *   custom?: Record<string, any>,
+ *   server?: string,
+ *   http?: Record<string, any>,
+ * }} ApiaryConfig
+ * @typedef {{ logs?: any[] }} ApiaryRunner
+ * @typedef {(error?: any, response?: any, parsedBody?: any) => void} ApiaryCallback
+ */
 
 const CONNECTION_ERRORS = [
   'ECONNRESET',
@@ -17,16 +30,28 @@ const CONNECTION_ERRORS = [
   'EPIPE',
 ];
 
+/**
+ * @param {import('events').EventEmitter} emitter
+ * @param {ReporterStats} stats
+ * @param {ApiaryConfig} config
+ * @param {ApiaryRunner} [runner]
+ */
 function ApiaryReporter(emitter, stats, config, runner) {
   this.type = 'apiary';
   this.stats = stats;
+  /** @type {string | null} */
   this.uuid = null;
+  /** @type {number | null} */
   this.startedAt = null;
+  /** @type {number | null} */
   this.endedAt = null;
+  /** @type {string | null} */
   this.remoteId = null;
   this.config = config;
   this.runner = runner;
+  /** @type {string | null} */
   this.reportUrl = null;
+  /** @type {ReporterTest[]} */
   this.errors = [];
   this.serverError = false;
   this.configuration = {
@@ -56,6 +81,15 @@ https://dredd.org/en/latest/how-to-guides/#using-apiary-reporter-and-apiary-test
 }
 
 // THIS IS HIIIIGHWAY TO HELL, HIIIIIGHWAY TO HELL. Everything should have one single interface
+/**
+ * Reads a setting from (in order) the deprecated custom config, the apiary
+ * reporter env block, or the process environment. The value is intentionally
+ * loosely typed since it spans config values, env strings and defaults.
+ * @param {string} customProperty
+ * @param {string} envProperty
+ * @param {*} [defaultVal]
+ * @returns {any}
+ */
 ApiaryReporter.prototype._get = function _get(
   customProperty,
   envProperty,
@@ -91,7 +125,9 @@ ApiaryReporter.prototype._get = function _get(
   return returnVal;
 };
 
+/** @returns {string[]} */
 ApiaryReporter.prototype._getKeys = function _getKeys() {
+  /** @type {string[]} */
   let returnKeys = [];
   returnKeys = returnKeys.concat(
     Object.keys(
@@ -101,6 +137,7 @@ ApiaryReporter.prototype._getKeys = function _getKeys() {
   return returnKeys.concat(Object.keys(process.env));
 };
 
+/** @param {import('events').EventEmitter} emitter */
 ApiaryReporter.prototype.configureEmitter = function configureEmitter(emitter) {
   emitter.on('start', (apiDescriptions, callback) => {
     if (this.serverError === true) {
@@ -114,6 +151,7 @@ ApiaryReporter.prototype.configureEmitter = function configureEmitter(emitter) {
     // - process.env keys
     const ciVars = /^(TRAVIS|CIRCLE|CI|DRONE|BUILD_ID)/;
     const envVarNames = this._getKeys();
+    /** @type {Record<string, any>} */
     const ciEnvVars = {};
     for (const envVarName of envVarNames) {
       if (envVarName.match(ciVars)) {
@@ -122,12 +160,15 @@ ApiaryReporter.prototype.configureEmitter = function configureEmitter(emitter) {
     }
 
     // Transform blueprints data to array
+    /** @type {Record<string, any>} */
     const data = {
-      blueprints: apiDescriptions.map((apiDescription) => ({
-        filename: apiDescription.location,
-        raw: apiDescription.content,
-        annotations: apiDescription.annotations,
-      })),
+      blueprints: /** @type {any[]} */ (apiDescriptions).map(
+        (apiDescription) => ({
+          filename: apiDescription.location,
+          raw: apiDescription.content,
+          annotations: apiDescription.annotations,
+        }),
+      ),
       endpoint: this.config.server,
       agent:
         this._get('dreddAgent', 'DREDD_AGENT') || this._get('user', 'USER'),
@@ -227,6 +268,10 @@ ApiaryReporter.prototype.configureEmitter = function configureEmitter(emitter) {
   });
 };
 
+/**
+ * @param {ReporterTest} test
+ * @param {ApiaryCallback} callback
+ */
 ApiaryReporter.prototype._createStep = function _createStep(test, callback) {
   if (this.serverError === true) {
     return callback();
@@ -241,12 +286,23 @@ ApiaryReporter.prototype._createStep = function _createStep(test, callback) {
   });
 };
 
+/**
+ * @param {string} path
+ * @param {string} method
+ * @param {any} reqBody
+ * @param {ApiaryCallback} callback
+ */
 ApiaryReporter.prototype._performRequestAsync = function _performRequestAsync(
   path,
   method,
   reqBody,
   callback,
 ) {
+  /**
+   * @param {any} err
+   * @param {{ headers: any, statusCode?: number } | undefined} res
+   * @param {string | Buffer | undefined} resBody
+   */
   const handleRequest = (err, res, resBody) => {
     let parsedBody;
     if (err) {
@@ -264,19 +320,20 @@ ApiaryReporter.prototype._performRequestAsync = function _performRequestAsync(
     logger.debug('Handling HTTP response from Apiary API');
 
     try {
-      parsedBody = JSON.parse(resBody);
+      parsedBody = JSON.parse(/** @type {string} */ (resBody));
     } catch (error) {
       this.serverError = true;
       err = new Error(`
 Apiary reporter failed to parse Apiary API response body:
-${error.message}\n${resBody}
+${/** @type {Error} */ (error).message}\n${resBody}
 `);
       return callback(err);
     }
 
+    const response = /** @type {{ headers: any, statusCode?: number }} */ (res);
     const info = {
-      headers: res.headers,
-      statusCode: res.statusCode,
+      headers: response.headers,
+      statusCode: response.statusCode,
       body: parsedBody,
     };
 
@@ -292,6 +349,7 @@ ${error.message}\n${resBody}
     'Content-Type': 'application/json',
   };
 
+  /** @type {Record<string, any>} */
   const options = clone(this.config.http || {});
   options.uri = this.configuration.apiUrl + path;
   options.method = method;
@@ -321,6 +379,23 @@ to Apiary API: ${options.method} ${options.uri} \
   }
 };
 
+/**
+ * @param {ReporterTest} test
+ * @returns {{
+ *   testRunId: string | null,
+ *   origin: any,
+ *   duration: number | undefined,
+ *   result: string | undefined,
+ *   startedAt: number | null | undefined,
+ *   results: {
+ *     request: any,
+ *     realResponse: any,
+ *     expectedResponse: any,
+ *     validationResult: any,
+ *     errors: any[],
+ *   },
+ * }}
+ */
 ApiaryReporter.prototype._transformTestToReporter =
   function _transformTestToReporter(test) {
     return {
