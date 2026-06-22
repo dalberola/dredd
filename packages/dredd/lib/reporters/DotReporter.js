@@ -1,10 +1,21 @@
+// @ts-check
 import logger from '../logger';
 import reporterOutputLogger from './reporterOutputLogger';
 import prettifyResponse from '../prettifyResponse';
 
+/**
+ * @typedef {import('../types/reporters').ReporterStats} ReporterStats
+ * @typedef {import('../types/reporters').ReporterTest} ReporterTest
+ */
+
+/**
+ * @param {import('events').EventEmitter} emitter
+ * @param {ReporterStats} stats
+ */
 function DotReporter(emitter, stats) {
   this.type = 'dot';
   this.stats = stats;
+  /** @type {ReporterTest[]} */
   this.errors = [];
 
   this.configureEmitter(emitter);
@@ -12,6 +23,7 @@ function DotReporter(emitter, stats) {
   logger.debug(`Using '${this.type}' reporter.`);
 }
 
+/** @param {import('events').EventEmitter} emitter */
 DotReporter.prototype.configureEmitter = function configureEmitter(emitter) {
   emitter.on('start', (apiDescriptions, callback) => {
     logger.debug('Beginning Dredd testing...');
@@ -67,6 +79,7 @@ ${this.stats.errors} errors, ${this.stats.skipped} skipped\
   });
 };
 
+/** @param {string} str */
 DotReporter.prototype.write = function write(str) {
   process.stdout.write(str);
 };

@@ -1,6 +1,12 @@
+// @ts-check
 import logger from '../logger';
 import reporterOutputLogger from './reporterOutputLogger';
 import prettifyResponse from '../prettifyResponse';
+
+/**
+ * @typedef {import('../types/reporters').ReporterStats} ReporterStats
+ * @typedef {import('../types/reporters').ReporterTest} ReporterTest
+ */
 
 const CONNECTION_ERRORS = [
   'ECONNRESET',
@@ -12,11 +18,18 @@ const CONNECTION_ERRORS = [
   'EPIPE',
 ];
 
+/**
+ * @param {import('events').EventEmitter} emitter
+ * @param {ReporterStats} stats
+ * @param {boolean} inlineErrors
+ * @param {boolean} details
+ */
 function CLIReporter(emitter, stats, inlineErrors, details) {
   this.type = 'cli';
   this.stats = stats;
   this.inlineErrors = inlineErrors;
   this.details = details;
+  /** @type {ReporterTest[]} */
   this.errors = [];
 
   this.configureEmitter(emitter);
@@ -24,6 +37,7 @@ function CLIReporter(emitter, stats, inlineErrors, details) {
   logger.debug(`Using '${this.type}' reporter.`);
 }
 
+/** @param {import('events').EventEmitter} emitter */
 CLIReporter.prototype.configureEmitter = function configureEmitter(emitter) {
   emitter.on('start', (apiDescriptions, callback) => {
     logger.debug('Beginning Dredd testing...');

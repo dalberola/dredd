@@ -135,11 +135,15 @@ function colorizeLevel(level, colorName) {
 // (matching Winston 2.x Dredd's routing): pass `true` for all levels, or an
 // array of level names for a subset. Levels not listed go to stdout.
 /**
+ * @template {Record<string, number>} TLevels
  * @param {object} options
- * @param {Record<string, number>} options.levels
+ * @param {TLevels} options.levels
  * @param {Record<string, string>} options.colors
  * @param {string} options.level
  * @param {boolean | string[]} [options.stderr]
+ *
+ * Returns the Winston logger widened with a call signature for each custom
+ * level name (the level methods are attached dynamically below).
  */
 export default function createConsoleLogger({
   levels,
@@ -209,5 +213,9 @@ export default function createConsoleLogger({
     configurable: true,
   });
 
-  return logger;
+  const leveledLogger =
+    /** @type {import('winston').Logger & Record<keyof TLevels, (...args: any[]) => import('winston').Logger>} */ (
+      logger
+    );
+  return leveledLogger;
 }
