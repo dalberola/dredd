@@ -369,19 +369,28 @@ class TransactionRunner {
       // Capture outer this
       const runHookWithData = (hookFnIndex, runHookCallback) => {
         const hookFn = hooks[hookFnIndex];
+        // Guard so the iteration callback fires exactly once. The try/catch
+        // below also wraps the inner `runHook` callback, so without this guard
+        // an error thrown after the callback (e.g. in `runHookCallback` or
+        // `emitHookError`) would invoke `runHookCallback` twice and execute the
+        // rest of the run twice.
+        let advanced = false;
+        const advance = () => {
+          if (advanced) {
+            return;
+          }
+          advanced = true;
+          runHookCallback();
+        };
         try {
           this.runHook(hookFn, data, (err) => {
             if (err) {
               logger.debug('Hook errored:', err);
               this.emitHookError(err, data);
             }
-            runHookCallback();
+            advance();
           });
         } catch (error) {
-          // Beware! This is very problematic part of code. This try/catch block
-          // catches also errors thrown in 'runHookCallback', i.e. in all
-          // subsequent flow! Then also 'callback' is called twice and
-          // all the flow can be executed twice. We need to reimplement this.
           // Treat assertion failures thrown from hooks (chai or node:assert,
           // both expose name === 'AssertionError') as a failed transaction
           // rather than a hook error.
@@ -398,7 +407,7 @@ class TransactionRunner {
             this.emitHookError(error, data);
           }
 
-          runHookCallback();
+          advance();
         }
       };
 
