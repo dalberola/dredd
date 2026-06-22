@@ -221,6 +221,7 @@ class TransactionRunner {
   emitStart(callback) {
     // More than one reporter is supported
     let reporterCount = this.configuration.emitter.listeners('start').length;
+    let started = false;
 
     // When event 'start' is emitted, function in callback is executed for each
     // reporter registered by listeners
@@ -232,9 +233,12 @@ class TransactionRunner {
           logger.error(reporterError.message);
         }
 
-        // Last called reporter callback function starts the runner
+        // Start the runner once every reporter's 'start' callback has fired.
+        // Guard with `started` and `<= 0` so the runner starts exactly once
+        // even if a reporter invokes its callback more than once.
         reporterCount--;
-        if (reporterCount === 0) {
+        if (reporterCount <= 0 && !started) {
+          started = true;
           callback();
         }
       },
@@ -918,9 +922,11 @@ include a message body: https://tools.ietf.org/html/rfc7231#section-6.3\
 
   emitEnd(callback) {
     let reporterCount = this.configuration.emitter.listeners('end').length;
+    let ended = false;
     this.configuration.emitter.emit('end', () => {
       reporterCount--;
-      if (reporterCount === 0) {
+      if (reporterCount <= 0 && !ended) {
+        ended = true;
         callback();
       }
     });

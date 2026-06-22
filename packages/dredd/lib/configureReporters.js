@@ -66,7 +66,7 @@ function configureReporters(config, stats, runner) {
       default:
         // I don't even know where to begin...
         // TODO: DESIGN / REFACTOR WHOLE REPORTER(S) API FROM SCRATCH, THIS IS MADNESS!!1
-        new BaseReporter(emitter, statistics);
+        return new BaseReporter(emitter, statistics);
     }
   }
 

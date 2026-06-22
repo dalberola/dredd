@@ -67,14 +67,6 @@ ApiaryReporter.prototype._get = function _get(
   if (this.config.custom && this.config.custom[customProperty]) {
     returnVal = this.config.custom[customProperty];
 
-    // This will be the ONLY supported way how to configure this reporter
-    // FIXME: this branch duplicates the condition above and can never run;
-    // preserved as-is during the eslint upgrade (both assign the same value,
-    // so behaviour is unchanged). Tracked for a separate fix.
-    // eslint-disable-next-line no-dupe-else-if
-  } else if (this.config.custom && this.config.custom[customProperty]) {
-    returnVal = this.config.custom[customProperty];
-
     // This will be deprecated
   } else if (
     this.config.custom &&
