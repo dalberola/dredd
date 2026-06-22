@@ -166,4 +166,20 @@ describe('BaseReporter', () => {
 
     it('should set the duration', () => assert.isNotNaN(test.duration));
   });
+
+  describe('when a test completes without a start time', () => {
+    beforeEach(() => {
+      test = {
+        status: 'pass',
+        title: 'Startless Test',
+      };
+      // No 'test start' emitted, so test.start is never set.
+      emitter.emit('test pass', test);
+    });
+
+    it('should set a numeric (zero) duration rather than NaN', () => {
+      assert.isNotNaN(test.duration);
+      assert.equal(test.duration, 0);
+    });
+  });
 });
