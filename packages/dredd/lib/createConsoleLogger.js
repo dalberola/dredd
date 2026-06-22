@@ -214,7 +214,7 @@ export default function createConsoleLogger({
   });
 
   const leveledLogger =
-    /** @type {import('winston').Logger & Record<keyof TLevels, (...args: any[]) => import('winston').Logger>} */ (
+    /** @type {import('winston').Logger & Record<keyof TLevels, (...args: any[]) => import('winston').Logger> & { transports: ConsoleTransport[] & { console: ConsoleTransport } }} */ (
       logger
     );
   return leveledLogger;
