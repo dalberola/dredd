@@ -1,10 +1,21 @@
+// @ts-check
 import tty from 'tty';
 
 import logger from '../logger';
 import prettifyResponse from '../prettifyResponse';
 import reporterOutputLogger from './reporterOutputLogger';
 
+/**
+ * @typedef {import('../types/reporters').ReporterStats} ReporterStats
+ * @typedef {import('../types/reporters').ReporterTest} ReporterTest
+ */
+
+/**
+ * @param {import('events').EventEmitter} emitter
+ * @param {ReporterStats} stats
+ */
 function NyanCatReporter(emitter, stats) {
+  /** @type {number} */
   let windowWidth;
 
   this.type = 'nyan';
@@ -13,9 +24,12 @@ function NyanCatReporter(emitter, stats) {
 
   if (this.isatty) {
     if (process.stdout.getWindowSize) {
-      windowWidth = process.stdout.getWindowSize(1)[0];
+      // Modern Node's getWindowSize() takes no argument (the legacy fd arg is
+      // ignored) and returns [columns, rows].
+      [windowWidth] = process.stdout.getWindowSize();
     } else {
-      windowWidth = tty.getWindowSize()[1];
+      // Legacy fallback removed from current Node's type definitions.
+      windowWidth = /** @type {any} */ (tty).getWindowSize()[1];
     }
   } else {
     windowWidth = 75;
@@ -24,11 +38,14 @@ function NyanCatReporter(emitter, stats) {
   this.rainbowColors = this.generateColors();
   this.colorIndex = 0;
   this.numberOfLines = 4;
+  /** @type {string[][]} */
   this.trajectories = [[], [], [], []];
   this.nyanCatWidth = 11;
   this.trajectoryWidthMax = ((windowWidth * 0.75) | 0) - this.nyanCatWidth; // eslint-disable-line no-bitwise
   this.scoreboardWidth = 5;
+  /** @type {number | boolean} */
   this.tick = 0;
+  /** @type {ReporterTest[]} */
   this.errors = [];
 
   this.configureEmitter(emitter);
@@ -36,6 +53,7 @@ function NyanCatReporter(emitter, stats) {
   logger.debug(`Using '${this.type}' reporter.`);
 }
 
+/** @param {import('events').EventEmitter} emitter */
 NyanCatReporter.prototype.configureEmitter = function configureEmitter(
   emitter,
 ) {
@@ -109,6 +127,10 @@ NyanCatReporter.prototype.drawScoreboard = function drawScoreboard() {
   };
 
   // Capture outer `this`
+  /**
+   * @param {number} color
+   * @param {number} n
+   */
   const draw = (color, n) => {
     this.write(' ');
     this.write(`\u001b[${color}m${n}\u001b[0m`);
@@ -187,10 +209,12 @@ NyanCatReporter.prototype.face = function face() {
   return '( - .-)';
 };
 
+/** @param {number} n */
 NyanCatReporter.prototype.cursorUp = function cursorUp(n) {
   this.write(`\u001b[${n}A`);
 };
 
+/** @param {number} n */
 NyanCatReporter.prototype.cursorDown = function cursorDown(n) {
   this.write(`\u001b[${n}B`);
 };
@@ -223,12 +247,14 @@ NyanCatReporter.prototype.generateColors = function generateColors() {
   return colors;
 };
 
+/** @param {string} str */
 NyanCatReporter.prototype.rainbowify = function rainbowify(str) {
   const color = this.rainbowColors[this.colorIndex % this.rainbowColors.length];
   this.colorIndex += 1;
   return `\u001b[38;5;${color}m${str}\u001b[0m`;
 };
 
+/** @param {string} str */
 NyanCatReporter.prototype.write = function write(str) {
   process.stdout.write(str);
 };
