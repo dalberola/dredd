@@ -1,3 +1,4 @@
+// @ts-check
 import clone from 'clone';
 import { noCallThru } from 'proxyquire';
 
@@ -20,19 +21,30 @@ const proxyquire = noCallThru();
 // or not. Side effects should get eliminated as much as possible in favor
 // of decoupling.
 
+/**
+ * @param {string} hookfile
+ * @param {any} hooks The Hooks instance, passed to the hook file as a stub.
+ */
 function loadHookFile(hookfile, hooks) {
   try {
     proxyquire(hookfile, { hooks });
   } catch (error) {
+    const hookError = /** @type {Error} */ (error);
     logger.warn(
       `Skipping hook loading. Error reading hook file '${hookfile}'. ` +
         'This probably means one or more of your hook files are invalid.\n' +
-        `Message: ${error.message}\n` +
-        `Stack: \n${error.stack}\n`,
+        `Message: ${hookError.message}\n` +
+        `Stack: \n${hookError.stack}\n`,
     );
   }
 }
 
+/**
+ * @param {any} runner The TransactionRunner instance (no canonical type until
+ *   TransactionRunner is type-checked).
+ * @param {any[]} transactions
+ * @param {(error?: any) => void} callback
+ */
 export default function addHooks(runner, transactions, callback) {
   if (!runner.logs) {
     runner.logs = [];
