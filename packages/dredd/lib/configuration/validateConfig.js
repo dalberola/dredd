@@ -1,3 +1,12 @@
+// @ts-check
+
+/**
+ * @typedef {object} ConfigRule
+ * @property {string[]} options Config keys this rule matches
+ * @property {string} message Warning/error message to surface
+ */
+
+/** @type {ConfigRule[]} */
 const deprecatedOptions = [
   {
     options: ['c'],
@@ -23,6 +32,7 @@ const deprecatedOptions = [
   },
 ];
 
+/** @type {ConfigRule[]} */
 const unsupportedOptions = [
   {
     options: ['timestamp', 't'],
@@ -46,15 +56,22 @@ const unsupportedOptions = [
   },
 ];
 
+/**
+ * @param {ConfigRule[]} rules
+ * @param {Record<string, unknown>} config
+ * @returns {string[]}
+ */
 function flushMessages(rules, config) {
   return Object.keys(config).reduce((messages, configKey) => {
     const warning = rules.find((rule) => rule.options.includes(configKey));
     return warning ? messages.concat(warning.message) : messages;
-  }, []);
+  }, /** @type {string[]} */ ([]));
 }
 
 /**
  * Returns the errors and warnings relative to the given config.
+ * @param {Record<string, unknown>} config
+ * @returns {{ warnings: string[], errors: string[] }}
  */
 const validateConfig = (config) => ({
   warnings: flushMessages(deprecatedOptions, config),
