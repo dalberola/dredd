@@ -1,3 +1,4 @@
+// @ts-check
 import async from 'async';
 import os from 'os';
 import url from 'url';
@@ -13,27 +14,38 @@ import performRequest from './performRequest';
 const OAS_31_DIALECT = 'https://spec.openapis.org/oas/3.1/dialect/base';
 const JSON_SCHEMA_2020_12 = 'https://json-schema.org/draft/2020-12/schema';
 
+/** @param {any} arr */
 function headersArrayToObject(arr) {
   return Array.from(arr).reduce((result, currentItem) => {
     result[currentItem.name] = currentItem.value;
     return result;
-  }, {});
+  }, /** @type {Record<string, any>} */ ({}));
 }
 
+/** @param {any} reporterError */
 function eventCallback(reporterError) {
   if (reporterError) {
     logger.error(reporterError.message);
   }
 }
 
+/**
+ * @param {any} value
+ * @param {string} errorPrefix
+ */
 function parseJSON(value, errorPrefix) {
   try {
     return JSON.parse(value);
   } catch (error) {
-    throw new Error(`${errorPrefix}: ${error.message}`, { cause: error });
+    const message = `${errorPrefix}: ${/** @type {Error} */ (error).message}`;
+    // The Error `cause` option is ES2022; Node supports it at runtime, but the
+    // compiler's `lib` is es2017, so the 2-argument constructor needs ignoring.
+    // @ts-ignore
+    throw new Error(message, { cause: error });
   }
 }
 
+/** @param {any} bodySchema */
 function getSchemaObject(bodySchema) {
   if (typeof bodySchema === 'string') {
     return parseJSON(bodySchema, 'Given JSON Schema is not a valid JSON');
@@ -41,6 +53,7 @@ function getSchemaObject(bodySchema) {
   return bodySchema;
 }
 
+/** @param {any} bodySchema */
 function getSchemaDialect(bodySchema) {
   if (!bodySchema) {
     return null;
@@ -50,12 +63,14 @@ function getSchemaDialect(bodySchema) {
   return schema && schema.$schema;
 }
 
+/** @param {any} bodySchema */
 function isAjvSchema(bodySchema) {
   return [OAS_31_DIALECT, JSON_SCHEMA_2020_12].includes(
     getSchemaDialect(bodySchema),
   );
 }
 
+/** @param {any} schema */
 function normalizeAjvSchemaDialect(schema) {
   if (schema && schema.$schema === OAS_31_DIALECT) {
     return { ...schema, $schema: JSON_SCHEMA_2020_12 };
@@ -63,6 +78,7 @@ function normalizeAjvSchemaDialect(schema) {
   return schema;
 }
 
+/** @param {any} error */
 function getErrorProperty(error) {
   switch (error.keyword) {
     case 'required':
@@ -74,10 +90,12 @@ function getErrorProperty(error) {
   }
 }
 
+/** @param {any} value */
 function getDataType(value) {
   return value === null ? null : typeof value;
 }
 
+/** @param {any} error */
 function formatJSONSchema202012Error(error) {
   const pointer = error.instancePath || '';
   const extraProperty = getErrorProperty(error);
@@ -97,6 +115,10 @@ function formatJSONSchema202012Error(error) {
   }
 }
 
+/**
+ * @param {any[]} errors
+ * @param {any} actualBody
+ */
 function createJSONSchemaValidationResult(errors, actualBody) {
   return {
     valid: errors.length === 0,
@@ -106,6 +128,10 @@ function createJSONSchemaValidationResult(errors, actualBody) {
   };
 }
 
+/**
+ * @param {any} error
+ * @param {any} actualBody
+ */
 function createInvalidJSONValidationResult(error, actualBody) {
   return createJSONSchemaValidationResult(
     [
@@ -121,6 +147,10 @@ function createInvalidJSONValidationResult(error, actualBody) {
   );
 }
 
+/**
+ * @param {any} bodySchema
+ * @param {any} actualBody
+ */
 function validateBodySchemaWithAjv(bodySchema, actualBody) {
   const ajv2020ModuleName = 'ajv/dist/2020';
   const ajvFormatsModuleName = 'ajv-formats';
@@ -142,7 +172,7 @@ function validateBodySchemaWithAjv(bodySchema, actualBody) {
 
   validate(actual);
 
-  const errors = (validate.errors || []).map((error) => {
+  const errors = (validate.errors || []).map((/** @type {any} */ error) => {
     const pointer = error.instancePath || '';
     const extraProperty = getErrorProperty(error);
     const location = extraProperty ? `${pointer}/${extraProperty}` : pointer;
@@ -158,26 +188,36 @@ function validateBodySchemaWithAjv(bodySchema, actualBody) {
   return createJSONSchemaValidationResult(errors, actualBody);
 }
 
+/** @param {any} fields */
 function validateFields(fields) {
   return Object.keys(fields).every((fieldName) => fields[fieldName].valid);
 }
 
 class TransactionRunner {
+  /** @param {any} configuration */
   constructor(configuration) {
     this.configureTransaction = this.configureTransaction.bind(this);
     this.executeTransaction = this.executeTransaction.bind(this);
     this.configuration = configuration;
     this.logs = [];
     this.hookStash = {};
+    /** @type {any} */
     this.error = null;
+    // Set externally by HooksWorkerClient when the hooks handler errors.
+    /** @type {any} */
     this.hookHandlerError = null;
   }
 
+  /** @param {any} config */
   config(config) {
     this.configuration = config;
     this.multiBlueprint = this.configuration.apiDescriptions.length > 1;
   }
 
+  /**
+   * @param {any[]} transactions
+   * @param {(error?: any) => void} callback
+   */
   run(transactions, callback) {
     logger.debug('Starting reporters and waiting until all of them are ready');
     this.emitStart((emitStartErr) => {
@@ -202,7 +242,8 @@ class TransactionRunner {
         logger.debug('Executing HTTP transactions');
         this.executeAllTransactions(
           transactions,
-          this.hooks,
+          // `hooks` is attached to the runner by addHooks (external mutation).
+          /** @type {any} */ (this).hooks,
           (execAllTransErr) => {
             if (execAllTransErr) {
               return callback(execAllTransErr);
@@ -218,6 +259,7 @@ class TransactionRunner {
     });
   }
 
+  /** @param {(error?: any) => void} callback */
   emitStart(callback) {
     // More than one reporter is supported
     let reporterCount = this.configuration.emitter.listeners('start').length;
@@ -228,7 +270,7 @@ class TransactionRunner {
     this.configuration.emitter.emit(
       'start',
       this.configuration.apiDescriptions,
-      (reporterError) => {
+      (/** @type {any} */ reporterError) => {
         if (reporterError) {
           logger.error(reporterError.message);
         }
@@ -245,12 +287,18 @@ class TransactionRunner {
     );
   }
 
+  /**
+   * @param {any[]} transactions
+   * @param {any} hooks
+   * @param {(error?: any) => void} callback
+   */
   executeAllTransactions(transactions, hooks, callback) {
     // Warning: Following lines is "differently" performed by 'addHooks'
     // in TransactionRunner.run call. Because addHooks creates hooks.transactions
     // as an object `{}` with transaction.name keys and value is every
     // transaction, we do not fill transactions from executeAllTransactions here.
     // Transactions is supposed to be an Array here!
+    /** @type {any} */
     let transaction;
     if (!hooks.transactions) {
       hooks.transactions = {};
@@ -362,12 +410,20 @@ class TransactionRunner {
   }
 
   // The 'data' argument can be 'transactions' array or 'transaction' object
+  /**
+   * @param {any} hooks
+   * @param {any} data
+   * @param {(error?: any) => void} callback
+   */
   runHooksForData(hooks, data, callback) {
     if (hooks && hooks.length) {
       logger.debug('Running hooks...');
 
       // Capture outer this
-      const runHookWithData = (hookFnIndex, runHookCallback) => {
+      const runHookWithData = (
+        /** @type {number} */ hookFnIndex,
+        /** @type {() => void} */ runHookCallback,
+      ) => {
         const hookFn = hooks[hookFnIndex];
         // Guard so the iteration callback fires exactly once. The try/catch
         // below also wraps the inner `runHook` callback, so without this guard
@@ -383,17 +439,18 @@ class TransactionRunner {
           runHookCallback();
         };
         try {
-          this.runHook(hookFn, data, (err) => {
+          this.runHook(hookFn, data, (/** @type {any} */ err) => {
             if (err) {
               logger.debug('Hook errored:', err);
               this.emitHookError(err, data);
             }
             advance();
           });
-        } catch (error) {
+        } catch (caught) {
           // Treat assertion failures thrown from hooks (chai or node:assert,
           // both expose name === 'AssertionError') as a failed transaction
           // rather than a hook error.
+          const error = /** @type {any} */ (caught);
           if (error && error.name === 'AssertionError') {
             const transactions = Array.isArray(data) ? data : [data];
             for (const transaction of transactions) {
@@ -422,6 +479,10 @@ class TransactionRunner {
   // If it's 'transactions', it is treated as single 'transaction' anyway in this
   // function. That probably isn't correct and should be fixed eventually
   // (beware, tests count with the current behavior).
+  /**
+   * @param {any} error
+   * @param {any} data
+   */
   emitHookError(error, data) {
     if (!(error instanceof Error)) {
       error = new Error(error);
@@ -431,6 +492,11 @@ class TransactionRunner {
     this.emitError(error, test);
   }
 
+  /**
+   * @param {any} hook
+   * @param {any} data
+   * @param {(error?: any) => void} callback
+   */
   runHook(hook, data, callback) {
     if (hook.length === 1) {
       // Sync api
@@ -442,6 +508,7 @@ class TransactionRunner {
     }
   }
 
+  /** @param {any} transaction */
   configureTransaction(transaction) {
     const { configuration } = this;
     const { origin, request, response } = transaction;
@@ -477,6 +544,7 @@ class TransactionRunner {
 
     // The data models as used here must conform to Gavel.js
     // as defined in `http-response.coffee`
+    /** @type {any} */
     const expected = { headers: headersArrayToObject(response.headers) };
     if (response.body) {
       expected.body = response.body;
@@ -519,6 +587,7 @@ class TransactionRunner {
     return configuredTransaction;
   }
 
+  /** @param {string} serverUrl */
   parseServerUrl(serverUrl) {
     if (!serverUrl.match(/^https?:\/\//i)) {
       // Protocol is missing. Remove any : or / at the beginning of the URL
@@ -530,6 +599,10 @@ class TransactionRunner {
     return new URL(serverUrl);
   }
 
+  /**
+   * @param {string} serverPath
+   * @param {string} requestPath
+   */
   getFullPath(serverPath, requestPath) {
     if (serverPath === '/') {
       return requestPath;
@@ -561,6 +634,10 @@ class TransactionRunner {
   }
 
   // Factory for 'transaction.test' object creation
+  /**
+   * @param {any} transaction
+   * @returns {any}
+   */
   createTest(transaction) {
     return {
       status: '',
@@ -576,6 +653,7 @@ class TransactionRunner {
   // inherits data from the "transaction".
   // Necessary when a test is skipped/failed to contain
   // transaction information that is otherwise missing.
+  /** @param {any} transaction */
   ensureTestStructure(transaction) {
     transaction.test.request = transaction.request;
     transaction.test.expected = transaction.expected;
@@ -587,6 +665,10 @@ class TransactionRunner {
   // Marks the transaction as failed and makes sure everything in the transaction
   // object is set accordingly. Typically this would be invoked when transaction
   // runner decides to force a transaction to behave as failed.
+  /**
+   * @param {any} transaction
+   * @param {string} [reason]
+   */
   failTransaction(transaction, reason) {
     transaction.fail = true;
 
@@ -608,6 +690,10 @@ class TransactionRunner {
 
   // Marks the transaction as skipped and makes sure everything in the transaction
   // object is set accordingly.
+  /**
+   * @param {any} transaction
+   * @param {string} [reason]
+   */
   skipTransaction(transaction, reason) {
     transaction.skip = true;
 
@@ -629,6 +715,7 @@ class TransactionRunner {
 
   // Ensures that given transaction object has the "errors" key
   // where custom test run errors (not validation errors) are stored.
+  /** @param {any} transaction */
   ensureTransactionErrors(transaction) {
     if (!transaction.results) {
       transaction.results = {};
@@ -642,6 +729,10 @@ class TransactionRunner {
 
   // Inspects given transaction and emits 'test *' events with 'transaction.test'
   // according to the test's status
+  /**
+   * @param {any} transaction
+   * @param {(error?: any) => void} callback
+   */
   emitResult(transaction, callback) {
     if (this.error || !transaction.test) {
       logger.debug(
@@ -696,6 +787,10 @@ class TransactionRunner {
   }
 
   // Emits 'test error' with given test data. Halts the transaction runner.
+  /**
+   * @param {any} error
+   * @param {any} test
+   */
   emitError(error, test) {
     logger.debug('Emitting to reporters: test error');
     this.configuration.emitter.emit('test error', error, test, eventCallback);
@@ -707,6 +802,11 @@ class TransactionRunner {
 
   // This is actually doing more some pre-flight and conditional skipping of
   // the transcation based on the configuration or hooks. TODO rename
+  /**
+   * @param {any} transaction
+   * @param {any} hooks
+   * @param {any} [callback] Dual-arity: omit to pass the callback as `hooks`.
+   */
   executeTransaction(transaction, hooks, callback) {
     if (!callback) {
       [callback, hooks] = Array.from([hooks, undefined]);
@@ -786,6 +886,12 @@ Not performing HTTP request for '${transaction.name}'.\
 
   // An actual HTTP request, before validation hooks triggering
   // and the response validation is invoked here
+  /**
+   * @param {any} test
+   * @param {any} transaction
+   * @param {any} hooks
+   * @param {(error?: any) => void} callback
+   */
   performRequestAndValidate(test, transaction, hooks, callback) {
     const uri =
       url.format({
@@ -838,8 +944,17 @@ Not performing HTTP request for '${transaction.name}'.\
   // 2. Constant shadowing and reusage of "validationOutput" object where it could be avoided.
   // 3. Ambiguity between internal "results" and legacy "gavelResult[name].results".
   // 4. Mapping with for/of that affects prototype properties.
+  /**
+   * @param {any} test
+   * @param {any} transaction
+   * @param {(error?: any) => void} callback
+   */
   validateTransaction(test, transaction, callback) {
     logger.debug('Validating HTTP transaction by Gavel.js');
+    // The bundled Gavel (lib/vendor/gavel.js) ships no usable types; cast at
+    // the call sites so the `gavel` receiver (and its `this`) is preserved.
+    const gavelModule = /** @type {any} */ (gavel);
+    /** @type {any} */
     let gavelResult = { fields: {} };
 
     try {
@@ -848,14 +963,20 @@ Not performing HTTP request for '${transaction.name}'.\
         delete expectedWithoutBody.body;
         delete expectedWithoutBody.bodySchema;
 
-        gavelResult = gavel.validate(expectedWithoutBody, transaction.real);
+        gavelResult = gavelModule.validate(
+          expectedWithoutBody,
+          transaction.real,
+        );
         gavelResult.fields.body = validateBodySchemaWithAjv(
           transaction.expected.bodySchema,
           transaction.real.body,
         );
         gavelResult.valid = validateFields(gavelResult.fields);
       } else {
-        gavelResult = gavel.validate(transaction.expected, transaction.real);
+        gavelResult = gavelModule.validate(
+          transaction.expected,
+          transaction.real,
+        );
       }
     } catch (validationError) {
       logger.debug('Gavel.js validation errored:', validationError);
@@ -910,7 +1031,7 @@ include a message body: https://tools.ietf.org/html/rfc7231#section-6.3\
 
     loggedFields.forEach((fieldName) => {
       const fieldResult = gavelResult.fields[fieldName];
-      (fieldResult.errors || []).forEach((gavelError) => {
+      (fieldResult.errors || []).forEach((/** @type {any} */ gavelError) => {
         message += `${fieldName}: ${gavelError.message}\n`;
       });
     });
@@ -929,6 +1050,7 @@ include a message body: https://tools.ietf.org/html/rfc7231#section-6.3\
     callback();
   }
 
+  /** @param {(error?: any) => void} callback */
   emitEnd(callback) {
     let reporterCount = this.configuration.emitter.listeners('end').length;
     let ended = false;
