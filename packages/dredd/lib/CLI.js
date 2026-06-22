@@ -131,6 +131,11 @@ class CLI {
 
     this.setExitOrCallback();
 
+    // Bind the SIGINT handler once so the same function reference is used for
+    // both `process.on` and `process.removeListener`, and so `this` refers to
+    // the CLI instance when the handler fires.
+    this.commandSigInt = this.commandSigInt.bind(this);
+
     if (!this.custom.cwd || typeof this.custom.cwd !== 'string') {
       this.custom.cwd = process.cwd();
     }
@@ -219,7 +224,7 @@ Example:
             logger.debug('Killing backend server process before Dredd exits.');
             this.serverProcess.signalKill();
           }
-          process.removeEventListener('SIGINT', this.commandSigInt);
+          process.removeListener('SIGINT', this.commandSigInt);
         }
         this.cb(exitStatus);
         return this;
@@ -503,7 +508,9 @@ ${packageData.name} v${packageData.version} \
 
   commandSigInt() {
     logger.error('\nShutting down from keyboard interruption (Ctrl+C)');
-    this.dreddInstance.transactionsComplete(() => this._processExit(0));
+    // `_processExit` gracefully terminates the backend server process (via
+    // `stopServer`) before exiting / invoking the configured exit callback.
+    this._processExit(0);
   }
 
   runDredd(dreddInstance) {
@@ -528,6 +535,7 @@ ${packageData.name} v${packageData.version} \
         logger.error(error.message);
       }
       this._processExit(1);
+      return;
     }
 
     if (stats.failures + stats.errors > 0) {
