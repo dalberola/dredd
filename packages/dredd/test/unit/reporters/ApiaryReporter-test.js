@@ -1,6 +1,5 @@
 import clone from 'clone';
 import nock from 'nock';
-import proxyquire from 'proxyquire';
 import sinon from 'sinon';
 import { assert } from 'chai';
 import { EventEmitter } from 'events';
@@ -8,11 +7,7 @@ import { EventEmitter } from 'events';
 import apiDescriptions from '../../fixtures/apiDescriptions';
 import loggerStub from '../../../lib/logger';
 import reporterOutputLoggerStub from '../../../lib/reporters/reporterOutputLogger';
-
-const ApiaryReporter = proxyquire('../../../lib/reporters/ApiaryReporter', {
-  '../logger': loggerStub,
-  './reporterOutputLogger': reporterOutputLoggerStub,
-}).default;
+import ApiaryReporter from '../../../lib/reporters/ApiaryReporter';
 
 const PORT = 9876;
 nock.enableNetConnect();

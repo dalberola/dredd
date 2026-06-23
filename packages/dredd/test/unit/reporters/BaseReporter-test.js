@@ -1,13 +1,7 @@
-import { noCallThru } from 'proxyquire';
 import { assert } from 'chai';
 import { EventEmitter } from 'events';
 
-import loggerStub from '../../../lib/logger';
-
-const proxyquire = noCallThru();
-const BaseReporter = proxyquire('../../../lib/reporters/BaseReporter', {
-  '../logger': loggerStub,
-}).default;
+import BaseReporter from '../../../lib/reporters/BaseReporter';
 
 describe('BaseReporter', () => {
   let stats = {};

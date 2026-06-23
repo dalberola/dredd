@@ -1,10 +1,10 @@
 import type { EventEmitter } from 'events';
 import tty from 'tty';
 
-import logger from '../logger';
-import prettifyResponse from '../prettifyResponse';
-import reporterOutputLogger from './reporterOutputLogger';
-import type { ReporterStats, ReporterTest } from '../types/reporters';
+import logger from '../logger.js';
+import prettifyResponse from '../prettifyResponse.js';
+import reporterOutputLogger from './reporterOutputLogger.js';
+import type { ReporterStats, ReporterTest } from '../types/reporters.js';
 
 class NyanCatReporter {
   type: string;

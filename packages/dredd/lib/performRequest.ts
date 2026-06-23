@@ -1,8 +1,8 @@
 import caseless from 'caseless';
 import type { IncomingHttpHeaders, OutgoingHttpHeaders } from 'http';
 
-import defaultRequest from './httpClient';
-import defaultLogger from './logger';
+import defaultRequest from './httpClient.js';
+import defaultLogger from './logger.js';
 
 interface TransactionRequest {
   method?: string;

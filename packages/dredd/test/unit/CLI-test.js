@@ -1,7 +1,5 @@
-import crossSpawnStub from 'cross-spawn';
 import express from 'express';
-import fsStub from 'fs';
-import { noCallThru } from 'proxyquire';
+import esmock from 'esmock';
 
 import sinon from 'sinon';
 import { assert } from 'chai';
@@ -10,14 +8,14 @@ import * as configUtils from '../../lib/configUtils';
 import loggerStub from '../../lib/logger';
 import options from '../../options';
 import * as packageData from '../../package.json';
+import Dredd from '../../lib/Dredd';
 
-const proxyquire = noCallThru();
-
-// A mutable shallow copy of the configUtils module, so its methods can be
-// stubbed. ES module namespace objects are sealed (read-only), so stubbing a
-// method directly on the import fails under ESM/esbuild — the copy restores
-// the writable surface the proxyquired CLI calls into.
-const configUtilsStub = { ...configUtils };
+// A mutable shallow copy of the configUtils module so its methods can be
+// stubbed. ES module namespace objects are sealed (read-only), and esmock
+// snapshots the injected mock at load time, so `save` is pre-stubbed here (a
+// no-op that also avoids writing a real dredd.yml) and asserted via its call
+// history rather than re-stubbed later.
+const configUtilsStub = { ...configUtils, save: sinon.stub() };
 
 const PORT = 9876;
 
@@ -26,34 +24,18 @@ let exitStatus;
 let stderr = '';
 let stdout = '';
 
-const addHooksStub = proxyquire('../../lib/addHooks', {
-  './logger': loggerStub,
-}).default;
-
-const transactionRunner = proxyquire('../../lib/TransactionRunner', {
-  './addHooks': addHooksStub,
-  './logger': loggerStub,
-}).default;
-
-const DreddStub = proxyquire('../../lib/Dredd', {
-  './TransactionRunner': transactionRunner,
-  './logger': loggerStub,
-}).default;
-
 const initStub = sinon.stub().callsFake((config, save, callback) => {
   save(config);
   callback();
 });
 
-const CLIStub = proxyquire('../../lib/CLI', {
-  './Dredd': DreddStub,
-  console: loggerStub,
-  './logger': loggerStub,
-  './init': initStub,
-  './configUtils': configUtilsStub,
-  fs: fsStub,
-  'cross-spawn': crossSpawnStub,
-}).default;
+// CLI is loaded through esmock with only its genuinely-faked dependencies
+// replaced: the interactive `init` prompt, a mutable `configUtils` copy (so
+// `save` can be stubbed), and `console` (routed to the logger so its output is
+// captured). Dredd/TransactionRunner/addHooks run for real; the logger and
+// cross-spawn are shared singletons stubbed directly. esmock is async, so the
+// class is loaded in a `before` hook.
+let CLIStub;
 
 function execCommand(custom = {}, cb) {
   stdout = '';
@@ -74,7 +56,16 @@ function execCommand(custom = {}, cb) {
 }
 
 describe('CLI class', () => {
-  before(() => {
+  before(async () => {
+    CLIStub = (
+      await esmock.p('../../lib/CLI.ts', {
+        '../../lib/init.ts': { default: initStub },
+        '../../lib/configUtils.ts': configUtilsStub,
+        '../../lib/logger.ts': { default: loggerStub },
+        console: { default: loggerStub },
+      })
+    ).default;
+
     const logLevels = ['warn', 'error', 'debug'];
     logLevels.forEach((method) => {
       sinon.stub(loggerStub, method).callsFake((chunk) => {
@@ -163,7 +154,7 @@ describe('CLI class', () => {
       });
 
       sinon.stub(dc, 'initDredd').callsFake((configuration) => {
-        const dredd = new DreddStub(configuration);
+        const dredd = new Dredd(configuration);
         sinon.stub(dredd, 'run');
         return dredd;
       });
@@ -301,12 +292,12 @@ describe('CLI class', () => {
 
     describe('init', () => {
       before((done) => {
-        sinon.stub(configUtilsStub, 'save');
+        configUtilsStub.save.resetHistory();
         execCommand({ argv: ['init'] }, done);
       });
 
       after(() => {
-        configUtilsStub.save.restore();
+        configUtilsStub.save.resetHistory();
       });
 
       it('should run interactive config', () => assert.isTrue(initStub.called));
@@ -323,27 +314,68 @@ describe('CLI class', () => {
   });
 
   describe('when using --server', () => {
+    // The backend server child process and the Dredd run are faked: esmock
+    // isolates CLI's transitive cross-spawn (reached via childProcess), so the
+    // spawn is mocked at the childProcess boundary, and Dredd is stubbed so no
+    // real transactions run against the (absent) test server.
+    const fakeServerProcess = {
+      stdout: { setEncoding() {}, on() {} },
+      stderr: { setEncoding() {}, on() {} },
+      on(event, cb) {
+        if (event === 'exit') {
+          setImmediate(cb);
+        }
+      },
+      spawned: true,
+      terminated: false,
+      terminate() {
+        this.terminated = true;
+      },
+      signalKill() {},
+      pid: 1234,
+    };
+    const childProcessSpawnStub = sinon.stub().returns(fakeServerProcess);
+
     before((done) => {
-      sinon.stub(crossSpawnStub, 'spawn').callsFake();
-      sinon
-        .stub(transactionRunner.prototype, 'executeAllTransactions')
-        .callsFake((transactions, hooks, cb) => cb());
-      execCommand(
-        {
-          argv: [
-            './test/fixtures/single-get.yaml',
-            `http://127.0.0.1:${PORT}`,
-            '--server',
-            'foo/bar',
-          ],
-        },
-        done,
-      );
+      class DreddStub {
+        constructor(configuration) {
+          this.configuration = configuration;
+        }
+
+        run(callback) {
+          callback(null, {});
+        }
+      }
+
+      esmock
+        .p('../../lib/CLI.ts', {
+          '../../lib/init.ts': { default: initStub },
+          '../../lib/configUtils.ts': configUtilsStub,
+          '../../lib/logger.ts': { default: loggerStub },
+          console: { default: loggerStub },
+          '../../lib/childProcess.ts': { spawn: childProcessSpawnStub },
+          '../../lib/Dredd.ts': { default: DreddStub },
+        })
+        .then((mod) => {
+          const ServerCLI = mod.default;
+          new ServerCLI(
+            {
+              custom: {
+                argv: [
+                  './test/fixtures/single-get.yaml',
+                  `http://127.0.0.1:${PORT}`,
+                  '--server',
+                  'foo/bar',
+                  '--server-wait=0',
+                ],
+              },
+            },
+            () => done(),
+          ).run();
+        });
     });
 
-    after(() => crossSpawnStub.spawn.restore());
-
     it('should run child process', () =>
-      assert.isTrue(crossSpawnStub.spawn.called));
+      assert.isTrue(childProcessSpawnStub.called));
   });
 });

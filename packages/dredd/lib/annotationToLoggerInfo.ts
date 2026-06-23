@@ -1,4 +1,4 @@
-import compileTransactionName from './compileTransactionName';
+import compileTransactionName from './compileTransactionName.js';
 
 /**
  * Turns annotation type into a log level

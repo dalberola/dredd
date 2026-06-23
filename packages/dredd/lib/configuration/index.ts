@@ -1,2 +1,2 @@
-export { default as applyConfiguration } from './applyConfiguration';
-export { default as applyLoggingOptions } from './applyLoggingOptions';
+export { default as applyConfiguration } from './applyConfiguration.js';
+export { default as applyLoggingOptions } from './applyLoggingOptions.js';

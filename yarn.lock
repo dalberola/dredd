@@ -913,11 +913,6 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.4.tgz#56e2cc26c397c038fab0e3a917a12d5c5909e901"
   integrity sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==
 
-"@types/proxyquire@1.3.31":
-  version "1.3.31"
-  resolved "https://registry.yarnpkg.com/@types/proxyquire/-/proxyquire-1.3.31.tgz#a008b78dad6061754e3adf2cb64b60303f68deaa"
-  integrity sha512-uALowNG2TSM1HNPMMOR0AJwv4aPYPhqB0xlEhkeRTMuto5hjoSPZkvgu1nbPUkz3gEPAHv4sy4DmKsurZiEfRQ==
-
 "@types/ramda@0.31.1":
   version "0.31.1"
   resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.31.1.tgz#da637f3110b0677521dbc13d8a86ec7cbbf8e3fe"
@@ -1795,6 +1790,11 @@ eslint@^10:
     minimatch "^10.2.4"
     natural-compare "^1.4.0"
     optionator "^0.9.3"
+
+esmock@2.7.6:
+  version "2.7.6"
+  resolved "https://registry.yarnpkg.com/esmock/-/esmock-2.7.6.tgz#643b911398124cdaa60806d7d38074f0238bbb6c"
+  integrity sha512-Moibxg8tl+wUeuDZZxHC9yVFi+rYITrPsu8/JDmO9AWVaXiWrFyvklruDv7pP7h3t0UqqPpZiCaZ51lzwVRK8A==
 
 espree@^11.2.0:
   version "11.2.0"

@@ -1,16 +1,16 @@
 import type { EventEmitter } from 'events';
 
-import ApiaryReporter from './reporters/ApiaryReporter';
-import BaseReporter from './reporters/BaseReporter';
-import CLIReporter from './reporters/CLIReporter';
-import DotReporter from './reporters/DotReporter';
-import HTMLReporter from './reporters/HTMLReporter';
-import MarkdownReporter from './reporters/MarkdownReporter';
-import NyanCatReporter from './reporters/NyanReporter';
-import XUnitReporter from './reporters/XUnitReporter';
+import ApiaryReporter from './reporters/ApiaryReporter.js';
+import BaseReporter from './reporters/BaseReporter.js';
+import CLIReporter from './reporters/CLIReporter.js';
+import DotReporter from './reporters/DotReporter.js';
+import HTMLReporter from './reporters/HTMLReporter.js';
+import MarkdownReporter from './reporters/MarkdownReporter.js';
+import NyanCatReporter from './reporters/NyanReporter.js';
+import XUnitReporter from './reporters/XUnitReporter.js';
 
-import logger from './logger';
-import type { ReporterStats } from './types/reporters';
+import logger from './logger.js';
+import type { ReporterStats } from './types/reporters.js';
 
 type ConfigureStats = ReporterStats & {
   fileBasedReporters?: number;

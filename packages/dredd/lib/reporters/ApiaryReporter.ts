@@ -2,13 +2,13 @@ import clone from 'clone';
 import { randomUUID as generateUuid } from 'crypto';
 import os from 'os';
 
-import request from '../httpClient';
-import logger from '../logger';
-import reporterOutputLogger from './reporterOutputLogger';
-import packageData from '../../package.json';
+import request from '../httpClient.js';
+import logger from '../logger.js';
+import reporterOutputLogger from './reporterOutputLogger.js';
+import packageData from '../../package.json' with { type: 'json' };
 
 import type { EventEmitter } from 'events';
-import type { ReporterStats, ReporterTest } from '../types/reporters';
+import type { ReporterStats, ReporterTest } from '../types/reporters.js';
 
 interface ApiaryConfig {
   custom?: Record<string, any>;

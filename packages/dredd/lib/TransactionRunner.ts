@@ -1,14 +1,16 @@
 import async from 'async';
 import os from 'os';
 import url from 'url';
+import { Ajv2020 } from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
 
-import addHooks from './addHooks';
-import validate from './validation/validate';
-import logger from './logger';
-import reporterOutputLogger from './reporters/reporterOutputLogger';
-import packageData from '../package.json';
-import sortTransactions from './sortTransactions';
-import performRequest from './performRequest';
+import addHooks from './addHooks.js';
+import validate from './validation/validate.js';
+import logger from './logger.js';
+import reporterOutputLogger from './reporters/reporterOutputLogger.js';
+import packageData from '../package.json' with { type: 'json' };
+import sortTransactions from './sortTransactions.js';
+import performRequest from './performRequest.js';
 
 const OAS_31_DIALECT = 'https://spec.openapis.org/oas/3.1/dialect/base';
 const JSON_SCHEMA_2020_12 = 'https://json-schema.org/draft/2020-12/schema';
@@ -129,17 +131,9 @@ function createInvalidJSONValidationResult(error: any, actualBody: any) {
 }
 
 function validateBodySchemaWithAjv(bodySchema: any, actualBody: any) {
-  const ajv2020ModuleName = 'ajv/dist/2020';
-  const ajvFormatsModuleName = 'ajv-formats';
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const Ajv2020Module = require(ajv2020ModuleName);
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const addFormatsModule = require(ajvFormatsModuleName);
-  const Ajv2020 = Ajv2020Module.default || Ajv2020Module;
-  const addFormats = addFormatsModule.default || addFormatsModule;
   const schema = normalizeAjvSchemaDialect(getSchemaObject(bodySchema));
   const ajv = new Ajv2020({ allErrors: true, strict: false, verbose: true });
-  addFormats(ajv);
+  (addFormats.default || addFormats)(ajv);
   const validate = ajv.compile(schema);
 
   let actual;

@@ -1,7 +1,7 @@
 import type { EventEmitter } from 'events';
 
-import logger from '../logger';
-import type { ReporterStats, ReporterTest } from '../types/reporters';
+import logger from '../logger.js';
+import type { ReporterStats, ReporterTest } from '../types/reporters.js';
 
 // Stamp `test.end` and compute `test.duration` from `test.start`. `test.start`
 // is normally a Date set by the 'test start' event, but may be a serialized

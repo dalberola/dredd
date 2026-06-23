@@ -1,4 +1,4 @@
-import { ValidationError } from './types';
+import { ValidationError } from './types.js';
 
 // Formats ajv validation errors into gavel@9.1.5's JSON-validation message
 // style, e.g.:

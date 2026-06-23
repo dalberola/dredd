@@ -1,5 +1,5 @@
-import resolvePaths from './resolvePaths';
-import isURL from './isURL';
+import resolvePaths from './resolvePaths.js';
+import isURL from './isURL.js';
 
 /**
  * Takes an array of strings representing API description document locations

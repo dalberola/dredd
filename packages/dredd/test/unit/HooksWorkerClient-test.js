@@ -2,7 +2,6 @@ import clone from 'clone';
 import crossSpawnStub from 'cross-spawn';
 import net from 'net';
 import path from 'path';
-import proxyquire from 'proxyquire';
 import sinon from 'sinon';
 import { assert } from 'chai';
 import { EventEmitter } from 'events';
@@ -13,6 +12,7 @@ import loggerStub from '../../lib/logger';
 import Hooks from '../../lib/Hooks';
 import * as commandLineOptions from '../../options';
 import TransactionRunner from '../../lib/TransactionRunner';
+import HooksWorkerClient from '../../lib/HooksWorkerClient';
 
 function measureExecutionDurationMs(fn) {
   const time = process.hrtime();
@@ -31,12 +31,6 @@ const PORT = 61321;
 
 let runner;
 const logLevels = ['error', 'warn', 'debug'];
-
-const HooksWorkerClient = proxyquire('../../lib/HooksWorkerClient', {
-  'cross-spawn': crossSpawnStub,
-  './which': whichStub,
-  './logger': loggerStub,
-}).default;
 
 let hooksWorkerClient;
 

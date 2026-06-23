@@ -1,22 +1,16 @@
 import bodyParser from 'body-parser';
 import clone from 'clone';
 import express from 'express';
-import htmlStub from 'html';
 import nock from 'nock';
 import sinon from 'sinon';
-import proxyquire from 'proxyquire';
 import { assert } from 'chai';
 import { EventEmitter } from 'events';
 import addHooks from '../../lib/addHooks';
 import loggerStub from '../../lib/logger';
 import Hooks from '../../lib/Hooks';
+import Runner from '../../lib/TransactionRunner';
 
 nock.enableNetConnect();
-
-const Runner = proxyquire('../../lib/TransactionRunner', {
-  html: htmlStub,
-  './logger': loggerStub,
-}).default;
 
 describe('TransactionRunner', () => {
   let server;

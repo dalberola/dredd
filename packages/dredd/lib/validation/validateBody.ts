@@ -1,16 +1,14 @@
-import Ajv from 'ajv';
+import { Ajv } from 'ajv';
+import addFormats from 'ajv-formats';
 
 import {
   ExpectedResponse,
   FieldValidationResult,
   RealResponse,
-} from './types';
-import formatJsonSchemaError from './formatJsonSchemaError';
-import formatGavelSchemaError from './formatGavelSchemaError';
-import generateSchemaFromExample from './generateSchemaFromExample';
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const addFormats = require('ajv-formats');
+} from './types.js';
+import formatJsonSchemaError from './formatJsonSchemaError.js';
+import formatGavelSchemaError from './formatGavelSchemaError.js';
+import generateSchemaFromExample from './generateSchemaFromExample.js';
 
 function getContentType(headers: Record<string, string> = {}): string | null {
   const key = Object.keys(headers).find(

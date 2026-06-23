@@ -1,4 +1,4 @@
-import { HTTPMethod, Transaction } from './general';
+import { HTTPMethod, Transaction } from './general.js';
 
 const sortedMethods: HTTPMethod[] = [
   HTTPMethod.CONNECT,

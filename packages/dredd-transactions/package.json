@@ -3,6 +3,11 @@
   "version": "0.1.2",
   "description": "Compiles HTTP Transactions (Request-Response pairs) from an API description document",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./parse": "./parse/index.js",
+    "./compile": "./compile/index.js"
+  },
   "engines": {
     "node": ">=22"
   },

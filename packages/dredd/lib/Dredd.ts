@@ -1,15 +1,16 @@
 import async from 'async';
+import { createRequire } from 'module';
 import parse from '@stacklych/dredd-transactions/parse';
 import compile from '@stacklych/dredd-transactions/compile';
 
-import configureReporters from './configureReporters';
-import resolveLocations from './resolveLocations';
-import readLocation from './readLocation';
-import resolveModule from './resolveModule';
-import logger from './logger';
-import TransactionRunner from './TransactionRunner';
-import { applyConfiguration } from './configuration';
-import annotationToLoggerInfo from './annotationToLoggerInfo';
+import configureReporters from './configureReporters.js';
+import resolveLocations from './resolveLocations.js';
+import readLocation from './readLocation.js';
+import resolveModule from './resolveModule.js';
+import logger from './logger.js';
+import TransactionRunner from './TransactionRunner.js';
+import { applyConfiguration } from './configuration/index.js';
+import annotationToLoggerInfo from './annotationToLoggerInfo.js';
 
 import type { EventEmitter } from 'events';
 
@@ -268,8 +269,9 @@ class Dredd {
         this.configuration.require,
       );
       try {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        require(requirePath);
+        // The --require module is user-supplied setup code (often a CommonJS
+        // register hook); load it synchronously with CommonJS semantics.
+        createRequire(import.meta.url)(requirePath);
       } catch (error) {
         callback(error, this.stats);
         return;

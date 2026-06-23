@@ -1,4 +1,4 @@
-import hooksLog from './hooksLog';
+import hooksLog from './hooksLog.js';
 
 // READ THIS! Disclaimer:
 // Do not add any functionality to this class unless you want to expose it to the Hooks API.
