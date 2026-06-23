@@ -1,11 +1,10 @@
-// @ts-check
-import R from 'ramda';
+import RTyped from 'ramda';
 import console from 'console'; // Stubbed in tests by proxyquire
 import fs from 'fs';
 import minimist from 'minimist';
 import os from 'os';
 import spawnArgs from 'spawn-args';
-import { spawn as spawnSync } from 'cross-spawn';
+import crossSpawn from 'cross-spawn';
 
 import * as configUtils from './configUtils';
 import Dredd from './Dredd';
@@ -18,25 +17,29 @@ import { spawn } from './childProcess';
 import dreddOptions from '../options.json';
 import packageData from '../package.json';
 
-/** @param {Record<string, any>} options */
-function getAliases(options) {
-  return Object.keys(options).reduce((aliases, optionName) => {
-    if (options[optionName].alias) {
-      aliases[optionName] = options[optionName].alias;
-    }
-    return aliases;
-  }, /** @type {Record<string, any>} */ ({}));
+// ramda's point-free helpers fight @types/ramda's conditional return types;
+// the result of mergeDeepRight is read with dynamic keys, so treat R as `any`.
+const R: any = RTyped;
+
+function getAliases(options: Record<string, any>) {
+  return Object.keys(options).reduce(
+    (aliases, optionName) => {
+      if (options[optionName].alias) {
+        aliases[optionName] = options[optionName].alias;
+      }
+      return aliases;
+    },
+    {} as Record<string, any>,
+  );
 }
 
-/** @param {Record<string, any>} options */
-function getArrayOptions(options) {
+function getArrayOptions(options: Record<string, any>) {
   return Object.keys(options).filter((optionName) =>
     Array.isArray(options[optionName].default),
   );
 }
 
-/** @param {Record<string, any>} options */
-function getBooleanOptions(options) {
+function getBooleanOptions(options: Record<string, any>) {
   return Object.keys(options).filter(
     (optionName) =>
       options[optionName].boolean === true ||
@@ -44,21 +47,21 @@ function getBooleanOptions(options) {
   );
 }
 
-/** @param {Record<string, any>} options */
-function getDefaults(options) {
-  return Object.keys(options).reduce((defaults, optionName) => {
-    if (Object.prototype.hasOwnProperty.call(options[optionName], 'default')) {
-      defaults[optionName] = options[optionName].default;
-    }
-    return defaults;
-  }, /** @type {Record<string, any>} */ ({}));
+function getDefaults(options: Record<string, any>) {
+  return Object.keys(options).reduce(
+    (defaults, optionName) => {
+      if (
+        Object.prototype.hasOwnProperty.call(options[optionName], 'default')
+      ) {
+        defaults[optionName] = options[optionName].default;
+      }
+      return defaults;
+    },
+    {} as Record<string, any>,
+  );
 }
 
-/**
- * @param {Record<string, any>} argv
- * @param {Record<string, any>} aliases
- */
-function syncAliases(argv, aliases) {
+function syncAliases(argv: Record<string, any>, aliases: Record<string, any>) {
   Object.keys(aliases).forEach((optionName) => {
     const alias = aliases[optionName];
     if (Object.prototype.hasOwnProperty.call(argv, optionName)) {
@@ -69,12 +72,11 @@ function syncAliases(argv, aliases) {
   });
 }
 
-/**
- * @param {Record<string, any>} argv
- * @param {string[]} arrayOptions
- * @param {Record<string, any>} aliases
- */
-function normalizeArrayOptions(argv, arrayOptions, aliases) {
+function normalizeArrayOptions(
+  argv: Record<string, any>,
+  arrayOptions: string[],
+  aliases: Record<string, any>,
+) {
   arrayOptions.forEach((optionName) => {
     const value = argv[optionName];
     if (Array.isArray(value)) {
@@ -91,12 +93,10 @@ function normalizeArrayOptions(argv, arrayOptions, aliases) {
   });
 }
 
-/**
- * @param {string[]} rawArgv
- * @param {Record<string, any>} [options]
- * @returns {import('minimist').ParsedArgs}
- */
-function parseArgv(rawArgv, options = {}) {
+function parseArgv(
+  rawArgv: string[],
+  options: Record<string, any> = {},
+): minimist.ParsedArgs {
   const aliases = getAliases(options);
   const argv = minimist(rawArgv, {
     alias: aliases,
@@ -109,12 +109,7 @@ function parseArgv(rawArgv, options = {}) {
   return argv;
 }
 
-/**
- * @param {string} usage
- * @param {Record<string, any>} options
- * @returns {string}
- */
-function formatHelp(usage, options) {
+function formatHelp(usage: string, options: Record<string, any>): string {
   const optionLines = Object.keys(options).map((optionName) => {
     const option = options[optionName];
     const aliases = option.alias ? `, -${option.alias}` : '';
@@ -123,20 +118,16 @@ function formatHelp(usage, options) {
   return `${usage}\n\nOptions:\n${optionLines.join('\n')}`;
 }
 
-/** @param {string[]} rawArgv */
-function createArgumentParser(rawArgv) {
+function createArgumentParser(rawArgv: string[]) {
   return {
     argv: parseArgv(rawArgv),
-    /** @type {Record<string, any>} */
-    optionDefinitions: {},
+    optionDefinitions: {} as Record<string, any>,
     usageText: '',
-    /** @param {string} text */
-    usage(text) {
+    usage(text: string) {
       this.usageText = text;
       return this;
     },
-    /** @param {Record<string, any>} options */
-    options(options) {
+    options(options: Record<string, any>) {
       this.optionDefinitions = options;
       this.argv = parseArgv(rawArgv, options);
       return this;
@@ -144,25 +135,41 @@ function createArgumentParser(rawArgv) {
     wrap() {
       return this;
     },
-    /** @param {(help: string) => void} printer */
-    showHelp(printer) {
+    showHelp(printer: (help: string) => void) {
       printer(formatHelp(this.usageText, this.optionDefinitions));
     },
   };
 }
 
 class CLI {
-  /**
-   * @param {{ exit?: (status: number) => void, custom?: Record<string, any> }} [options]
-   * @param {(status: number) => void} [cb]
-   */
-  constructor(options = {}, cb) {
-    // `cb` and `exit` are dependency-injected exit hooks invoked from inside
-    // closures (where TS can't narrow the optional away); type them loosely.
-    /** @type {any} */
+  // `cb` and `exit` are dependency-injected exit hooks invoked from inside
+  // closures (where TS can't narrow the optional away); type them loosely.
+  cb: any;
+  finished: boolean;
+  exit: any;
+  custom: Record<string, any>;
+  _processExit: (exitStatus: number) => any;
+  sigIntEventAdd?: boolean;
+  sigIntEventAdded?: boolean;
+  // Late-bound runtime members assigned across methods (dynamic arg bags, the
+  // spawned server process, the argument parser, the Dredd instance).
+  argumentParser: any;
+  cliArgv: any;
+  argv: any;
+  serverProcess: any;
+  dreddInstance: any;
+  server: any;
+  wait: any;
+
+  constructor(
+    options: {
+      exit?: (status: number) => void;
+      custom?: Record<string, any>;
+    } = {},
+    cb?: (status: number) => void,
+  ) {
     this.cb = cb;
     this.finished = false;
-    /** @type {any} */
     this.exit = options.exit;
     this.custom = options.custom || {};
 
@@ -183,13 +190,9 @@ class CLI {
   }
 
   setParsedArgv() {
-    // The argument parser is created here (not in the constructor), so it reads
-    // as possibly-undefined to the checker unless typed loosely.
-    /** @type {any} */
     this.argumentParser = createArgumentParser(this.custom.argv);
     // `argv`/`cliArgv` are dynamic merged arg bags reassigned across methods
     // (and self-referenced in `argv.path = [argv.path]`); type them `any`.
-    /** @type {any} */
     this.cliArgv = this.argumentParser.argv;
 
     this.argumentParser
@@ -208,14 +211,12 @@ Example:
       .options(dreddOptions)
       .wrap();
 
-    /** @type {any} */
     this.argv = this.argumentParser.argv;
     applyLoggingOptions(this.argv);
   }
 
   // Gracefully terminate server
-  /** @param {() => void} callback */
-  stopServer(callback) {
+  stopServer(callback: () => void) {
     if (!this.serverProcess || !this.serverProcess.spawned) {
       logger.debug('No backend server process to terminate.');
       return callback();
@@ -244,7 +245,7 @@ Example:
       }
 
       if (this.exit) {
-        return (/** @type {number} */ exitStatus) => {
+        return (exitStatus: number) => {
           logger.debug(
             `Using configured custom exit() method to terminate the Dredd process with status '${exitStatus}'.`,
           );
@@ -254,14 +255,14 @@ Example:
           });
         };
       }
-      return (/** @type {number} */ exitStatus) => {
+      return (exitStatus: number) => {
         logger.debug(
           `Using native process.exit() method to terminate the Dredd process with status '${exitStatus}'.`,
         );
         this.stopServer(() => process.exit(exitStatus));
       };
     }
-    return (/** @type {number} */ exitStatus) => {
+    return (exitStatus: number) => {
       logger.debug(
         `Using configured custom callback to terminate the Dredd process with status '${exitStatus}'.`,
       );
@@ -388,19 +389,18 @@ ${packageData.name} v${packageData.version} \
       );
       // A spawned child process augmented with Dredd's runtime control methods
       // and custom events ('crash'/'signalTerm'/'signalKill'); typed `any`.
-      /** @type {any} */
       this.serverProcess = spawn(command, parsedArgs);
       logger.debug(
         `Starting backend server process with command: ${this.argv.server}`,
       );
 
       this.serverProcess.stdout.setEncoding('utf8');
-      this.serverProcess.stdout.on('data', (/** @type {any} */ data) =>
+      this.serverProcess.stdout.on('data', (data: any) =>
         process.stdout.write(data.toString()),
       );
 
       this.serverProcess.stderr.setEncoding('utf8');
-      this.serverProcess.stderr.on('data', (/** @type {any} */ data) =>
+      this.serverProcess.stderr.on('data', (data: any) =>
         process.stdout.write(data.toString()),
       );
 
@@ -411,20 +411,17 @@ ${packageData.name} v${packageData.version} \
         logger.debug('Killing the backend server process'),
       );
 
-      this.serverProcess.on(
-        'crash',
-        (/** @type {number} */ exitStatus, /** @type {boolean} */ killed) => {
-          if (killed) {
-            logger.debug('Backend server process was killed');
-          }
-        },
-      );
+      this.serverProcess.on('crash', (exitStatus: number, killed: boolean) => {
+        if (killed) {
+          logger.debug('Backend server process was killed');
+        }
+      });
 
       this.serverProcess.on('exit', () => {
         logger.debug('Backend server process exited');
       });
 
-      this.serverProcess.on('error', (/** @type {any} */ err) => {
+      this.serverProcess.on('error', (err: any) => {
         logger.error(
           'Command to start backend server process failed, exiting Dredd',
           err,
@@ -462,16 +459,13 @@ ${packageData.name} v${packageData.version} \
 
   // This should be handled in a better way in the future:
   // https://github.com/apiaryio/dredd/issues/625
-  /** @param {Record<string, any>} config */
-  logDebuggingInfo(config) {
+  logDebuggingInfo(config: Record<string, any>) {
     logger.debug('Dredd version:', packageData.version);
     logger.debug('Node.js version:', process.version);
     logger.debug('Node.js environment:', process.versions);
     logger.debug('System version:', os.type(), os.release(), os.arch());
     try {
-      const npmVersion = /** @type {any} */ (
-        spawnSync('npm', ['--version'])
-      ).stdout
+      const npmVersion = (crossSpawn.spawn('npm', ['--version']) as any).stdout
         .toString()
         .trim();
       logger.debug(
@@ -505,10 +499,9 @@ ${packageData.name} v${packageData.version} \
 
       // Assigned here in run() rather than the constructor; typed loosely so
       // the later `runDredd(this.dreddInstance)` calls don't see it as undefined.
-      /** @type {any} */
       this.dreddInstance = this.initDredd(configurationForDredd);
     } catch (e) {
-      this.exitWithStatus(/** @type {Error} */ (e));
+      this.exitWithStatus(e as Error);
     }
 
     ignorePipeErrors(process);
@@ -516,7 +509,7 @@ ${packageData.name} v${packageData.version} \
     try {
       this.runServerAndThenDredd();
     } catch (e) {
-      const runError = /** @type {Error} */ (e);
+      const runError = e as Error;
       logger.error(runError.message, runError.stack);
       this.stopServer(() => {
         this._processExit(2);
@@ -528,7 +521,6 @@ ${packageData.name} v${packageData.version} \
     // When API description path is a glob, some shells are automatically expanding globs and concating
     // result as arguments so I'm taking last argument as API endpoint server URL and removing it
     // from parsed CLI args
-    /** @type {any} */
     this.server = this.argv._[this.argv._.length - 1];
     this.argv._.splice(this.argv._.length - 1, 1);
     return this;
@@ -562,8 +554,7 @@ ${packageData.name} v${packageData.version} \
     return cliConfig;
   }
 
-  /** @param {any} configuration */
-  initDredd(configuration) {
+  initDredd(configuration: any) {
     return new Dredd(configuration);
   }
 
@@ -574,8 +565,7 @@ ${packageData.name} v${packageData.version} \
     this._processExit(0);
   }
 
-  /** @param {Dredd} dreddInstance */
-  runDredd(dreddInstance) {
+  runDredd(dreddInstance: Dredd) {
     if (this.sigIntEventAdd) {
       // Handle SIGINT from user
       this.sigIntEventAdded = !(this.sigIntEventAdd = false);
@@ -591,11 +581,7 @@ ${packageData.name} v${packageData.version} \
     return this;
   }
 
-  /**
-   * @param {any} error
-   * @param {any} [stats]
-   */
-  exitWithStatus(error, stats) {
+  exitWithStatus(error: any, stats?: any) {
     if (error) {
       if (error.message) {
         logger.error(error.message);
