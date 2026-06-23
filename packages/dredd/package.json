@@ -45,7 +45,6 @@
     "ajv-formats": "3.0.1",
     "async": "3.2.6",
     "caseless": "0.12.0",
-    "chai": "4.5.0",
     "clone": "2.1.2",
     "cross-spawn": "7.0.6",
     "@stacklych/dredd-transactions": "^0.1.0",
@@ -65,7 +64,6 @@
   "devDependencies": {
     "@eslint/js": "^10",
     "@types/async": "3.2.25",
-    "@types/chai": "4.3.20",
     "@types/clone": "2.1.4",
     "@types/js-yaml": "4.0.9",
     "@types/minimist": "1.2.5",
@@ -74,6 +72,7 @@
     "@types/ramda": "0.31.1",
     "@types/which": "3.0.4",
     "body-parser": "^2",
+    "chai": "6.2.2",
     "coffeescript": "2.7.0",
     "@cucumber/cucumber": "13.0.0",
     "eslint": "^10",
