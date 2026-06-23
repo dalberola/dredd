@@ -35,7 +35,7 @@ Writing hooks
 
 Hooks are functions, which are registered to be ran for a specific test step (HTTP transaction) and at a specific point in Dredd's :ref:`execution life cycle <execution-life-cycle>`. Hook functions take one or more :ref:`transaction objects <transaction>`, which they can modify. Let's use hooks to add an `Authorization header <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization>`__ to Dredd's request.
 
-Dredd supports :ref:`writing hooks in multiple programming languages <supported-languages>`, but we'll go with JavaScript hooks in this tutorial as they're available out of the box.
+Dredd runs hooks written in JavaScript, which are available out of the box.
 
 Let's create a file called ``hooks.js`` with the following content:
 
@@ -59,32 +59,15 @@ Now the tests should pass even if publishing new article requires auth.
 
 .. _supported-languages:
 
-Supported languages
--------------------
+JavaScript hooks
+----------------
 
-Dredd itself is written in JavaScript, so it supports :ref:`JavaScript hooks <hooks-js>` out of the box. Running hooks in other languages requires installing a dedicated *hooks handler*. Supported languages are:
+Dredd is written in JavaScript and runs :ref:`JavaScript hooks <hooks-js>` out of the box — no extra installation required.
 
 .. toctree::
    :maxdepth: 1
 
    JavaScript <js>
-   Go <go>
-   Perl <perl>
-   PHP <php>
-   Python <python>
-   Ruby <ruby>
-   Rust <rust>
-
-.. toctree::
-   :hidden:
-
-   New language <new-language>
-
-.. note::
-
-   If you don't see your favorite language, :ref:`it's fairly easy to contribute support for it <hooks-new-language>`! Join the :ref:`Contributors Hall of Fame <maintainers>` where we praise those who added support for additional languages.
-
-   (Especially if your language of choice is **Java**, there's an eternal fame and glory waiting for you - see :ghissue:`#875`)
 
 
 .. _transaction-names:
@@ -132,18 +115,3 @@ Hooks get executed at specific points in Dredd's :ref:`execution life cycle <exe
 -  ``after`` called after a single HTTP transaction
 -  ``afterEach`` called after each HTTP transaction
 -  ``afterAll`` called with all HTTP transactions after the whole test run
-
-
-.. _hooks-docker:
-
-Hooks inside Docker
--------------------
-
-As mentioned in :ref:`supported-languages`, running hooks written in languages other than JavaScript requires a dedicated hooks handler. Hooks handler is a separate process, which communicates with Dredd over a TCP socket.
-
-If you're :ref:`running Dredd inside Docker <docker>`, you may want to use a separate container for the hooks handler and then run all your containers together as described in the :ref:`docker-compose` section.
-
-However, hooks were not originally designed with this scenario in mind. Dredd gets a name of (or path to) the hooks handler in :option:`--language` and then starts it as a child process. To work around this, `fool Dredd with a dummy script <https://github.com/apiaryio/dredd/issues/748#issuecomment-285355519>`__ and set :option:`--hooks-worker-handler-host` together with :option:`--hooks-worker-handler-port` to point Dredd's TCP communication to the other container.
-
-.. note::
-    The issue described above is tracked in :ghissue:`#755`.

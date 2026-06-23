@@ -32,19 +32,10 @@ Both versions validate response status, structure, and **data types** against
 the described schemas (including `$ref`, `allOf`, arrays, `nullable`, and string
 formats).
 
-### Supported Hooks Languages
+### Hooks
 
-Dredd supports writing [hooks](https://dredd.org/en/latest/hooks/)
-— a glue code for each test setup and teardown. Following languages are supported:
-
-- [Go](https://dredd.org/en/latest/hooks-go/)
-- [Node.js (JavaScript)](https://dredd.org/en/latest/hooks-nodejs/)
-- [Perl](https://dredd.org/en/latest/hooks-perl/)
-- [PHP](https://dredd.org/en/latest/hooks-php/)
-- [Python](https://dredd.org/en/latest/hooks-python/)
-- [Ruby](https://dredd.org/en/latest/hooks-ruby/)
-- [Rust](https://dredd.org/en/latest/hooks-rust/)
-- Didn't find your favorite language? _[Add a new one!](https://dredd.org/en/latest/hooks-new-language/)_
+Dredd supports writing [hooks](https://stacklych.github.io/dredd/) — glue code
+for test setup and teardown — in **JavaScript**, available out of the box.
 
 ### Supported Systems
 
