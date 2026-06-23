@@ -25,7 +25,6 @@ describe('init.prompt()', () => {
     ci: [],
     apiDescription: 'api.yaml',
     server: 'npm start',
-    language: 'nodejs',
   };
 
   it('passes the answers from inquirer to the callback', (done) => {
@@ -63,26 +62,6 @@ describe('init.prompt()', () => {
           questionByName(questions, 'apiHost').default,
           'http://127.0.0.1:3000',
         );
-        assert.equal(questionByName(questions, 'language').default, 'nodejs');
-        done();
-      },
-      {
-        loadInquirer: fakeInquirerLoader({}, (q) => {
-          questions = q;
-        }),
-      },
-    );
-  });
-
-  it('asks for the hooks language only when hooks are enabled', (done) => {
-    let questions;
-    prompt(
-      { custom: {} },
-      detected,
-      () => {
-        const language = questionByName(questions, 'language');
-        assert.isTrue(language.when({ hooks: true }));
-        assert.isFalse(language.when({ hooks: false }));
         done();
       },
       {

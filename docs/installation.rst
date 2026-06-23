@@ -47,7 +47,7 @@ If you are familiar with `Docker <https://docs.docker.com>`__, you can get start
 Docker Compose
 ~~~~~~~~~~~~~~
 
-Inside Docker it's impossible for Dredd to manage child processes, so the :option:`--server` and :option:`--language` options won't work properly.
+Inside Docker it's impossible for Dredd to manage child processes, so the :option:`--server` option won't work properly.
 
 Instead, you should have separate containers for each process and run them together with Dredd using `Docker Compose <https://docs.docker.com/compose/overview/>`__. You can `use -\\-abort-on-container-exit and -\\-exit-code-from <https://stackoverflow.com/a/49485880/325365>`__ with Docker Compose to manage the tear down of all the other containers when the Dredd tests finish.
 

@@ -170,8 +170,6 @@ class TransactionRunner {
   logs: any[];
   hookStash: any;
   error: any;
-  // Set externally by HooksWorkerClient when the hooks handler errors.
-  hookHandlerError: any;
   // Set by `config()` and across the run; loosely typed runtime members.
   multiBlueprint?: boolean;
   parsedUrl: any;
@@ -185,7 +183,6 @@ class TransactionRunner {
     this.logs = [];
     this.hookStash = {};
     this.error = null;
-    this.hookHandlerError = null;
   }
 
   config(config: any) {
@@ -279,17 +276,9 @@ class TransactionRunner {
     }
     // End of warning
 
-    if (this.hookHandlerError) {
-      return callback(this.hookHandlerError);
-    }
-
     logger.debug("Running 'beforeAll' hooks");
 
     this.runHooksForData(hooks.beforeAllHooks, transactions, () => {
-      if (this.hookHandlerError) {
-        return callback(this.hookHandlerError);
-      }
-
       // Iterate over transactions' transaction
       // Because async changes the way referencing of properties work,
       // we need to work with indexes (keys) here, no other way of access.
@@ -304,19 +293,11 @@ class TransactionRunner {
 
           logger.debug("Running 'beforeEach' hooks");
           this.runHooksForData(hooks.beforeEachHooks, transaction, () => {
-            if (this.hookHandlerError) {
-              return iterationCallback(this.hookHandlerError);
-            }
-
             logger.debug("Running 'before' hooks");
             this.runHooksForData(
               hooks.beforeHooks[transaction.name],
               transaction,
               () => {
-                if (this.hookHandlerError) {
-                  return iterationCallback(this.hookHandlerError);
-                }
-
                 // This method:
                 // - skips and fails based on hooks or options
                 // - executes a request
@@ -325,28 +306,16 @@ class TransactionRunner {
                 // - runs beforeValidation hooks
                 // - runs response validation
                 this.executeTransaction(transaction, hooks, () => {
-                  if (this.hookHandlerError) {
-                    return iterationCallback(this.hookHandlerError);
-                  }
-
                   logger.debug("Running 'afterEach' hooks");
                   this.runHooksForData(
                     hooks.afterEachHooks,
                     transaction,
                     () => {
-                      if (this.hookHandlerError) {
-                        return iterationCallback(this.hookHandlerError);
-                      }
-
                       logger.debug("Running 'after' hooks");
                       this.runHooksForData(
                         hooks.afterHooks[transaction.name],
                         transaction,
                         () => {
-                          if (this.hookHandlerError) {
-                            return iterationCallback(this.hookHandlerError);
-                          }
-
                           logger.debug(
                             `Evaluating results of transaction execution #${
                               transactionIndex + 1
@@ -370,9 +339,6 @@ class TransactionRunner {
 
           logger.debug("Running 'afterAll' hooks");
           this.runHooksForData(hooks.afterAllHooks, transactions, () => {
-            if (this.hookHandlerError) {
-              return callback(this.hookHandlerError);
-            }
             callback();
           });
         },
@@ -839,19 +805,11 @@ Not performing HTTP request for '${transaction.name}'.\
         hooks && hooks.beforeEachValidationHooks,
         transaction,
         () => {
-          if (this.hookHandlerError) {
-            return callback(this.hookHandlerError);
-          }
-
           logger.debug("Running 'beforeValidation' hooks");
           this.runHooksForData(
             hooks && hooks.beforeValidationHooks[transaction.name],
             transaction,
             () => {
-              if (this.hookHandlerError) {
-                return callback(this.hookHandlerError);
-              }
-
               this.validateTransaction(test, transaction, callback);
             },
           );

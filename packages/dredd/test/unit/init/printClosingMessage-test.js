@@ -12,19 +12,15 @@ describe('init._printClosingMessage()', () => {
   });
 
   it('mentions the config has been saved to dredd.yml', () => {
-    printClosingMessage({ language: 'nodejs' }, print);
+    printClosingMessage(print);
     assert.include(print.output, 'saved to dredd.yml');
   });
-  it('does not mention hooks when the language is JavaScript', () => {
-    printClosingMessage({ language: 'nodejs' }, print);
+  it('tells the user how to run Dredd', () => {
+    printClosingMessage(print);
+    assert.include(print.output, '$ dredd');
+  });
+  it('does not mention installing hooks', () => {
+    printClosingMessage(print);
     assert.notInclude(print.output, 'hooks');
-  });
-  it('does mention hooks when the language is not JavaScript', () => {
-    printClosingMessage({ language: 'python' }, print);
-    assert.include(print.output, 'hooks');
-  });
-  it('hints how to install non-JavaScript hooks', () => {
-    printClosingMessage({ language: 'python' }, print);
-    assert.include(print.output, 'pip install dredd_hooks');
   });
 });

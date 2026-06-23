@@ -15,7 +15,6 @@ interface DetectResult {
   ci: string[];
   apiDescription: string;
   server: string;
-  language: string;
 }
 
 /**
@@ -53,7 +52,7 @@ function init(
       callback(err);
     }
     save(updatedConfig);
-    printClosingMessage(updatedConfig);
+    printClosingMessage();
 
     callback();
   });
@@ -64,7 +63,6 @@ function detect(files: string[]): DetectResult {
     ci: detectCI(files),
     apiDescription: detectApiDescription(files),
     server: detectServer(files),
-    language: detectLanguage(files),
   };
 }
 
@@ -99,29 +97,6 @@ export function prompt(
           message: 'Host of the API under test',
           type: 'input',
           default: config.endpoint || 'http://127.0.0.1:3000',
-        },
-        {
-          name: 'hooks',
-          message: "Do you want to use hooks to customize Dredd's behavior?",
-          type: 'confirm',
-          default: true,
-          when: () => config.language === 'nodejs',
-        },
-        {
-          name: 'language',
-          message: 'Programming language of the hooks',
-          type: 'list',
-          default: detected.language,
-          choices: [
-            { name: 'Go', value: 'go' },
-            { name: 'JavaScript', value: 'nodejs' },
-            { name: 'Perl', value: 'perl' },
-            { name: 'PHP', value: 'php' },
-            { name: 'Python', value: 'python' },
-            { name: 'Ruby', value: 'ruby' },
-            { name: 'Rust', value: 'rust' },
-          ],
-          when: (answers: any) => answers.hooks,
         },
         {
           name: 'appveyor',
@@ -195,7 +170,6 @@ export function applyAnswers(
   config._[1] = answers.apiHost;
 
   config.server = answers.server || null;
-  config.language = answers.language || 'nodejs';
 
   if (answers.createCI) {
     ci[answers.createCI]();
@@ -216,37 +190,10 @@ export function applyAnswers(
 }
 
 export function printClosingMessage(
-  config: { language?: string },
   print: (message?: any) => void = console.log,
 ) {
   print('\nConfiguration saved to dredd.yml\n');
-  if (config.language === 'nodejs') {
-    print('You can run tests now, with:\n');
-  } else {
-    print('Install hooks and run Dredd test with:\n');
-  }
-  switch (config.language) {
-    case 'ruby':
-      print('  $ gem install dredd_hooks');
-      break;
-    case 'python':
-      print('  $ pip install dredd_hooks');
-      break;
-    case 'php':
-      print('  $ composer require ddelnano/dredd-hooks-php --dev');
-      break;
-    case 'perl':
-      print('  $ cpanm Dredd::Hooks');
-      break;
-    case 'go':
-      print('  $ go get github.com/snikch/goodman/cmd/goodman');
-      break;
-    case 'rust':
-      print('  $ cargo install dredd-hooks');
-      break;
-    default:
-      break;
-  }
+  print('You can run tests now, with:\n');
   print('  $ dredd\n');
 }
 
