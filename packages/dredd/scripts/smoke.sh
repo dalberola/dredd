@@ -51,7 +51,7 @@ fi
 # Test the command-line interface is installed and runs
 "$TMPDIR/node_modules/.bin/dredd" --version
 
-# Test the JavaScript API
-node -e 'process.exitCode = (new (require("@stacklych/dredd"))({})).run ? 0 : 1;'
+# Test the JavaScript API (the package is ESM)
+node --input-type=module -e 'import Dredd from "@stacklych/dredd"; process.exitCode = new Dredd({}).run ? 0 : 1;'
 
 rm -fr "$TMPDIR"

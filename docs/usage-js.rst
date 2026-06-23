@@ -3,12 +3,12 @@
 Using Dredd as a JavaScript Library
 ===================================
 
-Dredd can be used directly from your JavaScript code. First, import and configure Dredd:
+Dredd is an ES module. Import and configure it from your JavaScript code:
 
 .. code-block:: javascript
 
-   var Dredd = require('dredd');
-   var dredd = new Dredd(configuration);
+   import Dredd from '@stacklych/dredd';
+   const dredd = new Dredd(configuration);
 
 Then you need to run the Dredd testing:
 
