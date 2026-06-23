@@ -2,7 +2,6 @@ import clone from 'clone';
 import Module, { createRequire } from 'module';
 
 import Hooks from './Hooks.js';
-import HooksWorkerClient from './HooksWorkerClient.js';
 import logger from './logger.js';
 import reporterOutputLogger from './reporters/reporterOutputLogger.js';
 import resolvePaths from './resolvePaths.js';
@@ -10,15 +9,12 @@ import resolvePaths from './resolvePaths.js';
 const nodeRequire = createRequire(import.meta.url);
 
 // The 'addHooks()' function is a strange glue code responsible for various
-// side effects needed as a preparation for loading Node.js hooks. It is
-// asynchronous only because as the last thing, it spawns the hooks handler
-// process if it figures out the hooks are not JavaScript hooks.
+// side effects needed as a preparation for loading Node.js hooks.
 //
 // In the future we should get rid of this code. Hooks should get a nice,
-// separate logical component, which takes care of their loading and running
-// regardless the language used, and either delegates to the hooks handler
-// or not. Side effects should get eliminated as much as possible in favor
-// of decoupling.
+// separate logical component, which takes care of their loading and running.
+// Side effects should get eliminated as much as possible in favor of
+// decoupling.
 
 /**
  * @param hooks The Hooks instance, passed to the hook file as a stub.
@@ -108,16 +104,6 @@ export default function addHooks(
   // accessible in the node.js hooks API
   runner.hooks.configuration = clone(runner.configuration);
 
-  // If the language is empty or it is nodejs
-  if (
-    !runner.configuration.language ||
-    runner.configuration.language === 'nodejs'
-  ) {
-    hookfiles.forEach((hookfile) => loadHookFile(hookfile, runner.hooks));
-    return callback();
-  }
-
-  // If other language than nodejs, run hooks worker client
-  // Worker client will start the worker server and pass the "hookfiles" options as CLI arguments to it
-  return new HooksWorkerClient(runner).start(callback);
+  hookfiles.forEach((hookfile) => loadHookFile(hookfile, runner.hooks));
+  return callback();
 }

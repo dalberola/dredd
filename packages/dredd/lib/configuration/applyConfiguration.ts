@@ -40,15 +40,6 @@ export const DEFAULT_CONFIG = {
   sorted: false,
   names: false,
   hookfiles: [],
-  language: 'nodejs',
-  'hooks-worker-timeout': 5000,
-  'hooks-worker-connect-timeout': 1500,
-  'hooks-worker-connect-retry': 500,
-  'hooks-worker-after-connect-wait': 100,
-  'hooks-worker-term-timeout': 5000,
-  'hooks-worker-term-retry': 500,
-  'hooks-worker-handler-host': '127.0.0.1',
-  'hooks-worker-handler-port': 61321,
 };
 
 // Flattens given configuration Object, removing nested "options" key.

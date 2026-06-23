@@ -57,8 +57,6 @@ With the API instance running locally at ``http://127.0.0.1:3000``, you can now 
 Now the tests should pass even if publishing new article requires auth.
 
 
-.. _supported-languages:
-
 JavaScript hooks
 ----------------
 

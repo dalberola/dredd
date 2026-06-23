@@ -98,11 +98,6 @@ Dredd can be configured by :ref:`many CLI options <usage-cli>`. It’s recommend
    ? Location of the API description document: api-description.yaml
    ? Command to start API backend server e.g. (bundle exec rails server)
    ? URL of tested API endpoint: http://127.0.0.1:3000
-   ? Programming language of hooks:
-   ❯ nodejs
-     python
-     ruby
-     ...
    ? Dredd is best served with Continuous Integration. Create CircleCI config for Dredd? Yes
 
 Now you can start test run just by typing ``dredd``!
@@ -114,4 +109,4 @@ Now you can start test run just by typing ``dredd``!
 Use Hooks
 ---------
 
-Dredd’s :ref:`hooks <hooks>` enable you to write some glue code in your favorite language to support enhanced scenarios in your API tests. Read the documentation about hooks to learn more on how to write them. Choose your language and install corresponding hooks handler library.
+Dredd’s :ref:`hooks <hooks>` enable you to write some glue code in JavaScript to support enhanced scenarios in your API tests. Read the documentation about hooks to learn more on how to write them.
