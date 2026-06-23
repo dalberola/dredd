@@ -844,5 +844,68 @@ paths:
       assert.equal(compileResult.transactions[0].request.method, 'PURGE');
       assert.equal(compileResult.transactions[0].response.status, '204');
     });
+
+    it('serializes an `in: querystring` parameter into the query string', () => {
+      const compileResult = compileOpenAPI31(`
+openapi: 3.2.0
+info: { title: T, version: '1.0' }
+paths:
+  /search:
+    get:
+      parameters:
+        - in: querystring
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  q: { type: string, example: hi }
+                  n: { type: integer, example: 5 }
+      responses:
+        '200': { description: ok }
+`);
+      assert.jsonSchema(compileResult, createCompileResultSchema({
+        annotations: 0,
+        transactions: 1,
+      }));
+      assert.equal(compileResult.transactions[0].request.uri, '/search?q=hi&n=5');
+    });
+
+    it('uses an example serializedValue verbatim for an `in: querystring` parameter', () => {
+      const compileResult = compileOpenAPI31(`
+openapi: 3.2.0
+info: { title: T, version: '1.0' }
+paths:
+  /s:
+    get:
+      parameters:
+        - in: querystring
+          content:
+            application/x-www-form-urlencoded:
+              examples:
+                e: { serializedValue: 'a=1&b=2' }
+      responses:
+        '200': { description: ok }
+`);
+      assert.equal(compileResult.transactions[0].request.uri, '/s?a=1&b=2');
+    });
+
+    it('uses an example serializedValue verbatim for a response body', () => {
+      const compileResult = compileOpenAPI31(`
+openapi: 3.2.0
+info: { title: T, version: '1.0' }
+paths:
+  /r:
+    get:
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              examples:
+                e: { serializedValue: '{"raw":true}' }
+`);
+      assert.equal(compileResult.transactions[0].response.body, '{"raw":true}');
+    });
   });
 });
