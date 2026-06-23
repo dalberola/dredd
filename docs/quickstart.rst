@@ -11,7 +11,7 @@ Install Dredd
 
 ::
 
-   $ npm install -g dredd
+   $ npm install -g @stacklych/dredd
 
 If you’re not familiar with the Node.js ecosystem or you bump into any issues, follow the :ref:`installation guide <installation>`.
 
