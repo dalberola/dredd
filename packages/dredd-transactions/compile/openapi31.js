@@ -435,6 +435,19 @@ function isJSONMediaType(mediaType) {
   return type === 'application/json' || type.endsWith('+json');
 }
 
+// OpenAPI 3.2 sequential/streaming media: a Media Type Object carrying
+// `itemSchema` (a schema applied to each item of a stream) or the Server-Sent
+// Events media type. Dredd validates whole single responses, not consumed
+// streams, so such content is flagged and its body schema is not validated.
+function isStreamingMediaType(mediaType, mediaTypeObject) {
+  const type = mediaType.split(';')[0].trim().toLowerCase();
+  if (type === 'text/event-stream') {
+    return true;
+  }
+  return !!(mediaTypeObject
+    && Object.prototype.hasOwnProperty.call(mediaTypeObject, 'itemSchema'));
+}
+
 function bodyFromMediaType(document, mediaType, mediaTypeObject) {
   if (Object.prototype.hasOwnProperty.call(mediaTypeObject, 'example')) {
     return isJSONMediaType(mediaType)
@@ -521,7 +534,8 @@ function compileResponse(document, status, response, content) {
     if (typeof body !== 'undefined') {
       compiledResponse.body = body;
     }
-    if (content.mediaTypeObject.schema) {
+    if (content.mediaTypeObject.schema
+      && !isStreamingMediaType(content.mediaType, content.mediaTypeObject)) {
       const schema = cloneWithoutRef(document, content.mediaTypeObject.schema);
       if (schema && typeof schema === 'object' && !schema.$schema) {
         schema.$schema = document.jsonSchemaDialect || OAS_31_DIALECT;
@@ -547,6 +561,41 @@ function compileOrigin(filename, document, pathTemplate, method, response) {
         .map((header) => header.value)[0],
     ].filter(Boolean).join(' > '),
   };
+}
+
+// Surfaces a warning for each OpenAPI 3.2 streaming/sequential media type in the
+// operation's request body or responses. Dredd still emits the transaction (so
+// the endpoint's method, URI, status, and headers are exercised), but the
+// streamed body is not validated.
+function collectStreamingAnnotations(document, method, pathTemplate, operation) {
+  const annotations = [];
+  const note = (mediaType, where) => annotations.push({
+    type: 'warning',
+    component: 'apiDescriptionParser',
+    message: `${method} ${pathTemplate} ${where} uses the OpenAPI 3.2 streaming `
+      + `media type "${mediaType}" (itemSchema or Server-Sent Events), which Dredd `
+      + 'does not validate as a stream; its body schema is skipped.',
+    location: null,
+  });
+
+  const requestContent = operation.requestBody
+    && resolveRef(document, operation.requestBody).content;
+  Object.keys(requestContent || {}).forEach((mediaType) => {
+    if (isStreamingMediaType(mediaType, requestContent[mediaType])) {
+      note(mediaType, 'request body');
+    }
+  });
+
+  Object.keys(operation.responses || {}).forEach((status) => {
+    const content = resolveRef(document, operation.responses[status]).content || {};
+    Object.keys(content).forEach((mediaType) => {
+      if (isStreamingMediaType(mediaType, content[mediaType])) {
+        note(mediaType, `${status} response`);
+      }
+    });
+  });
+
+  return annotations;
 }
 
 function compileOperation(document, filename, pathTemplate, pathItem, method, operation) {
@@ -600,7 +649,10 @@ function compileOperation(document, filename, pathTemplate, pathItem, method, op
     return collected;
   }, []);
 
-  return { transactions, annotations: [] };
+  return {
+    transactions,
+    annotations: collectStreamingAnnotations(document, method, pathTemplate, operation),
+  };
 }
 
 // Collects the operations of a Path Item as `{ method, operation }`, where
