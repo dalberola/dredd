@@ -6,12 +6,18 @@ import { noCallThru } from 'proxyquire';
 import sinon from 'sinon';
 import { assert } from 'chai';
 
-import * as configUtilsStub from '../../lib/configUtils';
+import * as configUtils from '../../lib/configUtils';
 import loggerStub from '../../lib/logger';
 import options from '../../options';
 import * as packageData from '../../package.json';
 
 const proxyquire = noCallThru();
+
+// A mutable shallow copy of the configUtils module, so its methods can be
+// stubbed. ES module namespace objects are sealed (read-only), so stubbing a
+// method directly on the import fails under ESM/esbuild — the copy restores
+// the writable surface the proxyquired CLI calls into.
+const configUtilsStub = { ...configUtils };
 
 const PORT = 9876;
 
