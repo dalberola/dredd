@@ -84,7 +84,8 @@ function cloneWithoutRef(document, value, seen = new Set()) {
   return clone;
 }
 
-function findFirstExample(document, examples) {
+// Resolves the first Example Object of an `examples` map (following a $ref).
+function firstExampleObject(document, examples) {
   if (!examples || typeof examples !== 'object') {
     return undefined;
   }
@@ -95,6 +96,11 @@ function findFirstExample(document, examples) {
   }
 
   const example = resolveRef(document, examples[firstKey]);
+  return example && typeof example === 'object' ? example : undefined;
+}
+
+function findFirstExample(document, examples) {
+  const example = firstExampleObject(document, examples);
   return example ? example.value : undefined;
 }
 
@@ -286,12 +292,64 @@ function getDefaultExplode(style) {
   return style === 'form';
 }
 
+// OpenAPI 3.2 `in: querystring` parameters carry the entire query string in
+// their `content` (typically application/x-www-form-urlencoded). Serializes a
+// representative value: a serialized example verbatim, else an object example
+// or sample form-encoded as `key=value&…`, else a primitive percent-encoded.
+function serializeQuerystringParameter(document, parameter) {
+  const { content } = parameter;
+  if (!content || typeof content !== 'object') {
+    return undefined;
+  }
+  const mediaType = Object.keys(content)[0];
+  if (!mediaType) {
+    return undefined;
+  }
+  const mediaTypeObject = content[mediaType] || {};
+
+  const exampleObject = firstExampleObject(document, mediaTypeObject.examples);
+  if (exampleObject
+    && Object.prototype.hasOwnProperty.call(exampleObject, 'serializedValue')) {
+    return String(exampleObject.serializedValue);
+  }
+
+  let value;
+  if (Object.prototype.hasOwnProperty.call(mediaTypeObject, 'example')) {
+    value = mediaTypeObject.example;
+  } else if (exampleObject && typeof exampleObject.value !== 'undefined') {
+    value = exampleObject.value;
+  } else {
+    value = sampleFromSchema(document, mediaTypeObject.schema);
+  }
+  if (typeof value === 'undefined') {
+    return undefined;
+  }
+
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return Object.keys(value)
+      .map((key) => `${encodePart(key)}=${encodePart(value[key])}`)
+      .join('&');
+  }
+  return encodePart(value);
+}
+
 function compileParameters(document, pathTemplate, parameters) {
   let uri = pathTemplate;
   const query = [];
 
   parameters.forEach((parameter) => {
     const resolvedParameter = resolveRef(document, parameter);
+
+    // OpenAPI 3.2 `in: querystring`: the entire query string, supplied via the
+    // parameter's `content` rather than a schema.
+    if (resolvedParameter.in === 'querystring') {
+      const serialized = serializeQuerystringParameter(document, resolvedParameter);
+      if (serialized) {
+        query.push(serialized);
+      }
+      return;
+    }
+
     const value = sampleFromParameter(document, resolvedParameter);
     if (typeof value === 'undefined') {
       return;
@@ -384,9 +442,18 @@ function bodyFromMediaType(document, mediaType, mediaTypeObject) {
       : String(mediaTypeObject.example);
   }
 
-  const example = findFirstExample(document, mediaTypeObject.examples);
-  if (typeof example !== 'undefined') {
-    return isJSONMediaType(mediaType) ? JSON.stringify(example) : String(example);
+  const exampleObject = firstExampleObject(document, mediaTypeObject.examples);
+  if (exampleObject) {
+    // OpenAPI 3.2 `serializedValue`: the example is already in serialized form,
+    // so use it verbatim instead of re-encoding it.
+    if (Object.prototype.hasOwnProperty.call(exampleObject, 'serializedValue')) {
+      return String(exampleObject.serializedValue);
+    }
+    if (typeof exampleObject.value !== 'undefined') {
+      return isJSONMediaType(mediaType)
+        ? JSON.stringify(exampleObject.value)
+        : String(exampleObject.value);
+    }
   }
 
   const sample = sampleFromSchema(document, mediaTypeObject.schema);
