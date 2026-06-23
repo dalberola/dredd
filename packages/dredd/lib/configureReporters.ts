@@ -1,4 +1,5 @@
-// @ts-check
+import type { EventEmitter } from 'events';
+
 import ApiaryReporter from './reporters/ApiaryReporter';
 import BaseReporter from './reporters/BaseReporter';
 import CLIReporter from './reporters/CLIReporter';
@@ -9,46 +10,39 @@ import NyanCatReporter from './reporters/NyanReporter';
 import XUnitReporter from './reporters/XUnitReporter';
 
 import logger from './logger';
+import type { ReporterStats } from './types/reporters';
 
-/**
- * @typedef {import('./types/reporters').ReporterStats & {
- *   fileBasedReporters?: number,
- * }} ConfigureStats
- *
- * @typedef {{
- *   emitter: import('events').EventEmitter,
- *   reporter: string[],
- *   output: string[],
- *   details: boolean,
- *   'inline-errors': boolean,
- *   server?: string,
- *   custom?: Record<string, any>,
- *   http?: Record<string, any>,
- * }} ReportersConfig
- */
+type ConfigureStats = ReporterStats & {
+  fileBasedReporters?: number;
+};
+
+interface ReportersConfig {
+  emitter: EventEmitter;
+  reporter: string[];
+  output: string[];
+  details: boolean;
+  'inline-errors': boolean;
+  server?: string;
+  custom?: Record<string, any>;
+  http?: Record<string, any>;
+}
 
 const fileReporters = ['xunit', 'html', 'markdown', 'apiary'];
 
 const cliReporters = ['dot', 'nyan'];
 
-/**
- * @param {string[]} a
- * @param {string[]} b
- * @returns {string[]}
- */
-function intersection(a, b) {
+function intersection(a: string[], b: string[]): string[] {
   if (a.length > b.length) {
     [a, b] = Array.from([b, a]);
   }
   return Array.from(a).filter((value) => Array.from(b).includes(value));
 }
 
-/**
- * @param {ReportersConfig} config
- * @param {ConfigureStats} stats
- * @param {{ logs?: any[] }} [runner]
- */
-function configureReporters(config, stats, runner) {
+function configureReporters(
+  config: ReportersConfig,
+  stats: ConfigureStats,
+  runner?: { logs?: any[] },
+) {
   addReporter('base', config.emitter, stats);
 
   const reporters = config.reporter;
@@ -56,8 +50,7 @@ function configureReporters(config, stats, runner) {
 
   logger.debug('Configuring reporters:', reporters, outputs);
 
-  /** @param {string[]} reportersArr */
-  function addCli(reportersArr) {
+  function addCli(reportersArr: string[]) {
     if (reportersArr.length > 0) {
       const usedCliReporters = intersection(reportersArr, cliReporters);
       if (usedCliReporters.length === 0) {
@@ -78,13 +71,12 @@ function configureReporters(config, stats, runner) {
     );
   }
 
-  /**
-   * @param {string} reporter
-   * @param {import('events').EventEmitter} emitter
-   * @param {ConfigureStats} statistics
-   * @param {string} [path]
-   */
-  function addReporter(reporter, emitter, statistics, path) {
+  function addReporter(
+    reporter: string,
+    emitter: EventEmitter,
+    statistics: ConfigureStats,
+    path?: string,
+  ) {
     switch (reporter) {
       case 'xunit':
         return new XUnitReporter(emitter, statistics, path, config.details);
