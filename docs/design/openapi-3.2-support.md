@@ -1,6 +1,8 @@
 # OpenAPI 3.2 Support — Feasibility & Design
 
-Status: **draft / proposal** · Milestone: [#3 OpenAPI 3.2 support](https://github.com/stacklych/dredd/milestone/3) · Audited: 2026-06-23
+Status: **implemented — shipped in v0.4.0** · Milestone: [#3 OpenAPI 3.2 support](https://github.com/stacklych/dredd/milestone/3) (closed) · Audited & implemented: 2026-06-23
+
+> **Outcome:** all three phases shipped in v0.4.0 — routing + the QUERY method + `additionalOperations` (#107), `in: querystring` parameters + `serializedValue` examples (#108), and a warning for streaming/sequential media (`itemSchema`, Server-Sent Events) (#109). The verdict below held: the parser pin was not a blocker and the validation layer was unchanged. The rest of this document is kept as the original design record.
 
 ## Verdict (TL;DR)
 

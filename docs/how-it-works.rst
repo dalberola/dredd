@@ -107,7 +107,7 @@ OpenAPI 3.1
 2. Response ``content`` media type ``example`` or first ``examples`` entry - Dredd uses the sample payload as the expected body.
 3. If no explicit response example is present, Dredd generates a sample body from the schema using the following precedence: ``example``, ``default``, ``const``, first ``enum`` value, first ``oneOf`` schema, first ``anyOf`` schema, then a generated value by type.
 
-OpenAPI 3.1 schemas are emitted with an explicit ``$schema`` before validation. Dredd preserves a schema-level ``$schema``. If the schema does not define one, Dredd uses the root ``jsonSchemaDialect`` value. If neither is present, Dredd uses the `OpenAPI 3.1 Schema Object dialect`_ URI. The OpenAPI 3.1 Schema Object dialect and ``https://json-schema.org/draft/2020-12/schema`` are validated with Ajv.
+OpenAPI 3.1 and 3.2 schemas are emitted with an explicit ``$schema`` before validation (3.2 reuses the OpenAPI 3.1 Schema Object dialect). Dredd preserves a schema-level ``$schema``. If the schema does not define one, Dredd uses the root ``jsonSchemaDialect`` value. If neither is present, Dredd uses the `OpenAPI 3.1 Schema Object dialect`_ URI. The OpenAPI 3.1 Schema Object dialect and ``https://json-schema.org/draft/2020-12/schema`` are validated with Ajv.
 
 .. _gavels-expectations:
 
@@ -141,7 +141,7 @@ URI Parameters
 
 If Dredd isn’t able to infer any value for a required parameter, it will terminate the test run and complain that the parameter is *ambiguous*.
 
-In OpenAPI 3 documents, path parameters are serialized with ``style: simple`` and query parameters are serialized with ``style: form``. Arrays and objects support OpenAPI's default ``explode`` values and explicit ``explode: true`` or ``explode: false``. Other parameter locations and styles are not covered yet.
+In OpenAPI 3 documents, path parameters are serialized with ``style: simple`` and query parameters are serialized with ``style: form``. Arrays and objects support OpenAPI's default ``explode`` values and explicit ``explode: true`` or ``explode: false``. OpenAPI 3.2 ``in: querystring`` parameters are also supported: the whole query string is taken from the parameter's ``content`` (an object is form-encoded, or an example ``serializedValue`` is used verbatim). Other parameter locations and styles are not covered yet.
 
 Request Headers
 ~~~~~~~~~~~~~~~
@@ -175,7 +175,7 @@ Choosing HTTP Transactions
 
 The OpenAPI 3 compiler produces one transaction for each response entry on an operation. For each request or response body, Dredd selects the first declared media type. For ``default`` responses, Dredd currently uses HTTP 200 as the compiled expected status.
 
-Current OpenAPI 3 support is focused on response testing. It supports path and query parameter examples, path ``simple`` and query ``form`` parameter serialization, request body examples, response body examples, simple local ``$ref`` values, schema-derived JSON/text samples, and response schema validation for the OpenAPI 3.1 Schema Object dialect and JSON Schema 2020-12. It does not yet implement all OpenAPI 3.1 features such as external references, callbacks, links, webhooks, header or cookie parameters, matrix, label, space-delimited, pipe-delimited, or deep-object parameter serialization, or multipart encoding objects.
+Current OpenAPI 3 support is focused on response testing. It supports path and query parameter examples, path ``simple`` and query ``form`` parameter serialization, request body examples, response body examples, simple local ``$ref`` values, schema-derived JSON/text samples, and response schema validation for the OpenAPI 3.1 Schema Object dialect and JSON Schema 2020-12. OpenAPI 3.2 documents are compiled through the same path: the ``query`` (QUERY) method and the ``additionalOperations`` map produce transactions, and ``in: querystring`` parameters and example ``serializedValue`` are honoured. Streaming and sequential media (a media type carrying ``itemSchema``, or Server-Sent Events via ``text/event-stream``) is reported with a warning and is not validated as a stream. It does not yet implement all OpenAPI 3.1 features such as external references, callbacks, links, webhooks, header or cookie parameters, matrix, label, space-delimited, pipe-delimited, or deep-object parameter serialization, or multipart encoding objects.
 
 .. _security:
 
