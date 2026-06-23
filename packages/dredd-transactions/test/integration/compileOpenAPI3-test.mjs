@@ -907,5 +907,47 @@ paths:
 `);
       assert.equal(compileResult.transactions[0].response.body, '{"raw":true}');
     });
+
+    it('flags a streaming (itemSchema) response and skips its body schema', () => {
+      const compileResult = compileOpenAPI31(`
+openapi: 3.2.0
+info: { title: T, version: '1.0' }
+paths:
+  /stream:
+    get:
+      responses:
+        '200':
+          description: ok
+          content:
+            application/jsonl:
+              schema: { type: object }
+              itemSchema: { type: object, properties: { n: { type: integer } } }
+`);
+      assert.equal(compileResult.transactions.length, 1);
+      assert.isUndefined(compileResult.transactions[0].response.schema);
+      assert.equal(compileResult.annotations.length, 1);
+      assert.equal(compileResult.annotations[0].type, 'warning');
+      assert.include(compileResult.annotations[0].message, 'streaming');
+    });
+
+    it('flags a Server-Sent Events response', () => {
+      const compileResult = compileOpenAPI31(`
+openapi: 3.2.0
+info: { title: T, version: '1.0' }
+paths:
+  /events:
+    get:
+      responses:
+        '200':
+          description: ok
+          content:
+            text/event-stream:
+              itemSchema: { type: object }
+`);
+      assert.equal(compileResult.transactions.length, 1);
+      assert.isUndefined(compileResult.transactions[0].response.schema);
+      assert.equal(compileResult.annotations.length, 1);
+      assert.equal(compileResult.annotations[0].type, 'warning');
+    });
   });
 });
