@@ -8,15 +8,13 @@
 .. _Dredd Transactions: https://github.com/apiaryio/dredd-transactions
 
 
-.. API Blueprint
+.. MSON (data-structure notation used in docs/data-structures.rst)
 
-.. _API Blueprint: https://apiblueprint.org
 .. _MSON: https://apiblueprint.org/documentation/mson/tutorial.html
 
 
 .. OpenAPI specification
 
-.. _OpenAPI 2: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
 .. _OpenAPI 3: https://spec.openapis.org/oas/v3.0.4.html
 .. _OpenAPI 3.1: https://spec.openapis.org/oas/v3.1.2.html
 

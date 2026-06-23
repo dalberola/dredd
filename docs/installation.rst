@@ -115,7 +115,7 @@ Now that you have everything prepared, you can finally run npm to install Dredd:
 
 .. code-block:: text
 
-   npm install dredd --global
+   npm install @stacklych/dredd --global
 
 .. note::
    If you get ``EACCES`` permissions errors, try `one of the officially recommended solutions <https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally>`__. In the worst case, you can run the command again with ``sudo``.
@@ -135,7 +135,7 @@ Adding Dredd as a dev dependency
 If your API project is also an npm package, you may want to add Dredd as a dev dependency instead of installing it globally.
 
 - Make sure your project is an npm package with a ``package.json`` file
-- In the root of the project run ``npm install dredd --save-dev``
+- In the root of the project run ``npm install @stacklych/dredd --save-dev``
 - Once the installation is complete, you can run Dredd from the root of the project as ``npx dredd``
 
 This is how Dredd is installed in the `dredd-example <https://github.com/apiaryio/dredd-example>`__ repository, so you may want to see it for inspiration.

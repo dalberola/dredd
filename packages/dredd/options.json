@@ -11,7 +11,7 @@
   },
   "language": {
     "alias": "a",
-    "description": "Language of hookfiles. Possible options are: nodejs, ruby, python, php, perl, go, rust",
+    "description": "Language of hookfiles. The supported language is nodejs.",
     "default": "nodejs"
   },
   "require": {

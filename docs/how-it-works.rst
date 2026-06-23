@@ -15,10 +15,10 @@ In a nutshell, Dredd does following:
 Versioning
 ----------
 
-Dredd follows `Semantic Versioning <https://semver.org/>`__. To ensure certain stability of your Dredd installation (e.g. in CI), pin the version accordingly. You can also use release tags:
+Dredd follows `Semantic Versioning <https://semver.org/>`__. To ensure certain stability of your Dredd installation (e.g. in CI), pin the version accordingly:
 
--  ``npm install dredd`` - Installs the latest published version including experimental pre-release versions.
--  ``npm install dredd@stable`` - Skips experimental pre-release versions. Recommended for CI installations.
+-  ``npm install @stacklych/dredd`` - Installs the latest published version.
+-  ``npm install @stacklych/dredd@x.y.z`` - Pins a specific version. Recommended for CI installations.
 
 If the ``User-Agent`` header isn’t overridden in the API description document, Dredd uses it for sending information about its version number along with every HTTP request it does.
 

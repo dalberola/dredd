@@ -68,12 +68,8 @@ See below how sample configuration file could look like. The structure is the sa
    details: false
    method: []
    loglevel: warning
-   path: []
-   blueprint: api-description.yaml
+   path: ["api-description.yaml"]
    endpoint: "http://127.0.0.1:3000"
-
-.. note::
-   Do not get confused by Dredd using a keyword ``blueprint`` also for paths to OpenAPI documents. This is for historical reasons and will be changed in the future.
 
 CLI Options Reference
 ---------------------
