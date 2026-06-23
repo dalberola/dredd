@@ -1,0 +1,30 @@
+name: dockerhub-description
+
+# Sync the Docker Hub repository "Overview" (and short description) from a
+# source file. Docker Hub does not update the overview when an image is pushed,
+# so this runs separately: on demand, and whenever the overview source changes.
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/dockerhub-overview.md'
+      - '.github/workflows/dockerhub-description.yml'
+
+jobs:
+  update-description:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update Docker Hub repository overview
+        uses: peter-evans/dockerhub-description@v5
+        with:
+          username: stacklych
+          # Requires a Docker Hub PAT with read/write/delete scope (push-only
+          # tokens with read/write are NOT sufficient to edit the description).
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: stacklych/dredd
+          short-description: 'Dredd — HTTP API testing tool for OpenAPI 3.0/3.1'
+          readme-filepath: ./.github/dockerhub-overview.md
