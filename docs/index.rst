@@ -32,19 +32,10 @@ Supported API Description Formats
 
 Both versions validate response status, structure, and **data types** against the described schemas — including ``$ref``, ``allOf``, arrays, ``nullable``, and string formats.
 
-Supported Hooks Languages
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Hooks
+~~~~~
 
-Dredd supports writing :ref:`hooks <hooks>` — a glue code for each test setup and teardown. Following languages are supported:
-
--  :ref:`Go <hooks-go>`
--  :ref:`Node.js (JavaScript) <hooks-nodejs>`
--  :ref:`Perl <hooks-perl>`
--  :ref:`PHP <hooks-php>`
--  :ref:`Python <hooks-python>`
--  :ref:`Ruby <hooks-ruby>`
--  :ref:`Rust <hooks-rust>`
--  Didn’t find your favorite language? :ref:`Add a new one! <hooks-new-language>`
+Dredd supports writing :ref:`hooks <hooks>` — glue code for test setup and teardown — in :ref:`JavaScript <hooks-nodejs>`, available out of the box.
 
 Supported Systems
 ~~~~~~~~~~~~~~~~~
@@ -79,6 +70,5 @@ Example Applications
 --------------------
 
 -  `Express.js <https://github.com/apiaryio/dredd-example>`__
--  `Laravel <https://github.com/ddelnano/dredd-hooks-php/wiki/Laravel-Example>`__
 -  `Laravel & OpenAPI 3 <https://github.com/AndyWendt/laravel-dredd-openapi-v3>`__
 -  `Ruby on Rails <https://gitlab.com/theodorton/dredd-test-rails/>`__

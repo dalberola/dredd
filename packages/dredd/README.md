@@ -61,8 +61,8 @@ reporters, configuration, and CI usage.
 
 ## Hooks
 
-Dredd supports [hooks](https://dredd.org/en/latest/hooks/) — glue code for test
-setup and teardown — in Go, Node.js, Perl, PHP, Python, Ruby, and Rust.
+Dredd supports [hooks](https://stacklych.github.io/dredd/) — glue code for test
+setup and teardown — written in JavaScript, available out of the box.
 
 ## ESM only
 

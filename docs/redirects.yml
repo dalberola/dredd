@@ -27,13 +27,6 @@ redirects:
 
   # 'Hooks to a directory' migration
   "/hooks.html": "/hooks/index.html"
-  "/hooks-go.html": "/hooks/go.html"
-  "/hooks-new-language.html": "/hooks/new-language.html"
-  "/hooks-perl.html": "/hooks/perl.html"
-  "/hooks-ruby.html": "/hooks/ruby.html"
-  "/hooks-rust.html": "/hooks/rust.html"
-  "/hooks-php.html": "/hooks/php.html"
-  "/hooks-python.html": "/hooks/python.html"
 
   # 'MkDocs to Sphinx' migration
   "/usage-js/": "/usage-js.html"
@@ -45,10 +38,3 @@ redirects:
   "/installation/": "/installation.html"
   "/usage-cli/": "/usage-cli.html"
   "/hooks/": "/hooks/index.html"
-  "/hooks-go/": "/hooks/go.html"
-  "/hooks-new-language/": "/hooks/new-language.html"
-  "/hooks-perl/": "/hooks/perl.html"
-  "/hooks-ruby/": "/hooks/ruby.html"
-  "/hooks-rust/": "/hooks/rust.html"
-  "/hooks-php/": "/hooks/php.html"
-  "/hooks-python/": "/hooks/python.html"

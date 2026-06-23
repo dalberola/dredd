@@ -25,13 +25,13 @@ Maintainers
 Hall of fame
 ~~~~~~~~~~~~
 
-Dredd supports many programming languages thanks to the work of several contributors. They deserve eternal praise for dedicating time to create, improve, and maintain the respective :ref:`hooks handlers <hooks>`:
+Earlier versions of Dredd supported hooks in additional programming languages thanks to the work of several contributors. They deserve eternal praise for dedicating time to create, improve, and maintain the respective hooks handlers:
 
--  `@ddelnano <https://github.com/ddelnano>`__ (:ref:`PHP <hooks-php>`, :ref:`Go <hooks-go>`)
--  `@gonzalo-bulnes <https://github.com/gonzalo-bulnes>`__ (:ref:`Ruby <hooks-ruby>`)
--  `@hobofan <https://github.com/hobofan>`__ (:ref:`Rust <hooks-rust>`)
--  `@snikch <https://github.com/snikch>`__ (:ref:`Go <hooks-go>`)
--  `@ungrim97 <https://github.com/ungrim97>`__ (:ref:`Perl <hooks-perl>`)
+-  `@ddelnano <https://github.com/ddelnano>`__ (PHP, Go)
+-  `@gonzalo-bulnes <https://github.com/gonzalo-bulnes>`__ (Ruby)
+-  `@hobofan <https://github.com/hobofan>`__ (Rust)
+-  `@snikch <https://github.com/snikch>`__ (Go)
+-  `@ungrim97 <https://github.com/ungrim97>`__ (Perl)
 
 Big thanks also to `@netmilk <https://github.com/netmilk/>`__, the original author of Dredd and `Gavel`_!
 
