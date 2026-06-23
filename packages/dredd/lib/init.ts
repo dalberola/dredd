@@ -3,9 +3,9 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 
-import logger from './logger';
+import logger from './logger.js';
 
-import packageData from '../package.json';
+import packageData from '../package.json' with { type: 'json' };
 
 const INSTALL_DREDD = `npm install dredd@${packageData.version} --global`;
 const RUN_DREDD = 'dredd';
@@ -68,10 +68,10 @@ function detect(files: string[]): DetectResult {
   };
 }
 
-// inquirer 9+ is ESM-only; load it through a native dynamic import that
-// the CommonJS build will not downlevel to a failing require().
+// inquirer 9+ is ESM-only; load it through a dynamic import so the prompt
+// dependency is only pulled in when `dredd init` actually runs.
 const loadInquirer = (): Promise<any> =>
-  new Function('return import("inquirer")')().then((m: any) => m.default);
+  import('inquirer').then((m: any) => m.default);
 
 export function prompt(
   config: any,

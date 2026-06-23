@@ -1,11 +1,7 @@
-import {
-  ExpectedResponse,
-  RealResponse,
-  ValidationResult,
-} from './types';
-import validateStatusCode from './validateStatusCode';
-import validateHeaders from './validateHeaders';
-import validateBody from './validateBody';
+import { ExpectedResponse, RealResponse, ValidationResult } from './types.js';
+import validateStatusCode from './validateStatusCode.js';
+import validateHeaders from './validateHeaders.js';
+import validateBody from './validateBody.js';
 
 // In-house replacement for `gavel.validate(expected, real)` (issue #59).
 // Produces the same runtime shape as the vendored gavel@9.1.5 bundle:

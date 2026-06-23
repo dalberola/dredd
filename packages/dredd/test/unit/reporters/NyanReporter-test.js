@@ -1,15 +1,10 @@
-import { noCallThru } from 'proxyquire';
 import sinon from 'sinon';
 
 import { assert } from 'chai';
 import { EventEmitter } from 'events';
 
 import reporterOutputLoggerStub from '../../../lib/reporters/reporterOutputLogger';
-
-const proxyquire = noCallThru();
-const NyanCatReporter = proxyquire('../../../lib/reporters/NyanReporter', {
-  './reporterOutputLogger': reporterOutputLoggerStub,
-}).default;
+import NyanCatReporter from '../../../lib/reporters/NyanReporter';
 
 describe('NyanCatReporter', () => {
   let emitter;

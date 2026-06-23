@@ -2,12 +2,12 @@ import { EventEmitter } from 'events';
 import fs from 'fs';
 import pathmodule from 'path';
 
-import expandTilde from '../expandTilde';
+import expandTilde from '../expandTilde.js';
 
-import logger from '../logger';
-import reporterOutputLogger from './reporterOutputLogger';
-import prettifyResponse from '../prettifyResponse';
-import type { ReporterStats } from '../types/reporters';
+import logger from '../logger.js';
+import reporterOutputLogger from './reporterOutputLogger.js';
+import prettifyResponse from '../prettifyResponse.js';
+import type { ReporterStats } from '../types/reporters.js';
 
 // Escape the XML metacharacters relevant to a double-quoted attribute value
 // (test titles are emitted as the `name="..."` attribute). `&` must be replaced

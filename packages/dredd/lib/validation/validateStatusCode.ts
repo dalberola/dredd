@@ -1,4 +1,8 @@
-import { ExpectedResponse, FieldValidationResult, RealResponse } from './types';
+import {
+  ExpectedResponse,
+  FieldValidationResult,
+  RealResponse,
+} from './types.js';
 
 // Validates the HTTP status code by exact (stringwise) equality, matching
 // gavel@9.1.5's TextDiff-based statusCode field:

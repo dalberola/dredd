@@ -4,10 +4,10 @@ import path from 'path';
 import spawnArgs from 'spawn-args';
 import { EventEmitter } from 'events';
 
-import getGoBinary from './getGoBinary';
-import logger from './logger';
-import which from './which';
-import { spawn } from './childProcess';
+import getGoBinary from './getGoBinary.js';
+import logger from './logger.js';
+import which from './which.js';
+import { spawn } from './childProcess.js';
 
 class HooksWorkerClient {
   runner: any;

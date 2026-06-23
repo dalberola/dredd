@@ -3,7 +3,7 @@ import {
   FieldValidationResult,
   RealResponse,
   ValidationError,
-} from './types';
+} from './types.js';
 
 // Headers whose *value* gavel@9.1.5 enforces (via a JSON Schema `enum`). Every
 // other expected header is checked for presence only — a value mismatch on, say,

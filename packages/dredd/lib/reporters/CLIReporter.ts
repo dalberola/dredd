@@ -1,9 +1,9 @@
 import type { EventEmitter } from 'events';
 
-import logger from '../logger';
-import reporterOutputLogger from './reporterOutputLogger';
-import prettifyResponse from '../prettifyResponse';
-import type { ReporterStats, ReporterTest } from '../types/reporters';
+import logger from '../logger.js';
+import reporterOutputLogger from './reporterOutputLogger.js';
+import prettifyResponse from '../prettifyResponse.js';
+import type { ReporterStats, ReporterTest } from '../types/reporters.js';
 
 const CONNECTION_ERRORS = [
   'ECONNRESET',

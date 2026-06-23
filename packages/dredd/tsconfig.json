@@ -1,19 +1,19 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "module": "node16",
+    "module": "nodenext",
     "target": "es2017",
     "lib": ["es2017"],
     "typeRoots": ["node_modules/@types"],
     "rootDir": "./lib",
     "outDir": "./build",
-    "moduleResolution": "node16",
+    "moduleResolution": "nodenext",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "strict": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["./lib/**/*.ts", "./lib/**/*.js"],
+  "include": ["./lib/**/*.ts"],
   "exclude": ["node_modules", "build"]
 }

@@ -1,4 +1,3 @@
-import { noCallThru } from 'proxyquire';
 import sinon from 'sinon';
 
 import { assert } from 'chai';
@@ -6,11 +5,7 @@ import { EventEmitter } from 'events';
 
 import loggerStub from '../../../lib/logger';
 import reporterOutputLoggerStub from '../../../lib/reporters/reporterOutputLogger';
-
-const proxyquire = noCallThru();
-const DotReporter = proxyquire('../../../lib/reporters/DotReporter', {
-  '../logger': loggerStub,
-}).default;
+import DotReporter from '../../../lib/reporters/DotReporter';
 
 describe('DotReporter', () => {
   let stats = {};

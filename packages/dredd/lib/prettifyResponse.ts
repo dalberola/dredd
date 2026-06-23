@@ -1,6 +1,6 @@
 import html from 'html';
 
-import logger from './logger';
+import logger from './logger.js';
 
 /**
  * Render an HTTP response-like object (real response, expected response, or

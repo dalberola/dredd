@@ -1,13 +1,13 @@
 import clone from 'clone';
-import proxyquireBase from 'proxyquire';
+import Module, { createRequire } from 'module';
 
-import Hooks from './Hooks';
-import HooksWorkerClient from './HooksWorkerClient';
-import logger from './logger';
-import reporterOutputLogger from './reporters/reporterOutputLogger';
-import resolvePaths from './resolvePaths';
+import Hooks from './Hooks.js';
+import HooksWorkerClient from './HooksWorkerClient.js';
+import logger from './logger.js';
+import reporterOutputLogger from './reporters/reporterOutputLogger.js';
+import resolvePaths from './resolvePaths.js';
 
-const proxyquire = proxyquireBase.noCallThru();
+const nodeRequire = createRequire(import.meta.url);
 
 // The 'addHooks()' function is a strange glue code responsible for various
 // side effects needed as a preparation for loading Node.js hooks. It is
@@ -25,7 +25,28 @@ const proxyquire = proxyquireBase.noCallThru();
  */
 function loadHookFile(hookfile: string, hooks: any) {
   try {
-    proxyquire(hookfile, { hooks });
+    const resolved = nodeRequire.resolve(hookfile);
+    // Re-evaluate the hook file on each load (proxyquire never cached it).
+    delete nodeRequire.cache[resolved];
+
+    // Inject Dredd's Hooks instance as the `hooks` module the hook file
+    // requires. Intercepting Module._load replaces proxyquire, which cannot run
+    // under ESM (it reads `module.parent`, undefined in an ES module).
+    const moduleLoader = Module as unknown as {
+      _load: (request: string, ...args: any[]) => any;
+    };
+    const originalLoad = moduleLoader._load;
+    moduleLoader._load = function _load(request: string, ...args: any[]) {
+      if (request === 'hooks') {
+        return hooks;
+      }
+      return originalLoad.call(this, request, ...args);
+    };
+    try {
+      nodeRequire(resolved);
+    } finally {
+      moduleLoader._load = originalLoad;
+    }
   } catch (error) {
     const hookError = error as Error;
     logger.warn(

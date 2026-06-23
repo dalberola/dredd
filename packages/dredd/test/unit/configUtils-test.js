@@ -1,14 +1,10 @@
 import clone from 'clone';
 import fsStub from 'fs';
-import proxyquire from 'proxyquire';
 import sinon from 'sinon';
 import yamlStub from 'js-yaml';
 import { assert } from 'chai';
 
-const configUtils = proxyquire('../../lib/configUtils', {
-  fs: fsStub,
-  'js-yaml': yamlStub,
-});
+import * as configUtils from '../../lib/configUtils';
 
 const argvData = {
   _: ['blueprint', 'endpoint'],

@@ -1,5 +1,4 @@
 import fsStub from 'fs';
-import { noCallThru } from 'proxyquire';
 import sinon from 'sinon';
 
 import { assert } from 'chai';
@@ -7,14 +6,7 @@ import { EventEmitter } from 'events';
 
 import loggerStub from '../../../lib/logger';
 import reporterOutputLoggerStub from '../../../lib/reporters/reporterOutputLogger';
-
-const proxyquire = noCallThru();
-
-const XUnitReporter = proxyquire('../../../lib/reporters/XUnitReporter', {
-  '../logger': loggerStub,
-  './reporterOutputLogger': reporterOutputLoggerStub,
-  fs: fsStub,
-}).default;
+import XUnitReporter from '../../../lib/reporters/XUnitReporter';
 
 describe('XUnitReporter', () => {
   let test = {};
@@ -225,10 +217,7 @@ describe('XUnitReporter', () => {
           title: 'A & B < C > D " E',
         });
         const written = fsStub.appendFileSync.getCall(0).args[1];
-        assert.include(
-          written,
-          'name="A &amp; B &lt; C &gt; D &quot; E"',
-        );
+        assert.include(written, 'name="A &amp; B &lt; C &gt; D &quot; E"');
       }));
   });
 

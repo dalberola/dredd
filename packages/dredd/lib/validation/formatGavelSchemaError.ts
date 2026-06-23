@@ -1,4 +1,4 @@
-import { ValidationError } from './types';
+import { ValidationError } from './types.js';
 
 // Formats an ajv error for the explicit-`bodySchema` path the way gavel@9.1.5
 // did. Gavel used a *hybrid* renderer: a few keywords were translated into its

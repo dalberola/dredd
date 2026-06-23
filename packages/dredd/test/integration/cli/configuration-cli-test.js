@@ -1,45 +1,30 @@
 import express from 'express';
 import fs from 'fs';
-import { noCallThru } from 'proxyquire';
+import esmock from 'esmock';
 import sinon from 'sinon';
 import { assert } from 'chai';
 
 import loggerStub from '../../../lib/logger';
 import * as configUtilsModule from '../../../lib/configUtils';
 
-const proxyquire = noCallThru();
 const PORT = 9876;
 
-// A mutable shallow copy of the configUtils module, so its methods can be
-// stubbed/spied. ES module namespace objects are sealed (read-only), so
-// stubbing a method directly on the import fails under ESM/esbuild — the copy
-// restores the writable surface the proxyquired CLI calls into.
-const configUtils = { ...configUtilsModule };
+// A mutable shallow copy of the configUtils module so its methods can be
+// stubbed. ES module namespace objects are sealed (read-only) and esmock
+// snapshots the injected mock at load time, so `load` is pre-stubbed here and
+// reconfigured in place per test (rather than re-stubbed) so the esmocked CLI
+// observes the behaviour.
+const configUtils = { ...configUtilsModule, load: sinon.stub() };
 
 let exitStatus;
 
 let stderr = '';
 
-const addHooksStub = proxyquire('../../../lib/addHooks', {
-  './logger': loggerStub,
-}).default;
-
-const transactionRunner = proxyquire('../../../lib/TransactionRunner', {
-  './addHooks': addHooksStub,
-  './logger': loggerStub,
-}).default;
-
-const dreddStub = proxyquire('../../../lib/Dredd', {
-  './TransactionRunner': transactionRunner,
-  './logger': loggerStub,
-}).default;
-
-const CLIStub = proxyquire('../../../lib/CLI', {
-  './Dredd': dreddStub,
-  './configUtils': configUtils,
-  console: loggerStub,
-  fs,
-}).default;
+// CLI is loaded through esmock with its genuinely-faked dependencies replaced:
+// the mutable configUtils copy, and console/logger routed to the test logger so
+// output is captured. Dredd and TransactionRunner run for real. esmock is
+// async, so the class is loaded in a `before` hook.
+let CLIStub;
 
 function execCommand(custom = {}, cb) {
   stderr = '';
@@ -57,7 +42,15 @@ function execCommand(custom = {}, cb) {
 }
 
 describe('CLI class Integration', () => {
-  before(() => {
+  before(async () => {
+    CLIStub = (
+      await esmock.p('../../../lib/CLI.ts', {
+        '../../../lib/configUtils.ts': configUtils,
+        '../../../lib/logger.ts': { default: loggerStub },
+        console: { default: loggerStub },
+      })
+    ).default;
+
     ['warn', 'error', 'debug'].forEach((method) => {
       sinon.stub(loggerStub, method).callsFake((chunk) => {
         stderr += `\n${method}: ${chunk}`;
@@ -82,14 +75,13 @@ describe('CLI class Integration', () => {
 
       before((done) => {
         fsExistsSync = sinon.stub(fs, 'existsSync').callsFake(() => true);
-        configUtilsLoad = sinon
-          .stub(configUtils, 'load')
-          .callsFake(() => options);
+        configUtils.load.callsFake(() => options);
+        configUtilsLoad = configUtils.load;
         execCommand(cmd, done);
       });
       after(() => {
         fsExistsSync.restore();
-        configUtilsLoad.restore();
+        configUtils.load.reset();
       });
 
       it('should call fs.existsSync with given path', () =>
@@ -110,14 +102,13 @@ describe('CLI class Integration', () => {
 
       before((done) => {
         fsExistsSync = sinon.stub(fs, 'existsSync').callsFake(() => true);
-        configUtilsLoad = sinon
-          .stub(configUtils, 'load')
-          .callsFake(() => options);
+        configUtils.load.callsFake(() => options);
+        configUtilsLoad = configUtils.load;
         execCommand(cmd, done);
       });
       after(() => {
         fsExistsSync.restore();
-        configUtilsLoad.restore();
+        configUtils.load.reset();
       });
 
       it('should call fs.existsSync with dredd.yml', () =>
@@ -137,12 +128,12 @@ describe('CLI class Integration', () => {
 
       before((done) => {
         fsExistsSync = sinon.stub(fs, 'existsSync').callsFake(() => false);
-        configUtilsLoad = sinon.spy(configUtils, 'load');
+        configUtilsLoad = configUtils.load;
         execCommand(cmd, done);
       });
       after(() => {
         fsExistsSync.restore();
-        configUtilsLoad.restore();
+        configUtils.load.reset();
       });
 
       it('should call fs.existsSync with dredd.yml', () =>

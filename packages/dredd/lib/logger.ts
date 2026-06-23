@@ -1,4 +1,4 @@
-import createConsoleLogger from './createConsoleLogger';
+import createConsoleLogger from './createConsoleLogger.js';
 
 const logger = createConsoleLogger({
   levels: {

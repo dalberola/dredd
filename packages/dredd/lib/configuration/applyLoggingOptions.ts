@@ -1,5 +1,5 @@
-import logger from '../logger';
-import reporterOutputLogger from '../reporters/reporterOutputLogger';
+import logger from '../logger.js';
+import reporterOutputLogger from '../reporters/reporterOutputLogger.js';
 
 /**
  * Applies logging options from the given configuration.

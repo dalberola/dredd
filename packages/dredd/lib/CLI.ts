@@ -1,21 +1,21 @@
-import RTyped from 'ramda';
-import console from 'console'; // Stubbed in tests by proxyquire
+import * as RTyped from 'ramda';
+import console from 'console'; // Stubbed in tests by esmock
 import fs from 'fs';
 import minimist from 'minimist';
 import os from 'os';
 import spawnArgs from 'spawn-args';
 import crossSpawn from 'cross-spawn';
 
-import * as configUtils from './configUtils';
-import Dredd from './Dredd';
-import ignorePipeErrors from './ignorePipeErrors';
-import interactiveConfig from './init';
-import logger from './logger';
-import { applyLoggingOptions } from './configuration';
-import { spawn } from './childProcess';
+import * as configUtils from './configUtils.js';
+import Dredd from './Dredd.js';
+import ignorePipeErrors from './ignorePipeErrors.js';
+import interactiveConfig from './init.js';
+import logger from './logger.js';
+import { applyLoggingOptions } from './configuration/index.js';
+import { spawn } from './childProcess.js';
 
-import dreddOptions from '../options.json';
-import packageData from '../package.json';
+import dreddOptions from '../options.json' with { type: 'json' };
+import packageData from '../package.json' with { type: 'json' };
 
 // ramda's point-free helpers fight @types/ramda's conditional return types;
 // the result of mergeDeepRight is read with dynamic keys, so treat R as `any`.

@@ -2,14 +2,14 @@
 // don't satisfy compose()/when()'s overloads on this dynamic config bag; treat
 // the ramda namespace as untyped here (the typed boundaries — validateConfig's
 // return and resolveConfig's explicit return type — are preserved below).
-import RTyped from 'ramda';
+import * as RTyped from 'ramda';
 import { EventEmitter } from 'events';
 
-import logger from '../logger';
-import getProxySettings from '../getProxySettings';
-import applyLoggingOptions from './applyLoggingOptions';
-import validateConfig from './validateConfig';
-import normalizeConfig from './normalizeConfig';
+import logger from '../logger.js';
+import getProxySettings from '../getProxySettings.js';
+import applyLoggingOptions from './applyLoggingOptions.js';
+import validateConfig from './validateConfig.js';
+import normalizeConfig from './normalizeConfig.js';
 
 const R: any = RTyped;
 

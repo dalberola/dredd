@@ -1,8 +1,8 @@
 import fs from 'fs';
 import type { IncomingHttpHeaders } from 'http';
 
-import defaultRequest from './httpClient';
-import isURL from './isURL';
+import defaultRequest from './httpClient.js';
+import isURL from './isURL.js';
 
 type ReadCallback = (error: Error | null, data?: string | Buffer) => void;
 

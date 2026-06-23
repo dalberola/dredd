@@ -1,6 +1,6 @@
 import crossSpawn from 'cross-spawn';
 
-import ignorePipeErrors from './ignorePipeErrors';
+import ignorePipeErrors from './ignorePipeErrors.js';
 
 import type { ChildProcess } from 'child_process';
 import type { Writable } from 'stream';

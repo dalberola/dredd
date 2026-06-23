@@ -4,7 +4,7 @@
 // overloads, producing many false-positive errors with no underlying defect.
 // Treat the ramda namespace as untyped here; the real logic — the transform
 // callbacks below — is still type-checked via their annotated parameters.
-import RTyped from 'ramda';
+import * as RTyped from 'ramda';
 
 const R: any = RTyped;
 

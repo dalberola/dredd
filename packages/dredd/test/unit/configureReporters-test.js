@@ -7,7 +7,7 @@ import { EventEmitter } from 'events';
 
 import { assert } from 'chai';
 import sinon from 'sinon';
-import { noCallThru } from 'proxyquire';
+import esmock from 'esmock';
 
 import loggerStub from '../../lib/logger';
 import BaseReporter from '../../lib/reporters/BaseReporter';
@@ -19,7 +19,6 @@ import HTMLReporter from '../../lib/reporters/HTMLReporter';
 import MarkdownReporter from '../../lib/reporters/MarkdownReporter';
 import ApiaryReporter from '../../lib/reporters/ApiaryReporter';
 
-const proxyquire = noCallThru();
 const BaseReporterStub = sinon.spy(BaseReporter);
 const XUnitReporterStub = sinon.spy(XUnitReporter);
 const CliReporterStub = sinon.spy(CLIReporter);
@@ -31,17 +30,10 @@ const ApiaryReporterStub = sinon.spy(ApiaryReporter);
 
 const emitterStub = new EventEmitter();
 
-const configureReporters = proxyquire('../../lib/configureReporters', {
-  './logger': loggerStub,
-  './reporters/BaseReporter': BaseReporterStub,
-  './reporters/XUnitReporter': XUnitReporterStub,
-  './reporters/CLIReporter': CliReporterStub,
-  './reporters/DotReporter': DotReporterStub,
-  './reporters/NyanReporter': NyanCatReporterStub,
-  './reporters/HTMLReporter': HtmlReporterStub,
-  './reporters/MarkdownReporter': MarkdownReporterStub,
-  './reporters/ApiaryReporter': ApiaryReporterStub,
-}).default;
+// esmock injects the reporter spies in place of the real reporter modules so
+// the test can assert which reporter configureReporters() instantiates. esmock
+// is async, so the configured function is loaded in a `before` hook below.
+let configureReporters;
 
 function resetStubs() {
   emitterStub.removeAllListeners();
@@ -63,7 +55,25 @@ describe('configureReporters()', () => {
     'inline-errors': false,
   };
 
-  before(() => (loggerStub.transports.console.silent = true));
+  before(async () => {
+    loggerStub.transports.console.silent = true;
+    configureReporters = (
+      await esmock('../../lib/configureReporters.ts', {
+        '../../lib/reporters/BaseReporter.ts': { default: BaseReporterStub },
+        '../../lib/reporters/XUnitReporter.ts': { default: XUnitReporterStub },
+        '../../lib/reporters/CLIReporter.ts': { default: CliReporterStub },
+        '../../lib/reporters/DotReporter.ts': { default: DotReporterStub },
+        '../../lib/reporters/NyanReporter.ts': { default: NyanCatReporterStub },
+        '../../lib/reporters/HTMLReporter.ts': { default: HtmlReporterStub },
+        '../../lib/reporters/MarkdownReporter.ts': {
+          default: MarkdownReporterStub,
+        },
+        '../../lib/reporters/ApiaryReporter.ts': {
+          default: ApiaryReporterStub,
+        },
+      })
+    ).default;
+  });
 
   after(() => (loggerStub.transports.console.silent = false));
 

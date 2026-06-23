@@ -1,6 +1,6 @@
 {
-  "require": [
-    "tsx/cjs"
+  "node-option": [
+    "import=tsx"
   ],
   "timeout": 120000,
   "recursive": true

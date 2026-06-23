@@ -2,14 +2,7 @@ import http from 'http';
 import https from 'https';
 import type { Agent, IncomingHttpHeaders, OutgoingHttpHeaders } from 'http';
 import type { RequestOptions } from 'https';
-// http-proxy-agent/https-proxy-agent v9 are ESM-only ("type": "module"), but
-// Dredd's build emits CommonJS. This works at runtime because Dredd requires
-// Node >= 22, where `require()` of an ESM module is supported; TypeScript's
-// node16 module mode doesn't model that, so it flags the import (TS1479).
-// Suppress it here until the package goes ESM (see #29).
-// @ts-expect-error -- Node >=22 require(ESM); resolved as ESM by `module: node16`
 import { HttpProxyAgent } from 'http-proxy-agent';
-// @ts-expect-error -- Node >=22 require(ESM); resolved as ESM by `module: node16`
 import { HttpsProxyAgent } from 'https-proxy-agent';
 
 interface ResponseInfo {
